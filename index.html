@@ -25,7 +25,7 @@
         <p>Developed by [Your Name]</p>
     </div>
 
-    <!-- Main App (hidden initially) -->
+    <!-- Main App -->
     <div id="app">
         <!-- Initial Screen -->
         <div id="initial-screen" class="screen">
@@ -59,22 +59,38 @@
             <button id="enter-personnel-btn">Enter New Personnel</button>
             <button id="back-to-initial-btn">Back</button>
         </div>
+
+        <!-- Enter Vehicles Screen -->
+        <div id="vehicles-screen" class="screen" style="display: none;">
+            <h1>Enter New Vehicles</h1>
+            <button id="manual-add-btn">Manual Add</button>
+            <button id="upload-spreadsheet-btn">Upload Spreadsheet</button>
+            <button id="back-to-options-btn">Back</button>
+        </div>
+
+        <!-- Manual Add Screen -->
+        <div id="manual-add-screen" class="screen" style="display: none;">
+            <h1>Manual Add Equipment</h1>
+            <button id="add-comm-gear-btn">Add Comm Gear</button>
+            <button id="add-engineering-btn">Add Engineering Equipment</button>
+            <button id="add-vehicles-btn">Add Vehicles</button>
+            <button id="add-weapons-btn">Add Weapons Systems</button>
+            <button id="back-to-vehicles-btn">Back</button>
+        </div>
     </div>
 
     <script>
-        // After 5 seconds, remove splash and show app
-        setTimeout(() => {
-            const splash = document.getElementById('splash');
-            const app = document.getElementById('app');
-            splash.style.display = 'none'; // Hide splash
-            app.style.display = 'block';   // Show main app
-        }, 5000);
-
-        // Screen management within app
+        // Screen management
         function showScreen(screenId) {
             document.querySelectorAll('#app .screen').forEach(screen => screen.style.display = 'none');
             document.getElementById(screenId).style.display = 'block';
         }
+
+        // Splash screen transition
+        setTimeout(() => {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+        }, 5000);
 
         // Check for existing data
         const userData = JSON.parse(localStorage.getItem('userData')) || {};
@@ -82,7 +98,7 @@
             document.getElementById('returning-user-btn').disabled = false;
         }
 
-        // Button event listeners
+        // Initial screen buttons
         document.getElementById('new-user-btn').addEventListener('click', () => showScreen('new-user-screen'));
         document.getElementById('returning-user-btn').addEventListener('click', () => alert('Returning user functionality coming soon!'));
 
@@ -101,9 +117,21 @@
         });
 
         // Options screen buttons
-        document.getElementById('enter-vehicles-btn').addEventListener('click', () => alert('Vehicle entry coming in the next portion!'));
-        document.getElementById('enter-personnel-btn').addEventListener('click', () => alert('Personnel entry coming in the next portion!'));
+        document.getElementById('enter-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
+        document.getElementById('enter-personnel-btn').addEventListener('click', () => alert('Personnel entry coming soon!'));
         document.getElementById('back-to-initial-btn').addEventListener('click', () => showScreen('initial-screen'));
+
+        // Vehicles screen buttons
+        document.getElementById('manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
+        document.getElementById('upload-spreadsheet-btn').addEventListener('click', () => alert('Spreadsheet upload coming soon!'));
+        document.getElementById('back-to-options-btn').addEventListener('click', () => showScreen('options-screen'));
+
+        // Manual add screen buttons (placeholders)
+        document.getElementById('add-comm-gear-btn').addEventListener('click', () => alert('Add Comm Gear form coming soon!'));
+        document.getElementById('add-engineering-btn').addEventListener('click', () => alert('Add Engineering Equipment form coming soon!'));
+        document.getElementById('add-vehicles-btn').addEventListener('click', () => alert('Add Vehicles form coming soon!'));
+        document.getElementById('add-weapons-btn').addEventListener('click', () => alert('Add Weapons Systems form coming soon!'));
+        document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
     </script>
 </body>
 </html>
