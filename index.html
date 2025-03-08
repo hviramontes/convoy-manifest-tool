@@ -16,12 +16,12 @@
         input, select { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         label { display: block; margin: 5px 0; font-weight: bold; }
         .search-container { display: flex; align-items: center; margin-bottom: 20px; }
-        #comm-search { flex: 1; }
-        #add-search-btn { margin-left: 10px; }
+        #comm-search, #water-search { flex: 1; }
+        #add-search-btn, #add-water-btn { margin-left: 10px; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #013220; color: white; }
-        #comm-gear-added { max-height: 400px; overflow-y: auto; }
+        #comm-gear-added, #water-container-added { max-height: 400px; overflow-y: auto; }
         .delete-btn { background-color: #a30000; padding: 5px 10px; }
         .delete-btn:hover { background-color: #cc0000; }
         .error-message { color: red; font-size: 12px; display: none; }
@@ -82,13 +82,13 @@
         <div id="manual-add-screen" class="screen" style="display: none;">
             <h1>Manual Add Equipment</h1>
             <button id="add-comm-gear-btn">Add Comm Gear</button>
-            <button id="add-engineering-btn">Add Engineering Equipment</button>
+            <button id="add-water-containers-btn">Add Water Containers</button>
             <button id="add-vehicles-btn">Add Vehicles</button>
             <button id="add-weapons-btn">Add Weapons Systems</button>
             <button id="back-to-vehicles-btn">Back</button>
         </div>
 
-        <!-- Add Comm Gear Screen (Input Style 2 Simplified) -->
+        <!-- Add Comm Gear Screen (Input Style 2) -->
         <div id="add-comm-gear-screen" class="screen" style="display: none;">
             <h1>Add Comm Gear (Input Style 2)</h1>
             <div class="search-container">
@@ -109,10 +109,33 @@
             <button id="save-comm-gear-btn">Save</button>
             <button id="back-to-manual-add-btn">Back</button>
         </div>
+
+        <!-- Add Water Containers Screen (Input Style 2) -->
+        <div id="add-water-containers-screen" class="screen" style="display: none;">
+            <h1>Add Water Containers (Input Style 2)</h1>
+            <div class="search-container">
+                <input type="text" id="water-search" placeholder="Search Water Container" list="water-suggestions">
+                <datalist id="water-suggestions"></datalist>
+                <button id="add-water-btn">Add</button>
+            </div>
+            <table id="water-container-table">
+                <thead>
+                    <tr>
+                        <th>Container Code</th>
+                        <th>Name</th>
+                        <th>Serial Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="water-container-added"></tbody>
+            </table>
+            <button id="save-water-btn">Save</button>
+            <button id="back-to-manual-add-btn-water">Back</button>
+        </div>
     </div>
 
     <script>
-        // Simplified radio types from your list
+        // Radio types for Comm Gear
         const radioTypes = [
             "AN/PRC-117F",
             "AN/PRC-117G",
@@ -126,6 +149,13 @@
             "AN/PRC-119",
             "AN/PRC-153 (IISR)"
         ];
+
+        // Water container data from your table
+        const waterContainerData = {
+            "B2086": "SIXCON Water Storage Module",
+            "D0880": "M149 Water Trailer ('Water Bull')",
+            "D0882": "MTVR Water Trailer (MK149)"
+        };
 
         // Screen management
         function showScreen(screenId) {
@@ -142,7 +172,8 @@
         // Check for existing data
         const userData = JSON.parse(localStorage.getItem('userData')) || {};
         const commGear = JSON.parse(localStorage.getItem('commGear')) || [];
-        if (Object.keys(userData).length > 0 || commGear.length > 0) {
+        const waterContainers = JSON.parse(localStorage.getItem('waterContainers')) || [];
+        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0) {
             document.getElementById('returning-user-btn').disabled = false;
         }
 
@@ -179,28 +210,29 @@
             showScreen('add-comm-gear-screen');
             loadCommGearRows();
         });
-        document.getElementById('add-engineering-btn').addEventListener('click', () => alert('Add Engineering Equipment form coming soon!'));
+        document.getElementById('add-water-containers-btn').addEventListener('click', () => {
+            showScreen('add-water-containers-screen');
+            loadWaterContainerRows();
+        });
         document.getElementById('add-vehicles-btn').addEventListener('click', () => alert('Add Vehicles form coming soon!'));
         document.getElementById('add-weapons-btn').addEventListener('click', () => alert('Add Weapons Systems form coming soon!'));
         document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
 
-        // Comm gear screen (Input Style 2 Simplified) logic
-        const searchInput = document.getElementById('comm-search');
-        const suggestions = document.getElementById('comm-suggestions');
-        const addedTable = document.getElementById('comm-gear-added');
+        // Comm Gear (Input Style 2) logic
+        const commSearchInput = document.getElementById('comm-search');
+        const commSuggestions = document.getElementById('comm-suggestions');
+        const commAddedTable = document.getElementById('comm-gear-added');
 
-        // Populate datalist with radio types
         radioTypes.forEach(type => {
-            suggestions.innerHTML += `<option value="${type}"></option>`;
+            commSuggestions.innerHTML += `<option value="${type}"></option>`;
         });
 
-        // Add button logic
         document.getElementById('add-search-btn').addEventListener('click', () => {
-            const query = searchInput.value.trim().toUpperCase();
+            const query = commSearchInput.value.trim().toUpperCase();
             const match = radioTypes.find(type => type.toUpperCase() === query);
             if (match) {
-                addedTable.appendChild(createCommGearRow(match));
-                searchInput.value = ''; // Clear search
+                commAddedTable.appendChild(createCommGearRow(match));
+                commSearchInput.value = '';
             } else {
                 alert('No matching radio type found. Please select from the suggestions.');
             }
@@ -223,13 +255,13 @@
         }
 
         function loadCommGearRows() {
-            addedTable.innerHTML = '';
+            commAddedTable.innerHTML = '';
             const savedGear = JSON.parse(localStorage.getItem('commGear')) || [];
-            savedGear.forEach(gear => addedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
+            savedGear.forEach(gear => commAddedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
         }
 
         document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
-            const rows = addedTable.querySelectorAll('tr');
+            const rows = commAddedTable.querySelectorAll('tr');
             const gearList = [];
             let allValid = true;
             rows.forEach(row => {
@@ -256,7 +288,82 @@
             }
         });
 
-        document.getElementById('back-to-manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
+        // Water Containers (Input Style 2) logic
+        const waterSearchInput = document.getElementById('water-search');
+        const waterSuggestions = document.getElementById('water-suggestions');
+        const waterAddedTable = document.getElementById('water-container-added');
+
+        Object.entries(waterContainerData).forEach(([code, name]) => {
+            waterSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
+        });
+
+        document.getElementById('add-water-btn').addEventListener('click', () => {
+            const query = waterSearchInput.value.trim().toUpperCase();
+            const match = Object.keys(waterContainerData).find(code => code === query) || 
+                         Object.values(waterContainerData).find(name => name.toUpperCase() === query);
+            const code = Object.keys(waterContainerData).find(c => waterContainerData[c] === match || c === query);
+            const name = waterContainerData[code];
+            if (code && name) {
+                waterAddedTable.appendChild(createWaterContainerRow(code, name));
+                waterSearchInput.value = '';
+            } else {
+                alert('No matching water container found. Please select from the suggestions.');
+            }
+        });
+
+        function createWaterContainerRow(code, name, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${code}</td>
+                <td>${name}</td>
+                <td>
+                    <input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required>
+                    <div class="error-message">Missing Serial Number</div>
+                </td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => {
+                row.remove();
+            });
+            return row;
+        }
+
+        function loadWaterContainerRows() {
+            waterAddedTable.innerHTML = '';
+            const savedContainers = JSON.parse(localStorage.getItem('waterContainers')) || [];
+            savedContainers.forEach(container => waterAddedTable.appendChild(createWaterContainerRow(container.code, container.name, container.serial)));
+        }
+
+        document.getElementById('save-water-btn').addEventListener('click', () => {
+            const rows = waterAddedTable.querySelectorAll('tr');
+            const containerList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    containerList.push({ code, name, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (containerList.length > 0) {
+                localStorage.setItem('waterContainers', JSON.stringify(containerList));
+                alert('Water Containers saved!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+
+        document.getElementById('back-to-manual-add-btn-water').addEventListener('click', () => showScreen('manual-add-screen'));
     </script>
 </body>
 </html>
