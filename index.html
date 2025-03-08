@@ -5,71 +5,76 @@
     <title>USMC Convoy Manifest Tool</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; text-align: center; height: 100vh; overflow: hidden; }
+        #splash { background-color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #splash img { max-width: 300px; width: 80%; }
+        #app { display: none; height: 100vh; overflow-y: auto; }
         h1 { color: #013220; } /* Dark green for USMC */
-        .screen { display: none; padding: 20px; position: absolute; top: 0; left: 0; width: 100%; height: 100%; box-sizing: border-box; }
-        .active { display: block; }
+        .screen { padding: 20px; max-width: 600px; margin: 0 auto; background: white; min-height: 100%; }
         button { background-color: #013220; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
         button:hover { background-color: #024930; }
         button:disabled { background-color: #666; cursor: not-allowed; }
         input, select { width: 80%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
         label { display: block; margin: 5px 0; font-weight: bold; }
-        #splash { background-color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #splash img { max-width: 300px; width: 80%; }
-        #initial-screen, #new-user-screen, #options-screen { background: white; margin: 0 auto; max-width: 600px; height: 100%; overflow-y: auto; }
     </style>
 </head>
 <body>
     <!-- Splash Screen -->
-    <div id="splash" class="screen active">
+    <div id="splash">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Eagle%2C_Globe%2C_and_Anchor.svg/512px-Eagle%2C_Globe%2C_and_Anchor.svg.png" alt="USMC EGA">
         <h1>USMC Convoy Manifest Tool</h1>
         <p>Developed by [Your Name]</p>
     </div>
 
-    <!-- Initial Screen -->
-    <div id="initial-screen" class="screen">
-        <h1>Welcome to the USMC Convoy Manifest Tool</h1>
-        <button id="new-user-btn">New User</button>
-        <button id="returning-user-btn" disabled>Returning User</button>
-    </div>
+    <!-- Main App (hidden initially) -->
+    <div id="app">
+        <!-- Initial Screen -->
+        <div id="initial-screen" class="screen">
+            <h1>Welcome to the USMC Convoy Manifest Tool</h1>
+            <button id="new-user-btn">New User</button>
+            <button id="returning-user-btn" disabled>Returning User</button>
+        </div>
 
-    <!-- New User Registration -->
-    <div id="new-user-screen" class="screen">
-        <h1>New User Registration</h1>
-        <form id="user-form">
-            <label for="rank">Rank:</label>
-            <input type="text" id="rank" name="rank" required>
-            <label for="last-name">Last Name:</label>
-            <input type="text" id="last-name" name="last-name" required>
-            <label for="first-name">First Name:</label>
-            <input type="text" id="first-name" name="first-name" required>
-            <label for="billet">Billet:</label>
-            <input type="text" id="billet" name="billet" required>
-            <label for="unit">Unit:</label>
-            <input type="text" id="unit" name="unit" required>
-            <button type="submit">Submit</button>
-        </form>
-    </div>
+        <!-- New User Registration -->
+        <div id="new-user-screen" class="screen" style="display: none;">
+            <h1>New User Registration</h1>
+            <form id="user-form">
+                <label for="rank">Rank:</label>
+                <input type="text" id="rank" name="rank" required>
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" required>
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name" required>
+                <label for="billet">Billet:</label>
+                <input type="text" id="billet" name="billet" required>
+                <label for="unit">Unit:</label>
+                <input type="text" id="unit" name="unit" required>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
 
-    <!-- Options Screen -->
-    <div id="options-screen" class="screen">
-        <h1>Convoy Management Options</h1>
-        <button id="enter-vehicles-btn">Enter New Vehicles</button>
-        <button id="enter-personnel-btn">Enter New Personnel</button>
-        <button id="back-to-initial-btn">Back</button>
+        <!-- Options Screen -->
+        <div id="options-screen" class="screen" style="display: none;">
+            <h1>Convoy Management Options</h1>
+            <button id="enter-vehicles-btn">Enter New Vehicles</button>
+            <button id="enter-personnel-btn">Enter New Personnel</button>
+            <button id="back-to-initial-btn">Back</button>
+        </div>
     </div>
 
     <script>
-        // Screen management
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        // Splash screen timer
+        // After 5 seconds, remove splash and show app
         setTimeout(() => {
-            showScreen('initial-screen');
+            const splash = document.getElementById('splash');
+            const app = document.getElementById('app');
+            splash.style.display = 'none'; // Hide splash
+            app.style.display = 'block';   // Show main app
         }, 5000);
+
+        // Screen management within app
+        function showScreen(screenId) {
+            document.querySelectorAll('#app .screen').forEach(screen => screen.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
 
         // Check for existing data
         const userData = JSON.parse(localStorage.getItem('userData')) || {};
