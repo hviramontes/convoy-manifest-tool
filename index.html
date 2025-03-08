@@ -15,11 +15,13 @@
         button:disabled { background-color: #666; cursor: not-allowed; }
         input, select { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         label { display: block; margin: 5px 0; font-weight: bold; }
+        .search-container { display: flex; align-items: center; margin-bottom: 20px; }
+        #comm-search { flex: 1; }
+        #add-search-btn { margin-left: 10px; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #013220; color: white; }
-        .add-row-btn { background-color: #013220; font-size: 16px; padding: 5px 10px; }
-        .warning { color: red; font-weight: bold; margin-top: 10px; display: none; }
+        #comm-gear-added { max-height: 400px; overflow-y: auto; }
     </style>
 </head>
 <body>
@@ -83,21 +85,24 @@
             <button id="back-to-vehicles-btn">Back</button>
         </div>
 
-        <!-- Add Comm Gear Screen -->
+        <!-- Add Comm Gear Screen (Input Style 2) -->
         <div id="add-comm-gear-screen" class="screen" style="display: none;">
-            <h1>Add Comm Gear</h1>
+            <h1>Add Comm Gear (Input Style 2)</h1>
+            <div class="search-container">
+                <input type="text" id="comm-search" placeholder="Search by TAMCN or Name" list="comm-suggestions">
+                <datalist id="comm-suggestions"></datalist>
+                <button id="add-search-btn">Add</button>
+            </div>
             <table id="comm-gear-table">
                 <thead>
                     <tr>
                         <th>TAMCN</th>
                         <th>Name</th>
                         <th>Serial Number</th>
-                        <th></th>
                     </tr>
                 </thead>
-                <tbody id="comm-gear-rows"></tbody>
+                <tbody id="comm-gear-added"></tbody>
             </table>
-            <div id="serial-warning" class="warning">Please enter a serial number before adding a new row.</div>
             <button id="save-comm-gear-btn">Save</button>
             <button id="back-to-manual-add-btn">Back</button>
         </div>
@@ -233,78 +238,74 @@
         document.getElementById('add-weapons-btn').addEventListener('click', () => alert('Add Weapons Systems form coming soon!'));
         document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
 
-        // Comm gear screen logic
-        function createCommGearRow(tamcn = '', name = '', serial = '') {
+        // Comm gear screen (Input Style 2) logic
+        const searchInput = document.getElementById('comm-search');
+        const suggestions = document.getElementById('comm-suggestions');
+        const addedTable = document.getElementById('comm-gear-added');
+
+        // Populate datalist with all TAMCNs and Names
+        Object.entries(commGearData).forEach(([tamcn, name]) => {
+            suggestions.innerHTML += `<option value="${tamcn}">${name}</option>`;
+            suggestions.innerHTML += `<option value="${name}">${tamcn}</option>`;
+        });
+
+        // Add button logic
+        document.getElementById('add-search-btn').addEventListener('click', () => {
+            const query = searchInput.value.trim().toUpperCase();
+            let tamcn, name;
+            if (commGearData[query]) {
+                tamcn = query;
+                name = commGearData[query];
+            } else {
+                tamcn = Object.keys(commGearData).find(t => commGearData[t].toUpperCase() === query);
+                name = tamcn ? commGearData[tamcn] : null;
+            }
+            if (tamcn && name) {
+                addedTable.appendChild(createCommGearRow(tamcn, name));
+                searchInput.value = ''; // Clear search
+            } else {
+                alert('No matching item found. Please refine your search.');
+            }
+        });
+
+        function createCommGearRow(tamcn, name, serial = '') {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td><select class="tamcn-select">${Object.keys(commGearData).map(t => `<option value="${t}" ${t === tamcn ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
-                <td><select class="name-select">${Object.values(commGearData).map(n => `<option value="${n}" ${n === name ? 'selected' : ''}>${n}</option>`).join('')}</select></td>
+                <td>${tamcn}</td>
+                <td>${name}</td>
                 <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
-                <td><button class="add-row-btn">+</button></td>
             `;
-            const tamcnSelect = row.querySelector('.tamcn-select');
-            const nameSelect = row.querySelector('.name-select');
-            const serialInput = row.querySelector('.serial-input');
-
-            // Sync TAMCN to Name
-            tamcnSelect.addEventListener('change', () => {
-                nameSelect.value = commGearData[tamcnSelect.value];
-            });
-
-            // Sync Name to TAMCN
-            nameSelect.addEventListener('change', () => {
-                const selectedName = nameSelect.value;
-                const matchingTamcn = Object.keys(commGearData).find(t => commGearData[t] === selectedName);
-                if (matchingTamcn) tamcnSelect.value = matchingTamcn;
-            });
-
-            // Add row button with serial number check
-            row.querySelector('.add-row-btn').addEventListener('click', () => {
-                const warning = document.getElementById('serial-warning');
-                if (!serialInput.value.trim()) {
-                    warning.style.display = 'block';
-                    setTimeout(() => warning.style.display = 'none', 3000); // Hide after 3 seconds
-                } else {
-                    document.getElementById('comm-gear-rows').appendChild(createCommGearRow());
-                }
-            });
-
             return row;
         }
 
         function loadCommGearRows() {
-            const tbody = document.getElementById('comm-gear-rows');
-            tbody.innerHTML = '';
+            addedTable.innerHTML = '';
             const savedGear = JSON.parse(localStorage.getItem('commGear')) || [];
-            if (savedGear.length > 0) {
-                savedGear.forEach(gear => tbody.appendChild(createCommGearRow(gear.tamcn, gear.name, gear.serial)));
-            } else {
-                tbody.appendChild(createCommGearRow());
-            }
+            savedGear.forEach(gear => addedTable.appendChild(createCommGearRow(gear.tamcn, gear.name, gear.serial)));
         }
 
         document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
-            const rows = document.querySelectorAll('#comm-gear-rows tr');
+            const rows = addedTable.querySelectorAll('tr');
             const gearList = [];
             let allValid = true;
             rows.forEach(row => {
-                const tamcn = row.querySelector('.tamcn-select').value;
-                const name = row.querySelector('.name-select').value;
+                const tamcn = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
                 const serial = row.querySelector('.serial-input').value.trim();
-                if (tamcn && name && serial) {
+                if (serial) {
                     gearList.push({ tamcn, name, serial });
-                } else if (tamcn || name || serial) { // Partial row
+                } else {
                     allValid = false;
                 }
             });
             if (!allValid) {
-                alert('Please complete or remove incomplete rows before saving.');
+                alert('Please enter serial numbers for all added items.');
             } else if (gearList.length > 0) {
                 localStorage.setItem('commGear', JSON.stringify(gearList));
                 alert('Comm Gear saved!');
                 showScreen('manual-add-screen');
             } else {
-                alert('No valid entries to save.');
+                alert('No items to save.');
             }
         });
 
