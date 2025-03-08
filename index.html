@@ -16,12 +16,12 @@
         input, select { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         label { display: block; margin: 5px 0; font-weight: bold; }
         .search-container { display: flex; align-items: center; margin-bottom: 20px; }
-        #comm-search, #water-search { flex: 1; }
-        #add-search-btn, #add-water-btn { margin-left: 10px; }
+        #comm-search, #water-search, #fuel-search { flex: 1; }
+        #add-search-btn, #add-water-btn, #add-fuel-btn { margin-left: 10px; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #013220; color: white; }
-        #comm-gear-added, #water-container-added { max-height: 400px; overflow-y: auto; }
+        #comm-gear-added, #water-container-added, #fuel-container-added { max-height: 400px; overflow-y: auto; }
         .delete-btn { background-color: #a30000; padding: 5px 10px; }
         .delete-btn:hover { background-color: #cc0000; }
         .error-message { color: red; font-size: 12px; display: none; }
@@ -83,6 +83,7 @@
             <h1>Manual Add Equipment</h1>
             <button id="add-comm-gear-btn">Add Comm Gear</button>
             <button id="add-water-containers-btn">Add Water Containers</button>
+            <button id="add-fuel-containers-btn">Add Fuel Containers</button>
             <button id="add-vehicles-btn">Add Vehicles</button>
             <button id="add-weapons-btn">Add Weapons Systems</button>
             <button id="back-to-vehicles-btn">Back</button>
@@ -132,6 +133,29 @@
             <button id="save-water-btn">Save</button>
             <button id="back-to-manual-add-btn-water">Back</button>
         </div>
+
+        <!-- Add Fuel Containers Screen (Input Style 2) -->
+        <div id="add-fuel-containers-screen" class="screen" style="display: none;">
+            <h1>Add Fuel Containers (Input Style 2)</h1>
+            <div class="search-container">
+                <input type="text" id="fuel-search" placeholder="Search Fuel Container" list="fuel-suggestions">
+                <datalist id="fuel-suggestions"></datalist>
+                <button id="add-fuel-btn">Add</button>
+            </div>
+            <table id="fuel-container-table">
+                <thead>
+                    <tr>
+                        <th>Container Code</th>
+                        <th>Name</th>
+                        <th>Serial Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="fuel-container-added"></tbody>
+            </table>
+            <button id="save-fuel-btn">Save</button>
+            <button id="back-to-manual-add-btn-fuel">Back</button>
+        </div>
     </div>
 
     <script>
@@ -150,11 +174,18 @@
             "AN/PRC-153 (IISR)"
         ];
 
-        // Water container data from your table
+        // Water container data
         const waterContainerData = {
             "B2086": "SIXCON Water Storage Module",
             "D0880": "M149 Water Trailer ('Water Bull')",
             "D0882": "MTVR Water Trailer (MK149)"
+        };
+
+        // Fuel container data from your table
+        const fuelContainerData = {
+            "B2085": "Fuel SIXCON",
+            "D0211": "Flatrack Refueler",
+            "D0215": "M970 Refueler"
         };
 
         // Screen management
@@ -173,7 +204,8 @@
         const userData = JSON.parse(localStorage.getItem('userData')) || {};
         const commGear = JSON.parse(localStorage.getItem('commGear')) || [];
         const waterContainers = JSON.parse(localStorage.getItem('waterContainers')) || [];
-        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0) {
+        const fuelContainers = JSON.parse(localStorage.getItem('fuelContainers')) || [];
+        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0 || fuelContainers.length > 0) {
             document.getElementById('returning-user-btn').disabled = false;
         }
 
@@ -213,6 +245,10 @@
         document.getElementById('add-water-containers-btn').addEventListener('click', () => {
             showScreen('add-water-containers-screen');
             loadWaterContainerRows();
+        });
+        document.getElementById('add-fuel-containers-btn').addEventListener('click', () => {
+            showScreen('add-fuel-containers-screen');
+            loadFuelContainerRows();
         });
         document.getElementById('add-vehicles-btn').addEventListener('click', () => alert('Add Vehicles form coming soon!'));
         document.getElementById('add-weapons-btn').addEventListener('click', () => alert('Add Weapons Systems form coming soon!'));
@@ -363,7 +399,84 @@
             }
         });
 
+        // Fuel Containers (Input Style 2) logic
+        const fuelSearchInput = document.getElementById('fuel-search');
+        const fuelSuggestions = document.getElementById('fuel-suggestions');
+        const fuelAddedTable = document.getElementById('fuel-container-added');
+
+        Object.entries(fuelContainerData).forEach(([code, name]) => {
+            fuelSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
+        });
+
+        document.getElementById('add-fuel-btn').addEventListener('click', () => {
+            const query = fuelSearchInput.value.trim().toUpperCase();
+            const match = Object.keys(fuelContainerData).find(code => code === query) || 
+                         Object.values(fuelContainerData).find(name => name.toUpperCase() === query);
+            const code = Object.keys(fuelContainerData).find(c => fuelContainerData[c] === match || c === query);
+            const name = fuelContainerData[code];
+            if (code && name) {
+                fuelAddedTable.appendChild(createFuelContainerRow(code, name));
+                fuelSearchInput.value = '';
+            } else {
+                alert('No matching fuel container found. Please select from the suggestions.');
+            }
+        });
+
+        function createFuelContainerRow(code, name, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${code}</td>
+                <td>${name}</td>
+                <td>
+                    <input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required>
+                    <div class="error-message">Missing Serial Number</div>
+                </td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => {
+                row.remove();
+            });
+            return row;
+        }
+
+        function loadFuelContainerRows() {
+            fuelAddedTable.innerHTML = '';
+            const savedContainers = JSON.parse(localStorage.getItem('fuelContainers')) || [];
+            savedContainers.forEach(container => fuelAddedTable.appendChild(createFuelContainerRow(container.code, container.name, container.serial)));
+        }
+
+        document.getElementById('save-fuel-btn').addEventListener('click', () => {
+            const rows = fuelAddedTable.querySelectorAll('tr');
+            const containerList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    containerList.push({ code, name, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (containerList.length > 0) {
+                localStorage.setItem('fuelContainers', JSON.stringify(containerList));
+                alert('Fuel Containers saved!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+
         document.getElementById('back-to-manual-add-btn-water').addEventListener('click', () => showScreen('manual-add-screen'));
+        document.getElementById('back-to-manual-add-btn-fuel').addEventListener('click', () => showScreen('manual-add-screen'));
+        document.getElementById('back-to-manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
     </script>
 </body>
 </html>
