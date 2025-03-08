@@ -19,6 +19,7 @@
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #013220; color: white; }
         .add-row-btn { background-color: #013220; font-size: 16px; padding: 5px 10px; }
+        .warning { color: red; font-weight: bold; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
@@ -96,6 +97,7 @@
                 </thead>
                 <tbody id="comm-gear-rows"></tbody>
             </table>
+            <div id="serial-warning" class="warning">Please enter a serial number before adding a new row.</div>
             <button id="save-comm-gear-btn">Save</button>
             <button id="back-to-manual-add-btn">Back</button>
         </div>
@@ -242,12 +244,31 @@
             `;
             const tamcnSelect = row.querySelector('.tamcn-select');
             const nameSelect = row.querySelector('.name-select');
+            const serialInput = row.querySelector('.serial-input');
+
+            // Sync TAMCN to Name
             tamcnSelect.addEventListener('change', () => {
                 nameSelect.value = commGearData[tamcnSelect.value];
             });
-            row.querySelector('.add-row-btn').addEventListener('click', () => {
-                document.getElementById('comm-gear-rows').appendChild(createCommGearRow());
+
+            // Sync Name to TAMCN
+            nameSelect.addEventListener('change', () => {
+                const selectedName = nameSelect.value;
+                const matchingTamcn = Object.keys(commGearData).find(t => commGearData[t] === selectedName);
+                if (matchingTamcn) tamcnSelect.value = matchingTamcn;
             });
+
+            // Add row button with serial number check
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                const warning = document.getElementById('serial-warning');
+                if (!serialInput.value.trim()) {
+                    warning.style.display = 'block';
+                    setTimeout(() => warning.style.display = 'none', 3000); // Hide after 3 seconds
+                } else {
+                    document.getElementById('comm-gear-rows').appendChild(createCommGearRow());
+                }
+            });
+
             return row;
         }
 
@@ -265,17 +286,26 @@
         document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
             const rows = document.querySelectorAll('#comm-gear-rows tr');
             const gearList = [];
+            let allValid = true;
             rows.forEach(row => {
                 const tamcn = row.querySelector('.tamcn-select').value;
                 const name = row.querySelector('.name-select').value;
-                const serial = row.querySelector('.serial-input').value;
+                const serial = row.querySelector('.serial-input').value.trim();
                 if (tamcn && name && serial) {
                     gearList.push({ tamcn, name, serial });
+                } else if (tamcn || name || serial) { // Partial row
+                    allValid = false;
                 }
             });
-            localStorage.setItem('commGear', JSON.stringify(gearList));
-            alert('Comm Gear saved!');
-            showScreen('manual-add-screen');
+            if (!allValid) {
+                alert('Please complete or remove incomplete rows before saving.');
+            } else if (gearList.length > 0) {
+                localStorage.setItem('commGear', JSON.stringify(gearList));
+                alert('Comm Gear saved!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No valid entries to save.');
+            }
         });
 
         document.getElementById('back-to-manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
