@@ -21,7 +21,9 @@
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #013220; color: white; }
-        #comm-gear-added, #water-container-added, #fuel-container-added { max-height: 400px; overflow-y: auto; }
+        #comm-gear-added, #water-container-added, #fuel-container-added, #vehicles-added { max-height: 400px; overflow-y: auto; }
+        .add-row-btn { background-color: #013220; font-size: 16px; padding: 5px 10px; }
+        .add-row-btn:hover { background-color: #024930; }
         .delete-btn { background-color: #a30000; padding: 5px 10px; }
         .delete-btn:hover { background-color: #cc0000; }
         .error-message { color: red; font-size: 12px; display: none; }
@@ -156,6 +158,24 @@
             <button id="save-fuel-btn">Save</button>
             <button id="back-to-manual-add-btn-fuel">Back</button>
         </div>
+
+        <!-- Add Vehicles Screen (Input Style 1) -->
+        <div id="add-vehicles-screen" class="screen" style="display: none;">
+            <h1>Add Vehicles (Input Style 1)</h1>
+            <table id="vehicles-table">
+                <thead>
+                    <tr>
+                        <th>TAMCN</th>
+                        <th>Vehicle Description</th>
+                        <th>Serial Number</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="vehicles-added"></tbody>
+            </table>
+            <button id="save-vehicles-btn">Save</button>
+            <button id="back-to-manual-add-btn-vehicles">Back</button>
+        </div>
     </div>
 
     <script>
@@ -181,11 +201,70 @@
             "D0882": "MTVR Water Trailer (MK149)"
         };
 
-        // Fuel container data from your table
+        // Fuel container data
         const fuelContainerData = {
             "B2085": "Fuel SIXCON",
             "D0211": "Flatrack Refueler",
             "D0215": "M970 Refueler"
+        };
+
+        // Vehicle data
+        const vehicleData = {
+            "D0003": "TRUCK, ARMORED, CARGO 7 TON, W/O WINCH NON-REDUCIBLE W/DFCS",
+            "D0005": "TRUCK, ARMORED, XLWB CARGO, 7 TON, W/O WINCH, NON REDUCIBLE",
+            "D0007": "TRUCK, ARMORED, DUMP 7-TON W/O WINCH NON-REDUCIBLE",
+            "D0009": "TRUCK TRACTOR",
+            "D0011": "CARRIER, TROOP, ARMORED, MTVR",
+            "D0013": "TRUCK, ARMORED, TRACTOR, 7 TON, W/O WINCH, REDUCIBLE",
+            "D0015": "TRUCK, ARMORED, WRECKER, 7 TON, W/WINCH REDUCIBLE",
+            "D0016": "TRAILER, CARGO (LTT-H)",
+            "D0022": "TRUCK, UTILITY: EXPANDED CAPACITY, ENHANCED, 11,500 GVW, 4X4, M1152, 2 DOOR",
+            "D0026": "JLTV SHELTER AMBULANCE",
+            "D0045": "GENERAL PURPOSE JOINT LIGHT TACTICAL VEHICLE (JLTV)",
+            "D0046": "HVY GUNS CARRIER JLTV",
+            "D0048": "UTILITY JLTV",
+            "D0052": "LVSR, ARMORED CARGO VARIANT",
+            "D0053": "LVSR, ARMORED TRACTOR VARIANT",
+            "D0054": "LVSR, ARMORED WRECKER VARIANT",
+            "D0187": "TRK, UTIL, HVY, 2 1/4T, HMMWV",
+            "D0198": "TRUCK, CARGO, 7 TON, W/O WINCH",
+            "D0886": "TRUCK CARGO 22.5 TON, 10X10, (LVSR)",
+            "D0887": "TRUCK, TRACTOR, 10X10 (LVSR)",
+            "D1001": "TRK, AMBUL, 4-LTR, ARMD, 2 1/4T, HMMWV",
+            "D1002": "TRK, AMBUL, 2-LTR, SOFT TOP, 2 1/4T, HMMWV",
+            "D1062": "TRUCK, CARGO, 7 TON, XLWB, W/ WINCH",
+            "D1073": "TRUCK, DUMP, 7 TON, W/O WINCH",
+            "D1158": "TRK, UTIL, CARGO/TRP CARR, 1 1/4T, W/EQP, HMMWV",
+            "D1214": "TRUCK, WRECKER, 10X10 (LVSR)"
+        };
+
+        const vehicleModelNames = {
+            "D0003": "MK23",
+            "D0005": "MK25",
+            "D0007": "MK29",
+            "D0009": "MK31",
+            "D0011": "MK27 or MK28 (Troop Carrier Variants)",
+            "D0013": "MK31 (Tractor Variant)",
+            "D0015": "MK36 Wrecker",
+            "D0016": "M1102 (or LTT Trailer Series)",
+            "D0022": "M1152 HMMWV",
+            "D0026": "JLTV Ambulance Variant",
+            "D0045": "JLTV GP",
+            "D0046": "JLTV Heavy Guns Carrier Variant",
+            "D0048": "JLTV Utility Variant",
+            "D0052": "MKR18 Cargo",
+            "D0053": "MKR16 Tractor",
+            "D0054": "MKR15 Wrecker",
+            "D0187": "M998 or M1151 HMMWV",
+            "D0198": "MK23",
+            "D0886": "MKR18 Cargo",
+            "D0887": "MKR16 Tractor",
+            "D1001": "M997 (Armored Ambulance)",
+            "D1002": "M1035 (Soft Top Ambulance)",
+            "D1062": "MK28",
+            "D1073": "MK30",
+            "D1158": "M1097 or M1152 HMMWV",
+            "D1214": "MKR15 Wrecker"
         };
 
         // Screen management
@@ -205,7 +284,8 @@
         const commGear = JSON.parse(localStorage.getItem('commGear')) || [];
         const waterContainers = JSON.parse(localStorage.getItem('waterContainers')) || [];
         const fuelContainers = JSON.parse(localStorage.getItem('fuelContainers')) || [];
-        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0 || fuelContainers.length > 0) {
+        const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0 || fuelContainers.length > 0 || vehicles.length > 0) {
             document.getElementById('returning-user-btn').disabled = false;
         }
 
@@ -250,7 +330,10 @@
             showScreen('add-fuel-containers-screen');
             loadFuelContainerRows();
         });
-        document.getElementById('add-vehicles-btn').addEventListener('click', () => alert('Add Vehicles form coming soon!'));
+        document.getElementById('add-vehicles-btn').addEventListener('click', () => {
+            showScreen('add-vehicles-screen');
+            loadVehicleRows();
+        });
         document.getElementById('add-weapons-btn').addEventListener('click', () => alert('Add Weapons Systems form coming soon!'));
         document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
 
@@ -474,6 +557,80 @@
             }
         });
 
+        // Vehicles (Input Style 1) logic
+        function createVehicleRow(tamcn = '', description = '', serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><select class="tamcn-select">${Object.keys(vehicleData).map(t => `<option value="${t}" ${t === tamcn ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
+                <td><select class="description-select">${Object.values(vehicleData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
+                <td><button class="add-row-btn">+</button></td>
+            `;
+            const tamcnSelect = row.querySelector('.tamcn-select');
+            const descriptionSelect = row.querySelector('.description-select');
+            const serialInput = row.querySelector('.serial-input');
+
+            // Sync TAMCN to Description
+            tamcnSelect.addEventListener('change', () => {
+                descriptionSelect.value = vehicleData[tamcnSelect.value];
+            });
+
+            // Sync Description to TAMCN
+            descriptionSelect.addEventListener('change', () => {
+                const selectedDescription = descriptionSelect.value;
+                const matchingTamcn = Object.keys(vehicleData).find(t => vehicleData[t] === selectedDescription);
+                if (matchingTamcn) tamcnSelect.value = matchingTamcn;
+            });
+
+            // Add row button with serial number check
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                if (!serialInput.value.trim()) {
+                    alert('Please enter a serial number before adding a new row.');
+                } else {
+                    document.getElementById('vehicles-added').appendChild(createVehicleRow());
+                }
+            });
+
+            return row;
+        }
+
+        function loadVehicleRows() {
+            const tbody = document.getElementById('vehicles-added');
+            tbody.innerHTML = '';
+            const savedVehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+            if (savedVehicles.length > 0) {
+                savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.description, vehicle.serial)));
+            } else {
+                tbody.appendChild(createVehicleRow());
+            }
+        }
+
+        document.getElementById('save-vehicles-btn').addEventListener('click', () => {
+            const rows = document.querySelectorAll('#vehicles-added tr');
+            const vehicleList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const tamcn = row.querySelector('.tamcn-select').value;
+                const description = row.querySelector('.description-select').value;
+                const serial = row.querySelector('.serial-input').value.trim();
+                if (tamcn && description && serial) {
+                    vehicleList.push({ tamcn, description, serial });
+                } else if (tamcn || description || serial) {
+                    allValid = false;
+                }
+            });
+            if (!allValid) {
+                alert('Please complete all fields (TAMCN, Description, and Serial Number) for each row.');
+            } else if (vehicleList.length > 0) {
+                localStorage.setItem('vehicles', JSON.stringify(vehicleList));
+                alert('Vehicles saved!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No valid entries to save.');
+            }
+        });
+
+        document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('back-to-manual-add-btn-water').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('back-to-manual-add-btn-fuel').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('back-to-manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
