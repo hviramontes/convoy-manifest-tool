@@ -4,82 +4,98 @@
     <meta charset="UTF-8">
     <title>USMC Convoy Manifest Tool</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-        h1 { color: #013220; } /* Dark green for USMC vibe */
-        .section { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        label { display: block; margin: 10px 0 5px; font-weight: bold; }
-        input, select { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        button { background-color: #013220; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; }
+        body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f4f4; text-align: center; }
+        h1 { color: #013220; } /* Dark green for USMC */
+        .screen { display: none; padding: 20px; }
+        .active { display: block; }
+        button { background-color: #013220; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
         button:hover { background-color: #024930; }
-        #suggestion-output { margin-top: 20px; }
+        button:disabled { background-color: #666; cursor: not-allowed; }
+        input, select { width: 80%; padding: 8px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        label { display: block; margin: 5px 0; font-weight: bold; }
+        #splash { background-color: #white; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #splash img { max-width: 300px; }
     </style>
 </head>
 <body>
-    <h1>USMC Convoy Manifest Tool</h1>
-    <div class="section">
-        <h2>Convoy Planning</h2>
-        <form id="convoy-form">
-            <label for="cargo-type">What are you moving?</label>
-            <select id="cargo-type" name="cargo-type" required>
-                <option value="">Select cargo type</option>
-                <option value="ammo">Ammunition</option>
-                <option value="fuel">Fuel</option>
-                <option value="supplies">General Supplies</option>
-                <option value="personnel">Personnel</option>
-            </select>
+    <!-- Splash Screen -->
+    <div id="splash" class="screen active">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Eagle%2C_Globe%2C_and_Anchor.svg/512px-Eagle%2C_Globe%2C_and_Anchor.svg.png" alt="USMC EGA">
+        <h1>USMC Convoy Manifest Tool</h1>
+        <p>Developed by [Your Name]</p>
+    </div>
 
-            <label for="weight">Total Weight (lbs):</label>
-            <input type="number" id="weight" name="weight" min="0" step="1" required>
+    <!-- Initial Screen -->
+    <div id="initial-screen" class="screen">
+        <h1>Welcome to the USMC Convoy Manifest Tool</h1>
+        <button id="new-user-btn">New User</button>
+        <button id="returning-user-btn" disabled>Returning User</button>
+    </div>
 
-            <label for="volume">Volume (cu ft):</label>
-            <input type="number" id="volume" name="volume" min="0" step="1" required>
-
-            <button type="submit">Suggest Vehicles</button>
+    <!-- New User Registration -->
+    <div id="new-user-screen" class="screen">
+        <h1>New User Registration</h1>
+        <form id="user-form">
+            <label for="rank">Rank:</label>
+            <input type="text" id="rank" name="rank" required>
+            <label for="last-name">Last Name:</label>
+            <input type="text" id="last-name" name="last-name" required>
+            <label for="first-name">First Name:</label>
+            <input type="text" id="first-name" name="first-name" required>
+            <label for="billet">Billet:</label>
+            <input type="text" id="billet" name="billet" required>
+            <label for="unit">Unit:</label>
+            <input type="text" id="unit" name="unit" required>
+            <button type="submit">Submit</button>
         </form>
-        <div id="suggestion-output"></div>
+    </div>
+
+    <!-- Options Screen -->
+    <div id="options-screen" class="screen">
+        <h1>Convoy Management Options</h1>
+        <button id="enter-vehicles-btn">Enter New Vehicles</button>
+        <button id="enter-personnel-btn">Enter New Personnel</button>
+        <button id="back-to-initial-btn">Back</button>
     </div>
 
     <script>
-        const form = document.getElementById('convoy-form');
-        const output = document.getElementById('suggestion-output');
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
 
-        // Sample USMC vehicle data (simplified)
-        const vehicles = {
-            HMMWV: { capacity: 2500, volume: 100, suitableFor: ['ammo', 'supplies', 'personnel'] },
-            MTVR: { capacity: 15000, volume: 500, suitableFor: ['ammo', 'supplies', 'fuel'] },
-            LVS: { capacity: 25000, volume: 800, suitableFor: ['fuel', 'supplies'] }
-        };
+        // Splash screen timer
+        setTimeout(() => showScreen('initial-screen'), 5000);
 
-        form.addEventListener('submit', function(event) {
+        // Check for existing data
+        const userData = JSON.parse(localStorage.getItem('userData')) || {};
+        if (Object.keys(userData).length > 0) {
+            document.getElementById('returning-user-btn').disabled = false;
+        }
+
+        // Button event listeners
+        document.getElementById('new-user-btn').addEventListener('click', () => showScreen('new-user-screen'));
+        document.getElementById('returning-user-btn').addEventListener('click', () => alert('Returning user functionality coming soon!'));
+
+        // New user form submission
+        document.getElementById('user-form').addEventListener('submit', (event) => {
             event.preventDefault();
-            const cargoType = document.getElementById('cargo-type').value;
-            const weight = parseInt(document.getElementById('weight').value);
-            const volume = parseInt(document.getElementById('volume').value);
-
-            // Simple suggestion logic
-            let suggestion = [];
-            if (weight <= 2500 && volume <= 100 && vehicles.HMMWV.suitableFor.includes(cargoType)) {
-                suggestion.push('1x HMMWV');
-            } else if (weight <= 15000 && volume <= 500 && vehicles.MTVR.suitableFor.includes(cargoType)) {
-                suggestion.push('1x MTVR');
-            } else if (weight <= 25000 && volume <= 800 && vehicles.LVS.suitableFor.includes(cargoType)) {
-                suggestion.push('1x LVS');
-            } else {
-                suggestion.push('Multiple vehicles required or adjust load.');
-            }
-
-            // Display suggestion
-            output.innerHTML = `
-                <h3>Suggested Vehicles</h3>
-                <p>${suggestion.join(', ')}</p>
-                <button onclick="approvePlan('${suggestion.join(', ')}')">Approve Plan</button>
-            `;
+            const user = {
+                rank: document.getElementById('rank').value,
+                lastName: document.getElementById('last-name').value,
+                firstName: document.getElementById('first-name').value,
+                billet: document.getElementById('billet').value,
+                unit: document.getElementById('unit').value
+            };
+            localStorage.setItem('userData', JSON.stringify(user));
+            showScreen('options-screen');
         });
 
-        function approvePlan(suggestion) {
-            output.innerHTML += `<p>Plan approved! Manifest and load plan generation coming soon.</p>`;
-            // Next portion will expand this
-        }
+        // Options screen buttons
+        document.getElementById('enter-vehicles-btn').addEventListener('click', () => alert('Vehicle entry coming in the next portion!'));
+        document.getElementById('enter-personnel-btn').addEventListener('click', () => alert('Personnel entry coming in the next portion!'));
+        document.getElementById('back-to-initial-btn').addEventListener('click', () => showScreen('initial-screen'));
     </script>
 </body>
 </html>
