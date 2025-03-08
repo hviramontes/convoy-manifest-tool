@@ -22,6 +22,9 @@
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #013220; color: white; }
         #comm-gear-added { max-height: 400px; overflow-y: auto; }
+        .delete-btn { background-color: #a30000; padding: 5px 10px; }
+        .delete-btn:hover { background-color: #cc0000; }
+        .error-message { color: red; font-size: 12px; display: none; }
     </style>
 </head>
 <body>
@@ -85,20 +88,20 @@
             <button id="back-to-vehicles-btn">Back</button>
         </div>
 
-        <!-- Add Comm Gear Screen (Input Style 2) -->
+        <!-- Add Comm Gear Screen (Input Style 2 Simplified) -->
         <div id="add-comm-gear-screen" class="screen" style="display: none;">
             <h1>Add Comm Gear (Input Style 2)</h1>
             <div class="search-container">
-                <input type="text" id="comm-search" placeholder="Search by TAMCN or Name" list="comm-suggestions">
+                <input type="text" id="comm-search" placeholder="Search Radio Type" list="comm-suggestions">
                 <datalist id="comm-suggestions"></datalist>
                 <button id="add-search-btn">Add</button>
             </div>
             <table id="comm-gear-table">
                 <thead>
                     <tr>
-                        <th>TAMCN</th>
-                        <th>Name</th>
+                        <th>Radio Type</th>
                         <th>Serial Number</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="comm-gear-added"></tbody>
@@ -109,77 +112,20 @@
     </div>
 
     <script>
-        // Comm gear data from your spreadsheet
-        const commGearData = {
-            "A00227G": "JOINT BATTLE COMMAND-PLATFORM (JBC-P) INTERMEDIATE VEHICLE MOUNTED SYSTEM (VMS)",
-            "A00617G": "TACT ELEVATED ANTENNA MAST SYS (TEAMS)",
-            "A00677G": "HIGH FREQUENCY VEHICLE SYSTEM",
-            "A00732B": "CHARGER, ADVANCED BATTERY",
-            "A00977G": "RADIO SET, DUAL VEHICLE ADAPTER, 50-WATT (DVA)",
-            "A01187G": "RADIO SET, INTEGRATED INTRA-SQUAD",
-            "A01197G": "MARINE ANALOG TACTICAL TELEPHONE",
-            "A01267G": "MULTI-BAND FREQUENCY, VEHICLE MOUNTED RADIO SYSTEM",
-            "A01397G": "RADIO SET",
-            "A01737G": "COMM SECURITY MODULE (CSM)",
-            "A01747G": "LAN SERVICE MODULE (LSM)",
-            "A01757G": "COMPUTER DIGITAL DATA TRANSFER",
-            "A01767G": "LAN EXTENSION MODULE",
-            "A01777G": "APPLICATION SERVER MODULE(ASM)",
-            "A01987G": "RADIO SET, HIGH FREQUENCY, MANPACK SYSTEM",
-            "A02057G": "RADIO SET, MULTICHANNEL MANPACK (MCMP) SYSTEM",
-            "A02067G": "MULTICHANNEL MANPACK MULTICHANNEL MANPACK (MCMP) VEHICULAR SYSTEM SINGLE RT DUAL AMP",
-            "A02077G": "RADIO SET, MULTICHANNEL HANDHELD (MCHH) SYSTEM",
-            "A02087G": "RADIO SET, MULTICHANNEL HANDHELD (MCHH) VEHICLE SYSTEM",
-            "A02107G": "ANTENNA GROUP",
-            "A02117G": "ANTENNA GROUP",
-            "A02347G": "VERY SMALL APERTURE TERMINAL - SMALL (VSAT-S)",
-            "A02727G": "RADIO REMOTE CONTROL UNIT",
-            "A02757G": "SURVEILLANCE, PERSISTENT OBSERVATION, AND TARGET RECOGNITION (SPOTR)",
-            "A02987G": "HANDHELD SCANNER",
-            "A03007G": "PM-4I PRINTER LABEL (TDIS)",
-            "A03007GB": "PRINTER BARCODE LABEL DESKTOP (TDIS)",
-            "A03127G": "WAN SERVICES MODULE (WSM) V2",
-            "A03317G": "RADIO SET, LOW PROFILE SINGLE VEHICLE ADAPTER, 50-WATT",
-            "A03367G": "SCA MULTIBAND NETWORKING RADIO",
-            "A03517G": "RF-7800R-RC-110",
-            "A03527G": "SCA MULTIBAND NETWORKING VEHICULAR RADIO SYSTEM - SINGLE MOUNT (RF-300M-V150)",
-            "A03567G": "PLOTTER ALL-IN-ONE, EXPEDITIONARY",
-            "A04147G": "SMALL UNIT REMOTE SCOUTING SYSTEM (SURSS), PUMA SUAS",
-            "A08747G": "IAS TIER III INTELLIGENCE WORKSTATION (IW)",
-            "A12607G": "NAVIGATION SET, SATELLITE SIGNALS",
-            "A12607GK": "NAVIGATION SET, SATELLITE SIGNALS",
-            "A12607GL": "NAVIGATION SET, SATELLITE SIGNALS",
-            "A20427G": "RADIO SET, HIGH FREQUENCY, MANPACK",
-            "A20687G": "RADIO SET, MULTIBAND, FALCON II",
-            "A70007G": "MICROWAVE ANALYZER",
-            "A70027G": "ANALYZER, SPECTRUM HAND HELD",
-            "A70027GE": "HAND HELD 20GHZ SPECTRUM ANALYZER",
-            "A70517G": "METER, POWER",
-            "A70807G": "HAND HELD 1GHZ RADIO TEST SET",
-            "A70867G": "OPTICAL TIME DOMAIN REFLECTOMETER (OTDR)",
-            "A75022H": "WIRELESS AT-PLATFORM TEST SET (WATS)",
-            "A75047G": "EMSS ELECTRONIC MAINTENANCE DEVICE",
-            "A75057H": "HAND HELD RADIO TEST SET",
-            "A77067G": "POWER SUPPLY",
-            "A80017GA": "KGV 72",
-            "A80047GA": "KSV 21",
-            "A80067GC": "KG-250XS",
-            "A80107G": "TERMINAL EQUIPMENT, TELEPHONE, SECURE",
-            "A80237G": "TRANSFER DEVICE, DATA",
-            "A80847GB": "ENCRYPTION-DECRYPTION KIV-7M",
-            "A80887G": "ENCRYPTOR, NETWORK, IN-LINE",
-            "A80887GB": "ENCRYPTOR, NETWORK, IN-LINE",
-            "A90122G": "FIELD SERVICE STATION",
-            "A90157G": "THEATRE MEDICAL INFORMATION PROGRAM CLIENT",
-            "A90207G": "MCHS TABLET RUGGED",
-            "A90237GD": "LAPTOP, HIGH PERF DELL PREC 3571",
-            "A90257GB": "MCHS DEPLOY SERVER",
-            "A90897G": "TACTICAL OPERATIONS CENTER KIT",
-            "A91007G": "COMPUTER, GP, LAPTOP",
-            "A91007GL": "MCHS GP LAPTOP",
-            "A91007GM": "MCHS 5TH GEN GP LAPTOP",
-            "A91357G": "INTEGRATED COMPUTERIZED DEPLOYMENT SYSTEM (ICODES)"
-        };
+        // Simplified radio types from your list
+        const radioTypes = [
+            "AN/PRC-117F",
+            "AN/PRC-117G",
+            "AN/PRC-148 (MBITR)",
+            "AN/PRC-150",
+            "AN/PRC-152",
+            "AN/PRC-154",
+            "AN/PRC-155",
+            "AN/PRC-163",
+            "(MIDS) JTRS",
+            "AN/PRC-119",
+            "AN/PRC-153 (IISR)"
+        ];
 
         // Screen management
         function showScreen(screenId) {
@@ -238,50 +184,48 @@
         document.getElementById('add-weapons-btn').addEventListener('click', () => alert('Add Weapons Systems form coming soon!'));
         document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
 
-        // Comm gear screen (Input Style 2) logic
+        // Comm gear screen (Input Style 2 Simplified) logic
         const searchInput = document.getElementById('comm-search');
         const suggestions = document.getElementById('comm-suggestions');
         const addedTable = document.getElementById('comm-gear-added');
 
-        // Populate datalist with all TAMCNs and Names
-        Object.entries(commGearData).forEach(([tamcn, name]) => {
-            suggestions.innerHTML += `<option value="${tamcn}">${name}</option>`;
-            suggestions.innerHTML += `<option value="${name}">${tamcn}</option>`;
+        // Populate datalist with radio types
+        radioTypes.forEach(type => {
+            suggestions.innerHTML += `<option value="${type}"></option>`;
         });
 
         // Add button logic
         document.getElementById('add-search-btn').addEventListener('click', () => {
             const query = searchInput.value.trim().toUpperCase();
-            let tamcn, name;
-            if (commGearData[query]) {
-                tamcn = query;
-                name = commGearData[query];
-            } else {
-                tamcn = Object.keys(commGearData).find(t => commGearData[t].toUpperCase() === query);
-                name = tamcn ? commGearData[tamcn] : null;
-            }
-            if (tamcn && name) {
-                addedTable.appendChild(createCommGearRow(tamcn, name));
+            const match = radioTypes.find(type => type.toUpperCase() === query);
+            if (match) {
+                addedTable.appendChild(createCommGearRow(match));
                 searchInput.value = ''; // Clear search
             } else {
-                alert('No matching item found. Please refine your search.');
+                alert('No matching radio type found. Please select from the suggestions.');
             }
         });
 
-        function createCommGearRow(tamcn, name, serial = '') {
+        function createCommGearRow(radioType, serial = '') {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${tamcn}</td>
-                <td>${name}</td>
-                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
+                <td>${radioType}</td>
+                <td>
+                    <input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required>
+                    <div class="error-message">Missing Serial Number</div>
+                </td>
+                <td><button class="delete-btn">Delete</button></td>
             `;
+            row.querySelector('.delete-btn').addEventListener('click', () => {
+                row.remove();
+            });
             return row;
         }
 
         function loadCommGearRows() {
             addedTable.innerHTML = '';
             const savedGear = JSON.parse(localStorage.getItem('commGear')) || [];
-            savedGear.forEach(gear => addedTable.appendChild(createCommGearRow(gear.tamcn, gear.name, gear.serial)));
+            savedGear.forEach(gear => addedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
         }
 
         document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
@@ -289,13 +233,16 @@
             const gearList = [];
             let allValid = true;
             rows.forEach(row => {
-                const tamcn = row.cells[0].textContent;
-                const name = row.cells[1].textContent;
-                const serial = row.querySelector('.serial-input').value.trim();
+                const radioType = row.cells[0].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
                 if (serial) {
-                    gearList.push({ tamcn, name, serial });
+                    gearList.push({ radioType, serial });
+                    errorMessage.style.display = 'none';
                 } else {
                     allValid = false;
+                    errorMessage.style.display = 'block';
                 }
             });
             if (!allValid) {
