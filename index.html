@@ -165,6 +165,7 @@
             <table id="vehicles-table">
                 <thead>
                     <tr>
+                        <th>Model</th>
                         <th>TAMCN</th>
                         <th>Vehicle Description</th>
                         <th>Serial Number</th>
@@ -558,28 +559,45 @@
         });
 
         // Vehicles (Input Style 1) logic
-        function createVehicleRow(tamcn = '', description = '', serial = '') {
+        function createVehicleRow(tamcn = '', model = '', description = '', serial = '') {
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td><select class="model-select">${Object.keys(vehicleModelNames).map(t => `<option value="${vehicleModelNames[t]}" ${vehicleModelNames[t] === model ? 'selected' : ''}>${vehicleModelNames[t]}</option>`).join('')}</select></td>
                 <td><select class="tamcn-select">${Object.keys(vehicleData).map(t => `<option value="${t}" ${t === tamcn ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
                 <td><select class="description-select">${Object.values(vehicleData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
                 <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
                 <td><button class="add-row-btn">+</button></td>
             `;
+            const modelSelect = row.querySelector('.model-select');
             const tamcnSelect = row.querySelector('.tamcn-select');
             const descriptionSelect = row.querySelector('.description-select');
             const serialInput = row.querySelector('.serial-input');
 
-            // Sync TAMCN to Description
+            // Sync TAMCN to Model and Description
             tamcnSelect.addEventListener('change', () => {
-                descriptionSelect.value = vehicleData[tamcnSelect.value];
+                const selectedTamcn = tamcnSelect.value;
+                modelSelect.value = vehicleModelNames[selectedTamcn] || '';
+                descriptionSelect.value = vehicleData[selectedTamcn] || '';
             });
 
-            // Sync Description to TAMCN
+            // Sync Model to TAMCN and Description
+            modelSelect.addEventListener('change', () => {
+                const selectedModel = modelSelect.value;
+                const matchingTamcn = Object.keys(vehicleModelNames).find(t => vehicleModelNames[t] === selectedModel);
+                if (matchingTamcn) {
+                    tamcnSelect.value = matchingTamcn;
+                    descriptionSelect.value = vehicleData[matchingTamcn] || '';
+                }
+            });
+
+            // Sync Description to TAMCN and Model
             descriptionSelect.addEventListener('change', () => {
                 const selectedDescription = descriptionSelect.value;
                 const matchingTamcn = Object.keys(vehicleData).find(t => vehicleData[t] === selectedDescription);
-                if (matchingTamcn) tamcnSelect.value = matchingTamcn;
+                if (matchingTamcn) {
+                    tamcnSelect.value = matchingTamcn;
+                    modelSelect.value = vehicleModelNames[matchingTamcn] || '';
+                }
             });
 
             // Add row button with serial number check
@@ -599,7 +617,7 @@
             tbody.innerHTML = '';
             const savedVehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
             if (savedVehicles.length > 0) {
-                savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.description, vehicle.serial)));
+                savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicleModelNames[vehicle.tamcn], vehicle.description, vehicle.serial)));
             } else {
                 tbody.appendChild(createVehicleRow());
             }
@@ -611,16 +629,17 @@
             let allValid = true;
             rows.forEach(row => {
                 const tamcn = row.querySelector('.tamcn-select').value;
+                const model = row.querySelector('.model-select').value;
                 const description = row.querySelector('.description-select').value;
                 const serial = row.querySelector('.serial-input').value.trim();
-                if (tamcn && description && serial) {
-                    vehicleList.push({ tamcn, description, serial });
-                } else if (tamcn || description || serial) {
+                if (tamcn && model && description && serial) {
+                    vehicleList.push({ tamcn, model, description, serial });
+                } else if (tamcn || model || description || serial) {
                     allValid = false;
                 }
             });
             if (!allValid) {
-                alert('Please complete all fields (TAMCN, Description, and Serial Number) for each row.');
+                alert('Please complete all fields (Model, TAMCN, Description, and Serial Number) for each row.');
             } else if (vehicleList.length > 0) {
                 localStorage.setItem('vehicles', JSON.stringify(vehicleList));
                 alert('Vehicles saved!');
