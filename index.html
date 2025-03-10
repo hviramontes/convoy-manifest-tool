@@ -27,6 +27,7 @@
         .delete-btn { background-color: #a30000; padding: 5px 10px; }
         .delete-btn:hover { background-color: #cc0000; }
         .error-message { color: red; font-size: 12px; display: none; }
+        #upload-section { margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -76,7 +77,12 @@
         <div id="vehicles-screen" class="screen" style="display: none;">
             <h1>Enter New Vehicles</h1>
             <button id="manual-add-btn">Manual Add</button>
-            <button id="upload-spreadsheet-btn">Upload Spreadsheet</button>
+            <div id="upload-section">
+                <a href="data:text/csv;charset=utf-8,Category,Model,Code%2FTAMCN,Description,Serial%20Number%0AComm%20Gear,,Radio%20Type,,Serial%0AWater%20Containers,Code,Name,,Serial%0AFuel%20Containers,Code,Name,,Serial%0AVehicles,Model,TAMCN,Vehicle%20Description,Serial%0AWeapons%20Systems,Model,Code,Description,Serial" download="manifest_template.csv">Download Template</a>
+                <br>
+                <input type="file" id="spreadsheet-upload" accept=".csv">
+                <button id="upload-spreadsheet-btn">Upload Spreadsheet</button>
+            </div>
             <button id="back-to-options-btn">Back</button>
         </div>
 
@@ -348,7 +354,7 @@
 
         // Vehicles screen buttons
         document.getElementById('manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
-        document.getElementById('upload-spreadsheet-btn').addEventListener('click', () => alert('Spreadsheet upload coming soon!'));
+        document.getElementById('upload-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
         document.getElementById('back-to-options-btn').addEventListener('click', () => showScreen('options-screen'));
 
         // Manual add screen buttons
@@ -775,6 +781,65 @@
                 alert('No valid entries to save.');
             }
         });
+
+        // Spreadsheet Upload Logic
+        function handleSpreadsheetUpload() {
+            const fileInput = document.getElementById('spreadsheet-upload');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a CSV file to upload.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                if (lines.length <= 1) {
+                    alert('The CSV file is empty or invalid.');
+                    return;
+                }
+
+                const headers = lines[0].split(',');
+                if (headers[0] !== 'Category' || headers[1] !== 'Model' || headers[2] !== 'Code/TAMCN' || headers[3] !== 'Description' || headers[4] !== 'Serial Number') {
+                    alert('Invalid CSV format. Please use the provided template.');
+                    return;
+                }
+
+                const data = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const row = lines[i].split(',');
+                    if (row.length === 5) {
+                        const [category, model, codeTamcn, description, serial] = row.map(cell => cell.trim());
+                        if (category && serial) { // Require category and serial at minimum
+                            data.push({ category, model, codeTamcn, description, serial });
+                        }
+                    }
+                }
+
+                if (data.length === 0) {
+                    alert('No valid data found in the CSV file.');
+                    return;
+                }
+
+                // Process and save data by category
+                const commGearList = data.filter(item => item.category === 'Comm Gear').map(item => ({ radioType: item.description, serial: item.serial }));
+                const waterContainersList = data.filter(item => item.category === 'Water Containers').map(item => ({ code: item.codeTamcn, name: item.description, serial: item.serial }));
+                const fuelContainersList = data.filter(item => item.category === 'Fuel Containers').map(item => ({ code: item.codeTamcn, name: item.description, serial: item.serial }));
+                const vehiclesList = data.filter(item => item.category === 'Vehicles').map(item => ({ tamcn: item.codeTamcn, model: item.model, description: item.description, serial: item.serial }));
+                const weaponsList = data.filter(item => item.category === 'Weapons Systems').map(item => ({ code: item.codeTamcn, model: item.model, description: item.description, serial: item.serial }));
+
+                if (commGearList.length > 0) localStorage.setItem('commGear', JSON.stringify(commGearList));
+                if (waterContainersList.length > 0) localStorage.setItem('waterContainers', JSON.stringify(waterContainersList));
+                if (fuelContainersList.length > 0) localStorage.setItem('fuelContainers', JSON.stringify(fuelContainersList));
+                if (vehiclesList.length > 0) localStorage.setItem('vehicles', JSON.stringify(vehiclesList));
+                if (weaponsList.length > 0) localStorage.setItem('weapons', JSON.stringify(weaponsList));
+
+                alert('Spreadsheet data uploaded and saved successfully!');
+                showScreen('vehicles-screen');
+            };
+            reader.readAsText(file);
+        }
 
         document.getElementById('back-to-manual-add-btn-weapons').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
