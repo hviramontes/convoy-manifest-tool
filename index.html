@@ -21,7 +21,7 @@
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
         th { background-color: #013220; color: white; }
-        #comm-gear-added, #water-container-added, #fuel-container-added, #vehicles-added { max-height: 400px; overflow-y: auto; }
+        #comm-gear-added, #water-container-added, #fuel-container-added, #vehicles-added, #weapons-added { max-height: 400px; overflow-y: auto; }
         .add-row-btn { background-color: #013220; font-size: 16px; padding: 5px 10px; }
         .add-row-btn:hover { background-color: #024930; }
         .delete-btn { background-color: #a30000; padding: 5px 10px; }
@@ -177,6 +177,25 @@
             <button id="save-vehicles-btn">Save</button>
             <button id="back-to-manual-add-btn-vehicles">Back</button>
         </div>
+
+        <!-- Add Weapons Systems Screen (Input Style 1) -->
+        <div id="add-weapons-screen" class="screen" style="display: none;">
+            <h1>Add Weapons Systems (Input Style 1)</h1>
+            <table id="weapons-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Serial Number</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="weapons-added"></tbody>
+            </table>
+            <button id="save-weapons-btn">Save</button>
+            <button id="back-to-manual-add-btn-weapons">Back</button>
+        </div>
     </div>
 
     <script>
@@ -268,6 +287,19 @@
             "D1214": "MKR15 Wrecker"
         };
 
+        // Weapons data
+        const weaponsData = {
+            "E0011": "M2 .50 Caliber Machine Gun",
+            "E0178": "M240G 7.62mm Medium Machine Gun",
+            "E0845": "MK19 40mm Grenade Machine Gun"
+        };
+
+        const weaponsModelNames = {
+            "E0011": "M2",
+            "E0178": "M240G",
+            "E0845": "MK19"
+        };
+
         // Screen management
         function showScreen(screenId) {
             document.querySelectorAll('#app .screen').forEach(screen => screen.style.display = 'none');
@@ -286,7 +318,8 @@
         const waterContainers = JSON.parse(localStorage.getItem('waterContainers')) || [];
         const fuelContainers = JSON.parse(localStorage.getItem('fuelContainers')) || [];
         const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
-        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0 || fuelContainers.length > 0 || vehicles.length > 0) {
+        const weapons = JSON.parse(localStorage.getItem('weapons')) || [];
+        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0 || fuelContainers.length > 0 || vehicles.length > 0 || weapons.length > 0) {
             document.getElementById('returning-user-btn').disabled = false;
         }
 
@@ -335,7 +368,10 @@
             showScreen('add-vehicles-screen');
             loadVehicleRows();
         });
-        document.getElementById('add-weapons-btn').addEventListener('click', () => alert('Add Weapons Systems form coming soon!'));
+        document.getElementById('add-weapons-btn').addEventListener('click', () => {
+            showScreen('add-weapons-screen');
+            loadWeaponsRows();
+        });
         document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
 
         // Comm Gear (Input Style 2) logic
@@ -649,6 +685,98 @@
             }
         });
 
+        // Weapons Systems (Input Style 1) logic
+        function createWeaponsRow(code = '', model = '', description = '', serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><select class="model-select">${Object.keys(weaponsModelNames).map(c => `<option value="${weaponsModelNames[c]}" ${weaponsModelNames[c] === model ? 'selected' : ''}>${weaponsModelNames[c]}</option>`).join('')}</select></td>
+                <td><select class="code-select">${Object.keys(weaponsData).map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('')}</select></td>
+                <td><select class="description-select">${Object.values(weaponsData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
+                <td><button class="add-row-btn">+</button></td>
+            `;
+            const modelSelect = row.querySelector('.model-select');
+            const codeSelect = row.querySelector('.code-select');
+            const descriptionSelect = row.querySelector('.description-select');
+            const serialInput = row.querySelector('.serial-input');
+
+            // Sync Code to Model and Description
+            codeSelect.addEventListener('change', () => {
+                const selectedCode = codeSelect.value;
+                modelSelect.value = weaponsModelNames[selectedCode] || '';
+                descriptionSelect.value = weaponsData[selectedCode] || '';
+            });
+
+            // Sync Model to Code and Description
+            modelSelect.addEventListener('change', () => {
+                const selectedModel = modelSelect.value;
+                const matchingCode = Object.keys(weaponsModelNames).find(c => weaponsModelNames[c] === selectedModel);
+                if (matchingCode) {
+                    codeSelect.value = matchingCode;
+                    descriptionSelect.value = weaponsData[matchingCode] || '';
+                }
+            });
+
+            // Sync Description to Code and Model
+            descriptionSelect.addEventListener('change', () => {
+                const selectedDescription = descriptionSelect.value;
+                const matchingCode = Object.keys(weaponsData).find(c => weaponsData[c] === selectedDescription);
+                if (matchingCode) {
+                    codeSelect.value = matchingCode;
+                    modelSelect.value = weaponsModelNames[matchingCode] || '';
+                }
+            });
+
+            // Add row button with serial number check
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                if (!serialInput.value.trim()) {
+                    alert('Please enter a serial number before adding a new row.');
+                } else {
+                    document.getElementById('weapons-added').appendChild(createWeaponsRow());
+                }
+            });
+
+            return row;
+        }
+
+        function loadWeaponsRows() {
+            const tbody = document.getElementById('weapons-added');
+            tbody.innerHTML = '';
+            const savedWeapons = JSON.parse(localStorage.getItem('weapons')) || [];
+            if (savedWeapons.length > 0) {
+                savedWeapons.forEach(weapon => tbody.appendChild(createWeaponsRow(weapon.code, weaponsModelNames[weapon.code], weapon.description, weapon.serial)));
+            } else {
+                tbody.appendChild(createWeaponsRow());
+            }
+        }
+
+        document.getElementById('save-weapons-btn').addEventListener('click', () => {
+            const rows = document.querySelectorAll('#weapons-added tr');
+            const weaponList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.querySelector('.code-select').value;
+                const model = row.querySelector('.model-select').value;
+                const description = row.querySelector('.description-select').value;
+                const serial = row.querySelector('.serial-input').value.trim();
+                if (code && model && description && serial) {
+                    weaponList.push({ code, model, description, serial });
+                } else if (code || model || description || serial) {
+                    allValid = false;
+                }
+            });
+            if (!allValid) {
+                alert('Please complete all fields (Model, Code, Description, and Serial Number) for each row.');
+            } else if (weaponList.length > 0) {
+                localStorage.setItem('weapons', JSON.stringify(weaponList));
+                alert('Weapons Systems saved!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No valid entries to save.');
+            }
+        });
+
+        document.getElementById('back-to-manual-add-btn-weapons').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('back-to-manual-add-btn-water').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('back-to-manual-add-btn-fuel').addEventListener('click', () => showScreen('manual-add-screen'));
