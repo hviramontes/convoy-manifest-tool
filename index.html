@@ -787,34 +787,37 @@
         document.getElementById('download-template-btn').addEventListener('click', () => {
             const wb = XLSX.utils.book_new();
 
-            // Comm Gear Sheet
-            const commGearData = [['Radio Type', 'Serial Number']];
-            const commGearWs = XLSX.utils.aoa_to_sheet(commGearData);
-            wb.Sheets['Comm Gear'] = commGearWs;
+            // Test with a single sheet to isolate the issue
+            const testData = [['Radio Type', 'Serial Number'], ['', '']]; // Simple header and one empty row
+            const ws = XLSX.utils.aoa_to_sheet(testData);
+            wb.Sheets['Test Sheet'] = ws;
+            wb.Props = {
+                Title: "Manifest Template",
+                Subject: "USMC Convoy Manifest",
+                Author: "Grok 3",
+                CreatedDate: new Date()
+            };
 
-            // Water Containers Sheet
-            const waterContainersData = [['Container Code', 'Name', 'Serial Number']];
-            const waterContainersWs = XLSX.utils.aoa_to_sheet(waterContainersData);
-            wb.Sheets['Water Containers'] = waterContainersWs;
-
-            // Fuel Containers Sheet
-            const fuelContainersData = [['Container Code', 'Name', 'Serial Number']];
-            const fuelContainersWs = XLSX.utils.aoa_to_sheet(fuelContainersData);
-            wb.Sheets['Fuel Containers'] = fuelContainersWs;
-
-            // Vehicles Sheet
-            const vehiclesData = [['Model', 'TAMCN', 'Vehicle Description', 'Serial Number']];
-            const vehiclesWs = XLSX.utils.aoa_to_sheet(vehiclesData);
-            wb.Sheets['Vehicles'] = vehiclesWs;
-
-            // Weapons Systems Sheet
-            const weaponsDataSheet = [['Model', 'Code', 'Description', 'Serial Number']];
-            const weaponsWs = XLSX.utils.aoa_to_sheet(weaponsDataSheet);
-            wb.Sheets['Weapons Systems'] = weaponsWs;
-
-            // Write and download the workbook
-            XLSX.writeFile(wb, 'manifest_template.xlsx');
+            // Convert to binary and create a downloadable link
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+            const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'manifest_template.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
         });
+
+        // Utility function to convert string to ArrayBuffer
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
 
         // Spreadsheet Upload Logic with Validation
         function handleSpreadsheetUpload() {
