@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>USMC Convoy Manifest Tool</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.0/xlsx.full.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; text-align: center; height: 100vh; overflow: hidden; }
         #splash { background-color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -790,61 +790,31 @@
             // Comm Gear Sheet
             const commGearData = [['Radio Type', 'Serial Number']];
             const commGearWs = XLSX.utils.aoa_to_sheet(commGearData);
-            addDropdown(commGearWs, 'A2:A100', radioTypes); // Dropdown for Radio Type
             wb.Sheets['Comm Gear'] = commGearWs;
 
             // Water Containers Sheet
             const waterContainersData = [['Container Code', 'Name', 'Serial Number']];
             const waterContainersWs = XLSX.utils.aoa_to_sheet(waterContainersData);
-            addDropdown(waterContainersWs, 'A2:A100', Object.keys(waterContainerData)); // Dropdown for Code
-            addDropdown(waterContainersWs, 'B2:B100', Object.values(waterContainerData)); // Dropdown for Name
             wb.Sheets['Water Containers'] = waterContainersWs;
 
             // Fuel Containers Sheet
             const fuelContainersData = [['Container Code', 'Name', 'Serial Number']];
             const fuelContainersWs = XLSX.utils.aoa_to_sheet(fuelContainersData);
-            addDropdown(fuelContainersWs, 'A2:A100', Object.keys(fuelContainerData)); // Dropdown for Code
-            addDropdown(fuelContainersWs, 'B2:B100', Object.values(fuelContainerData)); // Dropdown for Name
             wb.Sheets['Fuel Containers'] = fuelContainersWs;
 
             // Vehicles Sheet
             const vehiclesData = [['Model', 'TAMCN', 'Vehicle Description', 'Serial Number']];
             const vehiclesWs = XLSX.utils.aoa_to_sheet(vehiclesData);
-            addDropdown(vehiclesWs, 'A2:A100', Object.values(vehicleModelNames)); // Dropdown for Model
-            addDropdown(vehiclesWs, 'B2:B100', Object.keys(vehicleData)); // Dropdown for TAMCN
-            addDropdown(vehiclesWs, 'C2:C100', Object.values(vehicleData)); // Dropdown for Description
             wb.Sheets['Vehicles'] = vehiclesWs;
 
             // Weapons Systems Sheet
             const weaponsDataSheet = [['Model', 'Code', 'Description', 'Serial Number']];
             const weaponsWs = XLSX.utils.aoa_to_sheet(weaponsDataSheet);
-            addDropdown(weaponsWs, 'A2:A100', Object.values(weaponsModelNames)); // Dropdown for Model
-            addDropdown(weaponsWs, 'B2:B100', Object.keys(weaponsData)); // Dropdown for Code
-            addDropdown(weaponsWs, 'C2:C100', Object.values(weaponsData)); // Dropdown for Description
             wb.Sheets['Weapons Systems'] = weaponsWs;
 
             // Write and download the workbook
             XLSX.writeFile(wb, 'manifest_template.xlsx');
         });
-
-        function addDropdown(worksheet, range, options) {
-            const [startCell, endCell] = range.split(':');
-            const startRow = XLSX.utils.decode_cell(startCell).r;
-            const endRow = XLSX.utils.decode_cell(endCell).r;
-            const col = XLSX.utils.decode_cell(startCell).c;
-
-            for (let i = startRow; i <= endRow; i++) {
-                const cellAddress = XLSX.utils.encode_cell({ r: i, c: col });
-                if (!worksheet[cellAddress]) worksheet[cellAddress] = { t: 's', v: '' };
-                if (!worksheet['!dataValidation']) worksheet['!dataValidation'] = [];
-                worksheet['!dataValidation'].push({
-                    sqref: cellAddress,
-                    type: 'list',
-                    allowBlank: true,
-                    formulae: [`"${options.join(',').replace(/"/g, '""')}"`]
-                });
-            }
-        }
 
         // Spreadsheet Upload Logic with Validation
         function handleSpreadsheetUpload() {
