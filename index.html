@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>USMC Convoy Manifest Tool</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; text-align: center; height: 100vh; overflow: hidden; }
         #splash { background-color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -78,9 +79,9 @@
             <h1>Enter New Vehicles</h1>
             <button id="manual-add-btn">Manual Add</button>
             <div id="upload-section">
-                <a href="data:text/csv;charset=utf-8,Category,Model,Code%2FTAMCN,Description,Serial%20Number%0AComm%20Gear,,Radio%20Type,,Serial%0AWater%20Containers,Code,Name,,Serial%0AFuel%20Containers,Code,Name,,Serial%0AVehicles,Model,TAMCN,Vehicle%20Description,Serial%0AWeapons%20Systems,Model,Code,Description,Serial" download="manifest_template.csv">Download Template</a>
+                <a id="download-template-btn" href="#" download="manifest_template.xlsx">Download Template</a>
                 <br>
-                <input type="file" id="spreadsheet-upload" accept=".csv">
+                <input type="file" id="spreadsheet-upload" accept=".xlsx">
                 <button id="upload-spreadsheet-btn">Upload Spreadsheet</button>
             </div>
             <button id="back-to-options-btn">Back</button>
@@ -782,52 +783,193 @@
             }
         });
 
-        // Spreadsheet Upload Logic
+        // Generate and Download Template
+        document.getElementById('download-template-btn').addEventListener('click', () => {
+            const wb = XLSX.utils.book_new();
+
+            // Comm Gear Sheet
+            const commGearData = [['Radio Type', 'Serial Number']];
+            const commGearWs = XLSX.utils.aoa_to_sheet(commGearData);
+            addDropdown(commGearWs, 'A2:A100', radioTypes); // Dropdown for Radio Type
+            wb.Sheets['Comm Gear'] = commGearWs;
+
+            // Water Containers Sheet
+            const waterContainersData = [['Container Code', 'Name', 'Serial Number']];
+            const waterContainersWs = XLSX.utils.aoa_to_sheet(waterContainersData);
+            addDropdown(waterContainersWs, 'A2:A100', Object.keys(waterContainerData)); // Dropdown for Code
+            addDropdown(waterContainersWs, 'B2:B100', Object.values(waterContainerData)); // Dropdown for Name
+            wb.Sheets['Water Containers'] = waterContainersWs;
+
+            // Fuel Containers Sheet
+            const fuelContainersData = [['Container Code', 'Name', 'Serial Number']];
+            const fuelContainersWs = XLSX.utils.aoa_to_sheet(fuelContainersData);
+            addDropdown(fuelContainersWs, 'A2:A100', Object.keys(fuelContainerData)); // Dropdown for Code
+            addDropdown(fuelContainersWs, 'B2:B100', Object.values(fuelContainerData)); // Dropdown for Name
+            wb.Sheets['Fuel Containers'] = fuelContainersWs;
+
+            // Vehicles Sheet
+            const vehiclesData = [['Model', 'TAMCN', 'Vehicle Description', 'Serial Number']];
+            const vehiclesWs = XLSX.utils.aoa_to_sheet(vehiclesData);
+            addDropdown(vehiclesWs, 'A2:A100', Object.values(vehicleModelNames)); // Dropdown for Model
+            addDropdown(vehiclesWs, 'B2:B100', Object.keys(vehicleData)); // Dropdown for TAMCN
+            addDropdown(vehiclesWs, 'C2:C100', Object.values(vehicleData)); // Dropdown for Description
+            wb.Sheets['Vehicles'] = vehiclesWs;
+
+            // Weapons Systems Sheet
+            const weaponsDataSheet = [['Model', 'Code', 'Description', 'Serial Number']];
+            const weaponsWs = XLSX.utils.aoa_to_sheet(weaponsDataSheet);
+            addDropdown(weaponsWs, 'A2:A100', Object.values(weaponsModelNames)); // Dropdown for Model
+            addDropdown(weaponsWs, 'B2:B100', Object.keys(weaponsData)); // Dropdown for Code
+            addDropdown(weaponsWs, 'C2:C100', Object.values(weaponsData)); // Dropdown for Description
+            wb.Sheets['Weapons Systems'] = weaponsWs;
+
+            // Write and download the workbook
+            XLSX.writeFile(wb, 'manifest_template.xlsx');
+        });
+
+        function addDropdown(worksheet, range, options) {
+            const [startCell, endCell] = range.split(':');
+            const startRow = XLSX.utils.decode_cell(startCell).r;
+            const endRow = XLSX.utils.decode_cell(endCell).r;
+            const col = XLSX.utils.decode_cell(startCell).c;
+
+            for (let i = startRow; i <= endRow; i++) {
+                const cellAddress = XLSX.utils.encode_cell({ r: i, c: col });
+                if (!worksheet[cellAddress]) worksheet[cellAddress] = { t: 's', v: '' };
+                if (!worksheet['!dataValidation']) worksheet['!dataValidation'] = [];
+                worksheet['!dataValidation'].push({
+                    sqref: cellAddress,
+                    type: 'list',
+                    allowBlank: true,
+                    formulae: [`"${options.join(',').replace(/"/g, '""')}"`]
+                });
+            }
+        }
+
+        // Spreadsheet Upload Logic with Validation
         function handleSpreadsheetUpload() {
             const fileInput = document.getElementById('spreadsheet-upload');
             const file = fileInput.files[0];
-            if (!file) {
-                alert('Please select a CSV file to upload.');
+            if (!file || !file.name.endsWith('.xlsx')) {
+                alert('Please select a valid .xlsx file to upload.');
                 return;
             }
 
             const reader = new FileReader();
             reader.onload = function(e) {
-                const text = e.target.result;
-                const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-                if (lines.length <= 1) {
-                    alert('The CSV file is empty or invalid.');
-                    return;
-                }
+                const data = new Uint8Array(e.target.result);
+                const wb = XLSX.read(data, { type: 'array' });
+                const sheets = ['Comm Gear', 'Water Containers', 'Fuel Containers', 'Vehicles', 'Weapons Systems'];
+                const allData = [];
+                const errors = [];
 
-                const headers = lines[0].split(',');
-                if (headers[0] !== 'Category' || headers[1] !== 'Model' || headers[2] !== 'Code/TAMCN' || headers[3] !== 'Description' || headers[4] !== 'Serial Number') {
-                    alert('Invalid CSV format. Please use the provided template.');
-                    return;
-                }
+                sheets.forEach(sheetName => {
+                    if (wb.SheetNames.includes(sheetName)) {
+                        const ws = wb.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(ws, { header: 1 });
+                        if (jsonData.length > 1) { // Skip header row
+                            jsonData.slice(1).forEach((row, index) => {
+                                const rowNum = index + 2;
+                                if (row.length > 0) {
+                                    let category = sheetName;
+                                    let model, codeTamcn, description, serial;
 
-                const data = [];
-                for (let i = 1; i < lines.length; i++) {
-                    const row = lines[i].split(',');
-                    if (row.length === 5) {
-                        const [category, model, codeTamcn, description, serial] = row.map(cell => cell.trim());
-                        if (category && serial) { // Require category and serial at minimum
-                            data.push({ category, model, codeTamcn, description, serial });
+                                    if (category === 'Comm Gear') {
+                                        [description, serial] = row;
+                                        if (!description || !radioTypes.includes(description)) {
+                                            errors.push(`${category} Row ${rowNum}: Invalid Radio Type "${description}". Must be one of: ${radioTypes.join(', ')}`);
+                                            return;
+                                        }
+                                        if (serial === undefined || serial === '') {
+                                            errors.push(`${category} Row ${rowNum}: Missing Serial Number`);
+                                            return;
+                                        }
+                                        allData.push({ category, model: '', codeTamcn: '', description, serial });
+                                    } else if (category === 'Water Containers' || category === 'Fuel Containers') {
+                                        [codeTamcn, description, serial] = row;
+                                        const dataMap = category === 'Water Containers' ? waterContainerData : fuelContainerData;
+                                        if (!codeTamcn || !Object.keys(dataMap).includes(codeTamcn)) {
+                                            errors.push(`${category} Row ${rowNum}: Invalid Code "${codeTamcn}". Must be one of: ${Object.keys(dataMap).join(', ')}`);
+                                            return;
+                                        }
+                                        if (description && description !== dataMap[codeTamcn]) {
+                                            errors.push(`${category} Row ${rowNum}: Description "${description}" does not match Code "${codeTamcn}". Expected: ${dataMap[codeTamcn]}`);
+                                            return;
+                                        }
+                                        if (serial === undefined || serial === '') {
+                                            errors.push(`${category} Row ${rowNum}: Missing Serial Number`);
+                                            return;
+                                        }
+                                        allData.push({ category, model: '', codeTamcn, description: dataMap[codeTamcn], serial });
+                                    } else if (category === 'Vehicles') {
+                                        [model, codeTamcn, description, serial] = row;
+                                        if (!codeTamcn || !Object.keys(vehicleData).includes(codeTamcn)) {
+                                            errors.push(`${category} Row ${rowNum}: Invalid TAMCN "${codeTamcn}". Must be one of: ${Object.keys(vehicleData).join(', ')}`);
+                                            return;
+                                        }
+                                        if (model && !Object.values(vehicleModelNames).includes(model)) {
+                                            errors.push(`${category} Row ${rowNum}: Invalid Model "${model}". Must be one of: ${Object.values(vehicleModelNames).join(', ')}`);
+                                            return;
+                                        }
+                                        if (model && vehicleModelNames[codeTamcn] !== model) {
+                                            errors.push(`${category} Row ${rowNum}: Model "${model}" does not match TAMCN "${codeTamcn}". Expected: ${vehicleModelNames[codeTamcn]}`);
+                                            return;
+                                        }
+                                        if (description && description !== vehicleData[codeTamcn]) {
+                                            errors.push(`${category} Row ${rowNum}: Description "${description}" does not match TAMCN "${codeTamcn}". Expected: ${vehicleData[codeTamcn]}`);
+                                            return;
+                                        }
+                                        if (serial === undefined || serial === '') {
+                                            errors.push(`${category} Row ${rowNum}: Missing Serial Number`);
+                                            return;
+                                        }
+                                        allData.push({ category, model: vehicleModelNames[codeTamcn], codeTamcn, description: vehicleData[codeTamcn], serial });
+                                    } else if (category === 'Weapons Systems') {
+                                        [model, codeTamcn, description, serial] = row;
+                                        if (!codeTamcn || !Object.keys(weaponsData).includes(codeTamcn)) {
+                                            errors.push(`${category} Row ${rowNum}: Invalid Code "${codeTamcn}". Must be one of: ${Object.keys(weaponsData).join(', ')}`);
+                                            return;
+                                        }
+                                        if (model && !Object.values(weaponsModelNames).includes(model)) {
+                                            errors.push(`${category} Row ${rowNum}: Invalid Model "${model}". Must be one of: ${Object.values(weaponsModelNames).join(', ')}`);
+                                            return;
+                                        }
+                                        if (model && weaponsModelNames[codeTamcn] !== model) {
+                                            errors.push(`${category} Row ${rowNum}: Model "${model}" does not match Code "${codeTamcn}". Expected: ${weaponsModelNames[codeTamcn]}`);
+                                            return;
+                                        }
+                                        if (description && description !== weaponsData[codeTamcn]) {
+                                            errors.push(`${category} Row ${rowNum}: Description "${description}" does not match Code "${codeTamcn}". Expected: ${weaponsData[codeTamcn]}`);
+                                            return;
+                                        }
+                                        if (serial === undefined || serial === '') {
+                                            errors.push(`${category} Row ${rowNum}: Missing Serial Number`);
+                                            return;
+                                        }
+                                        allData.push({ category, model: weaponsModelNames[codeTamcn], codeTamcn, description: weaponsData[codeTamcn], serial });
+                                    }
+                                }
+                            });
                         }
                     }
+                });
+
+                if (errors.length > 0) {
+                    alert('Errors found in XLSX:\n' + errors.join('\n'));
+                    return;
                 }
 
-                if (data.length === 0) {
-                    alert('No valid data found in the CSV file.');
+                if (allData.length === 0) {
+                    alert('No valid data found in the XLSX file after validation.');
                     return;
                 }
 
                 // Process and save data by category
-                const commGearList = data.filter(item => item.category === 'Comm Gear').map(item => ({ radioType: item.description, serial: item.serial }));
-                const waterContainersList = data.filter(item => item.category === 'Water Containers').map(item => ({ code: item.codeTamcn, name: item.description, serial: item.serial }));
-                const fuelContainersList = data.filter(item => item.category === 'Fuel Containers').map(item => ({ code: item.codeTamcn, name: item.description, serial: item.serial }));
-                const vehiclesList = data.filter(item => item.category === 'Vehicles').map(item => ({ tamcn: item.codeTamcn, model: item.model, description: item.description, serial: item.serial }));
-                const weaponsList = data.filter(item => item.category === 'Weapons Systems').map(item => ({ code: item.codeTamcn, model: item.model, description: item.description, serial: item.serial }));
+                const commGearList = allData.filter(item => item.category === 'Comm Gear').map(item => ({ radioType: item.description, serial: item.serial }));
+                const waterContainersList = allData.filter(item => item.category === 'Water Containers').map(item => ({ code: item.codeTamcn, name: item.description, serial: item.serial }));
+                const fuelContainersList = allData.filter(item => item.category === 'Fuel Containers').map(item => ({ code: item.codeTamcn, name: item.description, serial: item.serial }));
+                const vehiclesList = allData.filter(item => item.category === 'Vehicles').map(item => ({ tamcn: item.codeTamcn, model: item.model, description: item.description, serial: item.serial }));
+                const weaponsList = allData.filter(item => item.category === 'Weapons Systems').map(item => ({ code: item.codeTamcn, model: item.model, description: item.description, serial: item.serial }));
 
                 if (commGearList.length > 0) localStorage.setItem('commGear', JSON.stringify(commGearList));
                 if (waterContainersList.length > 0) localStorage.setItem('waterContainers', JSON.stringify(waterContainersList));
@@ -838,7 +980,7 @@
                 alert('Spreadsheet data uploaded and saved successfully!');
                 showScreen('vehicles-screen');
             };
-            reader.readAsText(file);
+            reader.readAsArrayBuffer(file);
         }
 
         document.getElementById('back-to-manual-add-btn-weapons').addEventListener('click', () => showScreen('manual-add-screen'));
