@@ -66,6 +66,15 @@
             </form>
         </div>
 
+        <!-- Returning User Screen -->
+        <div id="returning-user-screen" class="screen" style="display: none;">
+            <h1>Welcome Back</h1>
+            <label for="user-select">Select Your Profile:</label>
+            <select id="user-select"></select>
+            <button id="load-user-btn">Load Data</button>
+            <button id="back-to-initial-btn-returning">Back</button>
+        </div>
+
         <!-- Options Screen -->
         <div id="options-screen" class="screen" style="display: none;">
             <h1>Convoy Management Options</h1>
@@ -319,20 +328,23 @@
             document.getElementById('app').style.display = 'block';
         }, 5000);
 
-        // Check for existing data
-        const userData = JSON.parse(localStorage.getItem('userData')) || {};
-        const commGear = JSON.parse(localStorage.getItem('commGear')) || [];
-        const waterContainers = JSON.parse(localStorage.getItem('waterContainers')) || [];
-        const fuelContainers = JSON.parse(localStorage.getItem('fuelContainers')) || [];
-        const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
-        const weapons = JSON.parse(localStorage.getItem('weapons')) || [];
-        if (Object.keys(userData).length > 0 || commGear.length > 0 || waterContainers.length > 0 || fuelContainers.length > 0 || vehicles.length > 0 || weapons.length > 0) {
+        // Check for existing users and enable returning user button
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        if (Object.keys(users).length > 0) {
             document.getElementById('returning-user-btn').disabled = false;
         }
 
         // Initial screen buttons
         document.getElementById('new-user-btn').addEventListener('click', () => showScreen('new-user-screen'));
-        document.getElementById('returning-user-btn').addEventListener('click', () => alert('Returning user functionality coming soon!'));
+        document.getElementById('returning-user-btn').addEventListener('click', () => {
+            showScreen('returning-user-screen');
+            const userSelect = document.getElementById('user-select');
+            userSelect.innerHTML = '';
+            Object.keys(users).forEach(key => {
+                const user = users[key];
+                userSelect.innerHTML += `<option value="${key}">${user.rank} ${user.lastName}, ${user.firstName} (${user.unit})</option>`;
+            });
+        });
 
         // New user form submission
         document.getElementById('user-form').addEventListener('submit', (event) => {
@@ -344,9 +356,26 @@
                 billet: document.getElementById('billet').value,
                 unit: document.getElementById('unit').value
             };
-            localStorage.setItem('userData', JSON.stringify(user));
+            const userKey = `${user.rank}_${user.lastName}_${user.firstName}`.toLowerCase().replace(/\s+/g, ''); // e.g., "sgt_smith_john"
+            
+            // Store user data in a users object
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            users[userKey] = user;
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Set current user
+            localStorage.setItem('currentUser', userKey);
             showScreen('options-screen');
         });
+
+        // Returning user screen buttons
+        document.getElementById('load-user-btn').addEventListener('click', () => {
+            const userKey = document.getElementById('user-select').value;
+            localStorage.setItem('currentUser', userKey);
+            alert('Data loaded for ' + userKey);
+            showScreen('options-screen');
+        });
+        document.getElementById('back-to-initial-btn-returning').addEventListener('click', () => showScreen('initial-screen'));
 
         // Options screen buttons
         document.getElementById('enter-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
@@ -419,11 +448,22 @@
 
         function loadCommGearRows() {
             commAddedTable.innerHTML = '';
-            const savedGear = JSON.parse(localStorage.getItem('commGear')) || [];
-            savedGear.forEach(gear => commAddedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedGear = (userData[currentUser] && userData[currentUser].commGear) || [];
+                savedGear.forEach(gear => commAddedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
+            }
         }
 
         document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            
             const rows = commAddedTable.querySelectorAll('tr');
             const gearList = [];
             let allValid = true;
@@ -443,8 +483,11 @@
             if (!allValid) {
                 alert('Please enter serial numbers for all added items.');
             } else if (gearList.length > 0) {
-                localStorage.setItem('commGear', JSON.stringify(gearList));
-                alert('Comm Gear saved!');
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].commGear = gearList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Comm Gear saved for ' + currentUser + '!');
                 showScreen('manual-add-screen');
             } else {
                 alert('No items to save.');
@@ -493,11 +536,22 @@
 
         function loadWaterContainerRows() {
             waterAddedTable.innerHTML = '';
-            const savedContainers = JSON.parse(localStorage.getItem('waterContainers')) || [];
-            savedContainers.forEach(container => waterAddedTable.appendChild(createWaterContainerRow(container.code, container.name, container.serial)));
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedContainers = (userData[currentUser] && userData[currentUser].waterContainers) || [];
+                savedContainers.forEach(container => waterAddedTable.appendChild(createWaterContainerRow(container.code, container.name, container.serial)));
+            }
         }
 
         document.getElementById('save-water-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            
             const rows = waterAddedTable.querySelectorAll('tr');
             const containerList = [];
             let allValid = true;
@@ -518,8 +572,11 @@
             if (!allValid) {
                 alert('Please enter serial numbers for all added items.');
             } else if (containerList.length > 0) {
-                localStorage.setItem('waterContainers', JSON.stringify(containerList));
-                alert('Water Containers saved!');
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].waterContainers = containerList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Water Containers saved for ' + currentUser + '!');
                 showScreen('manual-add-screen');
             } else {
                 alert('No items to save.');
@@ -568,11 +625,22 @@
 
         function loadFuelContainerRows() {
             fuelAddedTable.innerHTML = '';
-            const savedContainers = JSON.parse(localStorage.getItem('fuelContainers')) || [];
-            savedContainers.forEach(container => fuelAddedTable.appendChild(createFuelContainerRow(container.code, container.name, container.serial)));
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedContainers = (userData[currentUser] && userData[currentUser].fuelContainers) || [];
+                savedContainers.forEach(container => fuelAddedTable.appendChild(createFuelContainerRow(container.code, container.name, container.serial)));
+            }
         }
 
         document.getElementById('save-fuel-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            
             const rows = fuelAddedTable.querySelectorAll('tr');
             const containerList = [];
             let allValid = true;
@@ -593,8 +661,11 @@
             if (!allValid) {
                 alert('Please enter serial numbers for all added items.');
             } else if (containerList.length > 0) {
-                localStorage.setItem('fuelContainers', JSON.stringify(containerList));
-                alert('Fuel Containers saved!');
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].fuelContainers = containerList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Fuel Containers saved for ' + currentUser + '!');
                 showScreen('manual-add-screen');
             } else {
                 alert('No items to save.');
@@ -658,15 +729,28 @@
         function loadVehicleRows() {
             const tbody = document.getElementById('vehicles-added');
             tbody.innerHTML = '';
-            const savedVehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
-            if (savedVehicles.length > 0) {
-                savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicleModelNames[vehicle.tamcn], vehicle.description, vehicle.serial)));
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedVehicles = (userData[currentUser] && userData[currentUser].vehicles) || [];
+                if (savedVehicles.length > 0) {
+                    savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.model, vehicle.description, vehicle.serial)));
+                } else {
+                    tbody.appendChild(createVehicleRow());
+                }
             } else {
                 tbody.appendChild(createVehicleRow());
             }
         }
 
         document.getElementById('save-vehicles-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            
             const rows = document.querySelectorAll('#vehicles-added tr');
             const vehicleList = [];
             let allValid = true;
@@ -684,8 +768,11 @@
             if (!allValid) {
                 alert('Please complete all fields (Model, TAMCN, Description, and Serial Number) for each row.');
             } else if (vehicleList.length > 0) {
-                localStorage.setItem('vehicles', JSON.stringify(vehicleList));
-                alert('Vehicles saved!');
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].vehicles = vehicleList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Vehicles saved for ' + currentUser + '!');
                 showScreen('manual-add-screen');
             } else {
                 alert('No valid entries to save.');
@@ -749,15 +836,28 @@
         function loadWeaponsRows() {
             const tbody = document.getElementById('weapons-added');
             tbody.innerHTML = '';
-            const savedWeapons = JSON.parse(localStorage.getItem('weapons')) || [];
-            if (savedWeapons.length > 0) {
-                savedWeapons.forEach(weapon => tbody.appendChild(createWeaponsRow(weapon.code, weaponsModelNames[weapon.code], weapon.description, weapon.serial)));
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedWeapons = (userData[currentUser] && userData[currentUser].weapons) || [];
+                if (savedWeapons.length > 0) {
+                    savedWeapons.forEach(weapon => tbody.appendChild(createWeaponsRow(weapon.code, weapon.model, weapon.description, weapon.serial)));
+                } else {
+                    tbody.appendChild(createWeaponsRow());
+                }
             } else {
                 tbody.appendChild(createWeaponsRow());
             }
         }
 
         document.getElementById('save-weapons-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            
             const rows = document.querySelectorAll('#weapons-added tr');
             const weaponList = [];
             let allValid = true;
@@ -775,8 +875,11 @@
             if (!allValid) {
                 alert('Please complete all fields (Model, Code, Description, and Serial Number) for each row.');
             } else if (weaponList.length > 0) {
-                localStorage.setItem('weapons', JSON.stringify(weaponList));
-                alert('Weapons Systems saved!');
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].weapons = weaponList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Weapons Systems saved for ' + currentUser + '!');
                 showScreen('manual-add-screen');
             } else {
                 alert('No valid entries to save.');
