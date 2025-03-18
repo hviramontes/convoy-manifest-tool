@@ -5,30 +5,129 @@
     <title>USMC Convoy Manifest Tool</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.20.0/xlsx.full.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; text-align: center; height: 100vh; overflow: hidden; }
-        #splash { background-color: white; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #splash img { max-width: 300px; width: 80%; }
-        #app { display: none; height: 100vh; overflow-y: auto; }
-        h1 { color: #013220; }
-        .screen { padding: 20px; max-width: 800px; margin: 0 auto; background: white; min-height: 100%; }
-        button { background-color: #013220; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
-        button:hover { background-color: #024930; }
-        button:disabled { background-color: #666; cursor: not-allowed; }
-        input, select { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        label { display: block; margin: 5px 0; font-weight: bold; }
-        .search-container { display: flex; align-items: center; margin-bottom: 20px; }
-        #comm-search, #water-search, #fuel-search { flex: 1; }
-        #add-search-btn, #add-water-btn, #add-fuel-btn { margin-left: 10px; }
-        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #013220; color: white; }
-        #comm-gear-added, #water-container-added, #fuel-container-added, #vehicles-added, #weapons-added { max-height: 400px; overflow-y: auto; }
-        .add-row-btn { background-color: #013220; font-size: 16px; padding: 5px 10px; }
-        .add-row-btn:hover { background-color: #024930; }
-        .delete-btn { background-color: #a30000; padding: 5px 10px; }
-        .delete-btn:hover { background-color: #cc0000; }
-        .error-message { color: red; font-size: 12px; display: none; }
-        #upload-section { margin-top: 10px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #D9C2A7; /* Light tan/clay background */
+            text-align: center; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+        #splash { 
+            background-color: #E8E8E8; /* Off-white for splash */
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        #splash img { 
+            max-width: 300px; 
+            width: 80%; 
+        }
+        #app { 
+            display: none; 
+            height: 100vh; 
+            overflow-y: auto; 
+        }
+        h1 { 
+            color: #4A2C2A; /* Mud brown for headers */
+        }
+        .screen { 
+            padding: 20px; 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: #E8E8E8; /* Off-white for screen backgrounds */
+            min-height: 100%; 
+        }
+        button { 
+            background-color: #4A2C2A; /* Mud brown for buttons */
+            color: #E8E8E8; /* Off-white text */
+            padding: 10px 20px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            margin: 5px; 
+        }
+        button:hover { 
+            background-color: #8C5B3D; /* Clay hover state */
+        }
+        button:disabled { 
+            background-color: #A68F7A; /* Muted clay-gray for disabled */
+            cursor: not-allowed; 
+        }
+        input, select { 
+            width: 100%; 
+            padding: 8px; 
+            margin: 5px 0; 
+            border: 1px solid #8C5B3D; /* Clay border */
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            background-color: #E8E8E8; /* Off-white input background */
+            color: #4A2C2A; /* Mud text */
+        }
+        label { 
+            display: block; 
+            margin: 5px 0; 
+            font-weight: bold; 
+            color: #4A2C2A; /* Mud text */
+        }
+        .search-container { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 20px; 
+        }
+        #comm-search, #water-search, #fuel-search { 
+            flex: 1; 
+        }
+        #add-search-btn, #add-water-btn, #add-fuel-btn { 
+            margin-left: 10px; 
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin: 20px 0; 
+        }
+        th, td { 
+            border: 1px solid #8C5B3D; /* Clay borders */
+            padding: 8px; 
+            text-align: left; 
+            color: #4A2C2A; /* Mud text */
+        }
+        th { 
+            background-color: #4A2C2A; /* Mud brown for table headers */
+            color: #E8E8E8; /* Off-white text */
+        }
+        #comm-gear-added, #water-container-added, #fuel-container-added, #vehicles-added, #weapons-added { 
+            max-height: 400px; 
+            overflow-y: auto; 
+        }
+        .add-row-btn { 
+            background-color: #4A2C2A; /* Mud brown */
+            font-size: 16px; 
+            padding: 5px 10px; 
+            color: #E8E8E8; /* Off-white */
+        }
+        .add-row-btn:hover { 
+            background-color: #8C5B3D; /* Clay hover */
+        }
+        .delete-btn { 
+            background-color: #A30000; /* Keep red for delete, fits earthy theme */
+            padding: 5px 10px; 
+            color: #E8E8E8; /* Off-white */
+        }
+        .delete-btn:hover { 
+            background-color: #CC0000; /* Brighter red hover */
+        }
+        .error-message { 
+            color: #A30000; /* Red for errors */
+            font-size: 12px; 
+            display: none; 
+        }
+        #upload-section { 
+            margin-top: 10px; 
+        }
     </style>
 </head>
 <body>
