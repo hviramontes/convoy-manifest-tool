@@ -152,7 +152,7 @@
             background: #E8E8E8; /* Off-white */
             padding: 20px; 
             border-radius: 8px; 
-            width: 400px; 
+            width: 600px; /* Widened from 400px */
             max-height: 80vh; 
             overflow-y: auto; 
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
@@ -160,6 +160,12 @@
         .popup-content h2 { 
             color: #4A2C2A; /* Mud brown */
             margin-top: 0; 
+        }
+        .popup-content h3 { 
+            color: #4A2C2A; /* Mud brown */
+            margin: 15px 0 5px 0; 
+            border-bottom: 1px solid #8C5B3D; /* Clay underline */
+            padding-bottom: 5px; 
         }
         .popup-content button { 
             margin-top: 10px; 
@@ -374,6 +380,7 @@
             <div class="popup-content">
                 <h2>Add New Person</h2>
                 <form id="personnel-form">
+                    <h3>Marine Info</h3>
                     <label for="personnel-rank">Rank:</label>
                     <select id="personnel-rank" name="rank" required></select>
                     <label for="personnel-last-name">Last Name:</label>
@@ -395,6 +402,8 @@
                     </select>
                     <label for="personnel-zap-number">Zap Number:</label>
                     <input type="text" id="personnel-zap-number" name="zap-number" required>
+
+                    <h3>Weapons/Optics</h3>
                     <label for="personnel-m4-serial">M4 Serial Number:</label>
                     <input type="text" id="personnel-m4-serial" name="m4-serial">
                     <label for="personnel-m9-serial">M9 Serial Number:</label>
@@ -407,6 +416,7 @@
                     <input type="text" id="personnel-peq-serial" name="peq-serial">
                     <label for="personnel-misc-gear">Miscellaneous Gear:</label>
                     <input type="text" id="personnel-misc-gear" name="misc-gear">
+                    
                     <button type="submit">Save</button>
                     <button type="button" id="cancel-personnel-form">Cancel</button>
                 </form>
@@ -1065,7 +1075,7 @@
 
         function createPersonnelRow(person) {
             const row = document.createElement('tr');
-            row.dataset.person = JSON.stringify(person); // Store full person data in dataset
+            row.dataset.person = JSON.stringify(person);
             row.innerHTML = `
                 <td>${person.rank}</td>
                 <td>${person.lastName}</td>
@@ -1083,7 +1093,7 @@
                 savePersonnelData();
             });
             row.querySelector('.manage-btn').addEventListener('click', () => {
-                alert('Manage functionality coming soon!'); // Placeholder for future feature
+                alert('Manage functionality coming soon!');
             });
             return row;
         }
