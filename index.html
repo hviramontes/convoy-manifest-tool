@@ -9,13 +9,17 @@
             font-family: Arial, sans-serif; 
             margin: 0; 
             padding: 0; 
-            background-color: #D9C2A7; /* Light tan/clay background */
+            background-color: #E5E6E0; /* Light grayish-white background */
+            color: #333333; /* Dark gray text */
             text-align: center; 
             height: 100vh; 
             overflow: hidden; 
+            border-right: 2px solid #FF0000; /* Red border on right */
+            border-bottom: 2px solid #FF0000; /* Red border on bottom */
+            position: relative; /* Ensure watermark positioning context */
         }
         #splash { 
-            background-color: #E8E8E8; /* Off-white for splash */
+            background-color: #E5E6E0; /* Match body background */
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
@@ -30,48 +34,59 @@
             display: none; 
             height: 100vh; 
             overflow-y: auto; 
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Eagle%2C_Globe%2C_and_Anchor.svg/512px-Eagle%2C_Globe%2C_and_Anchor.svg.png'); /* EGA watermark */
+            background-repeat: repeat; /* Repeat the image */
+            background-size: 200px; /* Adjust size to match watermark scale */
+            background-position: center; /* Center the pattern */
+            background-attachment: fixed; /* Fixed position for watermark effect */
+            opacity: 0.1; /* Low opacity for watermark */
+            position: relative; /* Ensure content stays above watermark */
         }
-        h1 { 
-            color: #4A2C2A; /* Mud brown for headers */
-        }
-        .screen { 
+        #app > .screen { 
+            position: relative; /* Ensure screens are above watermark */
+            background: rgba(255, 255, 255, 0.9); /* Slight white overlay to improve readability */
             padding: 20px; 
             max-width: 800px; 
             margin: 0 auto; 
-            background: #E8E8E8; /* Off-white for screen backgrounds */
             min-height: 100%; 
+            border: 1px solid #D3D3D3; /* Light gray border */
+        }
+        h1, h2, h3 { 
+            color: #333333; /* Dark gray headers */
+            font-weight: bold;
         }
         button { 
-            background-color: #4A2C2A; /* Mud brown for buttons */
-            color: #E8E8E8; /* Off-white text */
+            background-color: #F5A623; /* Orange buttons */
+            color: #FFFFFF; /* White text */
             padding: 10px 20px; 
             border: none; 
-            border-radius: 4px; 
+            border-radius: 0; /* Sharp corners */
             cursor: pointer; 
             margin: 5px; 
+            font-weight: bold;
         }
         button:hover { 
-            background-color: #8C5B3D; /* Clay hover state */
+            background-color: #D48F1E; /* Darker orange on hover */
         }
         button:disabled { 
-            background-color: #A68F7A; /* Muted clay-gray for disabled */
+            background-color: #A9A9A9; /* Gray for disabled */
             cursor: not-allowed; 
         }
         input, select { 
             width: 100%; 
             padding: 8px; 
             margin: 5px 0; 
-            border: 1px solid #8C5B3D; /* Clay border */
-            border-radius: 4px; 
+            border: 1px solid #D3D3D3; /* Light gray border */
+            border-radius: 0; /* Sharp corners */
             box-sizing: border-box; 
-            background-color: #E8E8E8; /* Off-white input background */
-            color: #4A2C2A; /* Mud text */
+            background-color: #FFFFFF; /* White input background */
+            color: #333333; /* Dark gray text */
         }
         label { 
             display: block; 
             margin: 5px 0; 
             font-weight: bold; 
-            color: #4A2C2A; /* Mud text */
+            color: #333333; /* Dark gray text */
         }
         .search-container { 
             display: flex; 
@@ -90,43 +105,46 @@
             margin: 20px 0; 
         }
         th, td { 
-            border: 1px solid #8C5B3D; /* Clay borders */
+            border: 1px solid #D3D3D3; /* Light gray borders */
             padding: 8px; 
             text-align: left; 
-            color: #4A2C2A; /* Mud text */
+            color: #333333; /* Dark gray text */
         }
         th { 
-            background-color: #4A2C2A; /* Mud brown for table headers */
-            color: #E8E8E8; /* Off-white text */
+            background-color: #8C6A3F; /* Olive brown for table headers */
+            color: #FFFFFF; /* White text */
         }
         #comm-gear-added, #water-container-added, #fuel-container-added, #vehicles-added, #weapons-added, #personnel-added { 
             max-height: 400px; 
             overflow-y: auto; 
         }
         .add-row-btn { 
-            background-color: #4A2C2A; /* Mud brown */
+            background-color: #F5A623; /* Orange */
             font-size: 16px; 
             padding: 5px 10px; 
-            color: #E8E8E8; /* Off-white */
+            color: #FFFFFF; /* White text */
+            border-radius: 0; /* Sharp corners */
         }
         .add-row-btn:hover { 
-            background-color: #8C5B3D; /* Clay hover */
+            background-color: #D48F1E; /* Darker orange on hover */
         }
         .delete-btn { 
             background-color: #A30000; /* Red for delete */
             padding: 5px 10px; 
-            color: #E8E8E8; /* Off-white */
+            color: #FFFFFF; /* White text */
+            border-radius: 0; /* Sharp corners */
         }
         .delete-btn:hover { 
             background-color: #CC0000; /* Brighter red hover */
         }
         .manage-btn { 
-            background-color: #4A2C2A; /* Mud brown */
+            background-color: #F5A623; /* Orange */
             padding: 5px 10px; 
-            color: #E8E8E8; /* Off-white */
+            color: #FFFFFF; /* White text */
+            border-radius: 0; /* Sharp corners */
         }
         .manage-btn:hover { 
-            background-color: #8C5B3D; /* Clay hover */
+            background-color: #D48F1E; /* Darker orange on hover */
         }
         .error-message { 
             color: #A30000; /* Red for errors */
@@ -150,23 +168,25 @@
             z-index: 1000; 
         }
         .popup-content { 
-            background: #E8E8E8; /* Off-white */
+            background: #FFFFFF; /* White popup background */
             padding: 20px; 
-            border-radius: 8px; 
+            border-radius: 0; /* Sharp corners */
             width: 600px; 
             max-height: 80vh; 
             overflow-y: auto; 
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
+            border: 1px solid #D3D3D3; /* Light gray border */
         }
         .popup-content h2 { 
-            color: #4A2C2A; /* Mud brown */
+            color: #333333; /* Dark gray */
             margin-top: 0; 
+            font-weight: bold;
         }
         .popup-content h3 { 
-            color: #4A2C2A; /* Mud brown */
+            color: #333333; /* Dark gray */
             margin: 25px 0 10px 0; /* Increased spacing */
-            border-bottom: 1px solid #8C5B3D; /* Clay underline */
+            border-bottom: 1px solid #D3D3D3; /* Light gray underline */
             padding-bottom: 5px; 
+            font-weight: bold;
         }
         .popup-content button { 
             margin-top: 10px; 
@@ -185,6 +205,24 @@
         .checkbox-list label { 
             font-weight: normal; 
             margin: 5px 0; 
+        }
+        /* Footer (if needed) */
+        .footer { 
+            background-color: #28A745; /* Green footer */
+            color: #FFFFFF; /* White text */
+            text-align: center; 
+            padding: 5px; 
+            position: fixed; 
+            bottom: 0; 
+            width: 100%; 
+        }
+        /* Links (like "Download Template") */
+        a { 
+            color: #F5A623; /* Orange links */
+            text-decoration: none; 
+        }
+        a:hover { 
+            color: #D48F1E; /* Darker orange on hover */
         }
     </style>
 </head>
@@ -454,6 +492,11 @@
                 <button id="save-licenses-btn">Save</button>
                 <button id="cancel-licenses-btn">Cancel</button>
             </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            UNCLASSIFIED
         </div>
     </div>
 
