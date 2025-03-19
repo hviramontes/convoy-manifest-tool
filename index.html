@@ -1336,23 +1336,40 @@
     }
 
     // Spreadsheet Upload Logic for Personnel
-    document.getElementById('upload-personnel-spreadsheet-btn').addEventListener('click', handlePersonnelSpreadsheetUpload);
+document.addEventListener('DOMContentLoaded', () => {
+    // Ensure the button exists before adding the listener
+    const uploadBtn = document.getElementById('upload-personnel-spreadsheet-btn');
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', handlePersonnelSpreadsheetUpload);
+    } else {
+        console.error('Upload button not found in DOM');
+    }
+});
 
-    function handlePersonnelSpreadsheetUpload() {
-        const fileInput = document.getElementById('personnel-spreadsheet-upload');
-        const file = fileInput.files[0];
-        if (!file) {
-            alert('Please select a file to upload.');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
+function handlePersonnelSpreadsheetUpload() {
+    console.log('Upload button clicked'); // Debug: Confirm click is registered
+    const fileInput = document.getElementById('personnel-spreadsheet-upload');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        console.log('No file selected');
+        alert('Please select a file to upload.');
+        return;
+    }
+    
+    console.log('File selected:', file.name); // Debug: Confirm file is captured
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            console.log('File loaded, processing...'); // Debug: Confirm file is read
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
             const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-
+            
+            console.log('Spreadsheet data:', jsonData); // Debug: See the parsed data
+            
             const currentUser = localStorage.getItem('currentUser');
             if (!currentUser) {
                 alert('No user logged in. Please register first.');
@@ -1363,19 +1380,17 @@
             const userData = JSON.parse(localStorage.getItem('userData')) || {};
             if (!userData[currentUser]) userData[currentUser] = {};
 
-            // Expected headers based on your template
             const headers = jsonData[0];
             const personnel = [];
             let invalidRows = [];
 
-            // Map headers to expected fields (correcting 'Zap Numbe' to 'zapNumber')
             const headerMap = {
                 'Rank': 'rank',
                 'Last Name': 'lastName',
                 'First Name': 'firstName',
                 'Middle Init': 'middleInitial',
                 'Blood Type': 'bloodType',
-                'Zap Numbe': 'zapNumber', // Assuming this is a typo in the image
+                'Zap Numbe': 'zapNumber',
                 'M4 Serial': 'm4Serial',
                 'M9 Serial': 'm9Serial',
                 'RCO Serial': 'rcoSerial',
@@ -1384,26 +1399,16 @@
                 'Miscellaneous Gear': 'miscGear'
             };
 
-            jsonData.slice(1).forEach((row, index) => { // Skip header row
-                if (row.length >= 6) { // At least required fields (Rank, Last Name, First Name, Blood Type, Zap Number)
-                    const person = {
-                        rank: row[headers.indexOf('Rank')] || '',
-                        lastName: row[headers.indexOf('Last Name')] || '',
-                        firstName: row[headers.indexOf('First Name')] || '',
-                        middleInitial: row[headers.indexOf('Middle Init')] || '',
-                        bloodType: row[headers.indexOf('Blood Type')] || '',
-                        zapNumber: row[headers.indexOf('Zap Numbe')] || '',
-                        m4Serial: row[headers.indexOf('M4 Serial')] || '',
-                        m9Serial: row[headers.indexOf('M9 Serial')] || '',
-                        rcoSerial: row[headers.indexOf('RCO Serial')] || '',
-                        nvgSerial: row[headers.indexOf('NVG Serial')] || '',
-                        peqSerial: row[headers.indexOf('PEQ Serial')] || '',
-                        miscGear: row[headers.indexOf('Miscellaneous Gear')] || ''
-                    };
+            jsonData.slice(1).forEach((row, index) => {
+                if (row.length >= 6) {
+                    const person = {};
+                    Object.keys(headerMap).forEach(header => {
+                        const colIndex = headers.indexOf(header);
+                        person[headerMap[header]] = colIndex !== -1 ? row[colIndex] || '' : '';
+                    });
 
-                    // Validate required fields
                     if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
-                        invalidRows.push(`Row ${index + 2}: Missing required fields (Rank, Last Name, First Name, Blood Type, or Zap Number)`);
+                        invalidRows.push(`Row ${index + 2}: Missing required fields`);
                     } else if (!usmcRanks.includes(person.rank)) {
                         invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
                     } else if (!validBloodTypes.includes(person.bloodType)) {
@@ -1415,7 +1420,8 @@
             });
 
             if (invalidRows.length > 0) {
-                alert('Some rows could not be uploaded due to errors:\n' + invalidRows.join('\n'));
+                console.log('Invalid rows detected:', invalidRows);
+                alert('Some rows could not be uploaded:\n' + invalidRows.join('\n'));
             }
 
             if (personnel.length > 0) {
@@ -1426,9 +1432,18 @@
             } else if (invalidRows.length === 0) {
                 alert('No valid personnel data found in the spreadsheet.');
             }
-        };
-        reader.readAsArrayBuffer(file);
-    }
+        } catch (error) {
+            console.error('Error processing spreadsheet:', error);
+            alert('An error occurred while processing the file: ' + error.message);
+        }
+    };
+    reader.onerror = function() {
+        console.error('Error reading file');
+        alert('Failed to read the file.');
+    };
+    reader.readAsArrayBuffer(file);
+}
+
 </script>
 </body>
 </html>
