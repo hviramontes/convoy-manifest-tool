@@ -9,17 +9,17 @@
             font-family: Arial, sans-serif; 
             margin: 0; 
             padding: 0; 
-            background-color: #E5E6E0; 
-            color: #1A2526; 
+            background-color: #E5E6E0; /* Light grayish-white background */
+            color: #1A2526; /* Darker shade for better readability */
             text-align: center; 
             height: 100vh; 
             overflow: hidden; 
-            border-right: 2px solid #FF0000; 
-            border-bottom: 2px solid #FF0000; 
-            position: relative; 
+            border-right: 2px solid #FF0000; /* Red border on right */
+            border-bottom: 2px solid #FF0000; /* Red border on bottom */
+            position: relative; /* Ensure watermark positioning context */
         }
         #splash { 
-            background-color: #E5E6E0; 
+            background-color: #E5E6E0; /* Match body background */
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
@@ -34,67 +34,67 @@
             display: none; 
             height: 100vh; 
             overflow-y: auto; 
-            position: relative; 
+            position: relative; /* For watermark positioning */
         }
-#app::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('ega-watermark.png');
-    background-repeat: no-repeat; /* Changed from repeat to no-repeat */
-    background-size: contain; /* Scales the image to fit within the container while maintaining aspect ratio */
-    background-position: center; /* Centers the image */
-    opacity: 0.3; /* Adjust as needed for visibility */
-    z-index: -1;
-}
+        #app::before {
+            content: '';
+            position: fixed; /* Fixed position to cover the viewport */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('ega-watermark.png'); /* Use the new EGA image */
+            background-repeat: repeat; /* Repeat the image */
+            background-size: 200px; /* Adjust size to match watermark scale */
+            background-position: center; /* Center the pattern */
+            opacity: 0.1; /* Low opacity for watermark */
+            z-index: -1; /* Ensure watermark is behind content */
+        }
         #app > .screen { 
-            position: relative; 
-            background: rgba(255, 255, 255, 0.8); 
+            position: relative; /* Ensure screens are above watermark */
+            background: rgba(255, 255, 255, 0.8); /* Slightly less opaque white for readability */
             padding: 20px; 
             max-width: 800px; 
             margin: 0 auto; 
             min-height: 100%; 
-            border: 1px solid #D3D3D3; 
+            border: 1px solid #D3D3D3; /* Light gray border */
         }
         h1, h2, h3 { 
-            color: #1A2526; 
+            color: #1A2526; /* Darker shade for headers */
             font-weight: bold;
         }
         button { 
-            background-color: #F5A623; 
-            color: #FFFFFF; 
+            background-color: #F5A623; /* Orange buttons */
+            color: #FFFFFF; /* White text */
             padding: 10px 20px; 
             border: none; 
-            border-radius: 0; 
+            border-radius: 0; /* Sharp corners */
             cursor: pointer; 
             margin: 5px; 
             font-weight: bold;
         }
         button:hover { 
-            background-color: #D48F1E; 
+            background-color: #D48F1E; /* Darker orange on hover */
         }
         button:disabled { 
-            background-color: #A9A9A9; 
+            background-color: #A9A9A9; /* Gray for disabled */
             cursor: not-allowed; 
         }
         input, select { 
             width: 100%; 
             padding: 8px; 
             margin: 5px 0; 
-            border: 1px solid #D3D3D3; 
-            border-radius: 0; 
+            border: 1px solid #D3D3D3; /* Light gray border */
+            border-radius: 0; /* Sharp corners */
             box-sizing: border-box; 
-            background-color: #FFFFFF; 
-            color: #1A2526; 
+            background-color: #FFFFFF; /* White input background */
+            color: #1A2526; /* Darker shade for input text */
         }
         label { 
             display: block; 
             margin: 5px 0; 
             font-weight: bold; 
-            color: #1A2526; 
+            color: #1A2526; /* Darker shade for labels */
         }
         .search-container { 
             display: flex; 
@@ -113,55 +113,56 @@
             margin: 20px 0; 
         }
         th, td { 
-            border: 1px solid #D3D3D3; 
+            border: 1px solid #D3D3D3; /* Light gray borders */
             padding: 8px; 
             text-align: left; 
-            color: #1A2526; 
+            color: #1A2526; /* Darker shade for table text */
         }
         th { 
-            background-color: #8C6A3F; 
-            color: #FFFFFF; 
+            background-color: #8C6A3F; /* Olive brown for table headers */
+            color: #FFFFFF; /* White text */
         }
         #comm-gear-added, #water-container-added, #fuel-container-added, #vehicles-added, #weapons-added, #personnel-added { 
             max-height: 400px; 
             overflow-y: auto; 
         }
         .add-row-btn { 
-            background-color: #F5A623; 
+            background-color: #F5A623; /* Orange */
             font-size: 16px; 
             padding: 5px 10px; 
-            color: #FFFFFF; 
-            border-radius: 0; 
+            color: #FFFFFF; /* White text */
+            border-radius: 0; /* Sharp corners */
         }
         .add-row-btn:hover { 
-            background-color: #D48F1E; 
+            background-color: #D48F1E; /* Darker orange on hover */
         }
         .delete-btn { 
-            background-color: #A30000; 
+            background-color: #A30000; /* Red for delete */
             padding: 5px 10px; 
-            color: #FFFFFF; 
-            border-radius: 0; 
+            color: #FFFFFF; /* White text */
+            border-radius: 0; /* Sharp corners */
         }
         .delete-btn:hover { 
-            background-color: #CC0000; 
+            background-color: #CC0000; /* Brighter red hover */
         }
         .manage-btn { 
-            background-color: #F5A623; 
+            background-color: #F5A623; /* Orange */
             padding: 5px 10px; 
-            color: #FFFFFF; 
-            border-radius: 0; 
+            color: #FFFFFF; /* White text */
+            border-radius: 0; /* Sharp corners */
         }
         .manage-btn:hover { 
-            background-color: #D48F1E; 
+            background-color: #D48F1E; /* Darker orange on hover */
         }
         .error-message { 
-            color: #A30000; 
+            color: #A30000; /* Red for errors */
             font-size: 12px; 
             display: none; 
         }
         #upload-section { 
             margin-top: 10px; 
         }
+        /* Popup Form Styles */
         .popup { 
             display: none; 
             position: fixed; 
@@ -175,23 +176,23 @@
             z-index: 1000; 
         }
         .popup-content { 
-            background: #FFFFFF; 
+            background: #FFFFFF; /* White popup background */
             padding: 20px; 
-            border-radius: 0; 
+            border-radius: 0; /* Sharp corners */
             width: 600px; 
             max-height: 80vh; 
             overflow-y: auto; 
-            border: 1px solid #D3D3D3; 
+            border: 1px solid #D3D3D3; /* Light gray border */
         }
         .popup-content h2 { 
-            color: #1A2526; 
+            color: #1A2526; /* Darker shade */
             margin-top: 0; 
             font-weight: bold;
         }
         .popup-content h3 { 
-            color: #1A2526; 
-            margin: 25px 0 10px 0; 
-            border-bottom: 1px solid #D3D3D3; 
+            color: #1A2526; /* Darker shade */
+            margin: 25px 0 10px 0; /* Increased spacing */
+            border-bottom: 1px solid #D3D3D3; /* Light gray underline */
             padding-bottom: 5px; 
             font-weight: bold;
         }
@@ -213,38 +214,44 @@
             font-weight: normal; 
             margin: 5px 0; 
         }
+        /* Footer (if needed) */
         .footer { 
-            background-color: #28A745; 
-            color: #FFFFFF; 
+            background-color: #28A745; /* Green footer */
+            color: #FFFFFF; /* White text */
             text-align: center; 
             padding: 5px; 
             position: fixed; 
             bottom: 0; 
             width: 100%; 
         }
+        /* Links (like "Download Template") */
         a { 
-            color: #F5A623; 
+            color: #F5A623; /* Orange links */
             text-decoration: none; 
         }
         a:hover { 
-            color: #D48F1E; 
+            color: #D48F1E; /* Darker orange on hover */
         }
     </style>
 </head>
 <body>
+    <!-- Splash Screen -->
     <div id="splash">
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Eagle%2C_Globe%2C_and_Anchor.svg/512px-Eagle%2C_Globe%2C_and_Anchor.svg.png" alt="USMC EGA">
         <h1>USMC Convoy Manifest Tool</h1>
         <p>Developed by [Your Name]</p>
     </div>
 
+    <!-- Main App -->
     <div id="app">
+        <!-- Initial Screen -->
         <div id="initial-screen" class="screen">
             <h1>Welcome to the USMC Convoy Manifest Tool</h1>
             <button id="new-user-btn">New User</button>
             <button id="returning-user-btn" disabled>Returning User</button>
         </div>
 
+        <!-- New User Registration -->
         <div id="new-user-screen" class="screen" style="display: none;">
             <h1>New User Registration</h1>
             <form id="user-form">
@@ -262,6 +269,7 @@
             </form>
         </div>
 
+        <!-- Returning User Screen -->
         <div id="returning-user-screen" class="screen" style="display: none;">
             <h1>Welcome Back</h1>
             <label for="user-select">Select Your Profile:</label>
@@ -270,6 +278,7 @@
             <button id="back-to-initial-btn-returning">Back</button>
         </div>
 
+        <!-- Options Screen -->
         <div id="options-screen" class="screen" style="display: none;">
             <h1>Convoy Management Options</h1>
             <button id="enter-vehicles-btn">Enter New Vehicles</button>
@@ -277,6 +286,7 @@
             <button id="back-to-initial-btn">Back</button>
         </div>
 
+        <!-- Enter Vehicles Screen -->
         <div id="vehicles-screen" class="screen" style="display: none;">
             <h1>Enter New Vehicles</h1>
             <button id="manual-add-btn">Manual Add</button>
@@ -289,6 +299,7 @@
             <button id="back-to-options-btn">Back</button>
         </div>
 
+        <!-- Manual Add Screen -->
         <div id="manual-add-screen" class="screen" style="display: none;">
             <h1>Manual Add Equipment</h1>
             <button id="add-comm-gear-btn">Add Comm Gear</button>
@@ -299,8 +310,9 @@
             <button id="back-to-vehicles-btn">Back</button>
         </div>
 
+        <!-- Add Comm Gear Screen -->
         <div id="add-comm-gear-screen" class="screen" style="display: none;">
-            <h1>Add Comm Gear</h1>
+            <h1>Add Comm Gear (Input Style 2)</h1>
             <div class="search-container">
                 <input type="text" id="comm-search" placeholder="Search Radio Type" list="comm-suggestions">
                 <datalist id="comm-suggestions"></datalist>
@@ -320,8 +332,9 @@
             <button id="back-to-manual-add-btn">Back</button>
         </div>
 
+        <!-- Add Water Containers Screen -->
         <div id="add-water-containers-screen" class="screen" style="display: none;">
-            <h1>Add Water Containers</h1>
+            <h1>Add Water Containers (Input Style 2)</h1>
             <div class="search-container">
                 <input type="text" id="water-search" placeholder="Search Water Container" list="water-suggestions">
                 <datalist id="water-suggestions"></datalist>
@@ -342,8 +355,9 @@
             <button id="back-to-manual-add-btn-water">Back</button>
         </div>
 
+        <!-- Add Fuel Containers Screen -->
         <div id="add-fuel-containers-screen" class="screen" style="display: none;">
-            <h1>Add Fuel Containers</h1>
+            <h1>Add Fuel Containers (Input Style 2)</h1>
             <div class="search-container">
                 <input type="text" id="fuel-search" placeholder="Search Fuel Container" list="fuel-suggestions">
                 <datalist id="fuel-suggestions"></datalist>
@@ -364,8 +378,9 @@
             <button id="back-to-manual-add-btn-fuel">Back</button>
         </div>
 
+        <!-- Add Vehicles Screen -->
         <div id="add-vehicles-screen" class="screen" style="display: none;">
-            <h1>Add Vehicles</h1>
+            <h1>Add Vehicles (Input Style 1)</h1>
             <table id="vehicles-table">
                 <thead>
                     <tr>
@@ -382,8 +397,9 @@
             <button id="back-to-manual-add-btn-vehicles">Back</button>
         </div>
 
+        <!-- Add Weapons Systems Screen -->
         <div id="add-weapons-screen" class="screen" style="display: none;">
-            <h1>Add Weapons Systems</h1>
+            <h1>Add Weapons Systems (Input Style 1)</h1>
             <table id="weapons-table">
                 <thead>
                     <tr>
@@ -400,32 +416,28 @@
             <button id="back-to-manual-add-btn-weapons">Back</button>
         </div>
 
-<div id="personnel-screen" class="screen" style="display: none;">
-    <h1>Enter New Personnel</h1>
-    <button id="add-personnel-btn">Add New Person</button>
-    <div id="personnel-upload-section">
-        <a id="download-personnel-template-btn" href="https://raw.githubusercontent.com/hviramontes/convoy-manifest-tool/refs/heads/main/Convoy Manifest Personnel Upload.xlsx" download="Convoy Manifest Personnel Upload.xlsx">Download Personnel Template</a>
-        <br>
-        <input type="file" id="personnel-spreadsheet-upload" accept=".xlsx">
-        <button id="upload-personnel-spreadsheet-btn">Upload Personnel Spreadsheet</button>
-    </div>
-    <table id="personnel-table">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Last Name</th>
-                <th>First Name</th>
-                <th>Middle Initial</th>
-                <th>Blood Type</th>
-                <th>ZAP Number</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody id="personnel-added"></tbody>
-    </table>
-    <button id="back-to-options-btn-personnel">Back</button>
-</div>
+        <!-- Enter Personnel Screen -->
+        <div id="personnel-screen" class="screen" style="display: none;">
+            <h1>Enter New Personnel</h1>
+            <button id="add-personnel-btn">Add New Person</button>
+            <table id="personnel-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Last Name</th>
+                        <th>First Name</th>
+                        <th>Middle Initial</th>
+                        <th>Blood Type</th>
+                        <th>Zap Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="personnel-added"></tbody>
+            </table>
+            <button id="back-to-options-btn-personnel">Back</button>
+        </div>
 
+        <!-- Personnel Form Popup -->
         <div id="personnel-form-popup" class="popup">
             <div class="popup-content">
                 <h2>Add New Person</h2>
@@ -480,6 +492,7 @@
             </div>
         </div>
 
+        <!-- Licenses Selection Popup -->
         <div id="licenses-popup" class="popup">
             <div class="popup-content">
                 <h2>Select Licenses</h2>
@@ -489,870 +502,980 @@
             </div>
         </div>
 
+        <!-- Footer -->
         <div class="footer">
             UNCLASSIFIED
         </div>
     </div>
 
-   <script>
-    // Data definitions (unchanged)
-    const radioTypes = [
-        "AN/PRC-117F", "AN/PRC-117G", "AN/PRC-148 (MBITR)", "AN/PRC-150", "AN/PRC-152",
-        "AN/PRC-154", "AN/PRC-155", "AN/PRC-163", "(MIDS) JTRS", "AN/PRC-119", "AN/PRC-153 (IISR)"
-    ];
+    <script>
+        // Radio types for Comm Gear
+        const radioTypes = [
+            "AN/PRC-117F", "AN/PRC-117G", "AN/PRC-148 (MBITR)", "AN/PRC-150", "AN/PRC-152",
+            "AN/PRC-154", "AN/PRC-155", "AN/PRC-163", "(MIDS) JTRS", "AN/PRC-119", "AN/PRC-153 (IISR)"
+        ];
 
-    const waterContainerData = {
-        "B2086": "SIXCON Water Storage Module",
-        "D0880": "M149 Water Trailer ('Water Bull')",
-        "D0882": "MTVR Water Trailer (MK149)"
-    };
-
-    const fuelContainerData = {
-        "B2085": "Fuel SIXCON",
-        "D0211": "Flatrack Refueler",
-        "D0215": "M970 Refueler"
-    };
-
-    const vehicleData = {
-        "D0003": "TRUCK, ARMORED, CARGO 7 TON, W/O WINCH NON-REDUCIBLE W/DFCS",
-        "D0005": "TRUCK, ARMORED, XLWB CARGO, 7 TON, W/O WINCH, NON REDUCIBLE",
-        "D0007": "TRUCK, ARMORED, DUMP 7-TON W/O WINCH NON-REDUCIBLE",
-        "D0009": "TRUCK TRACTOR",
-        "D0011": "CARRIER, TROOP, ARMORED, MTVR",
-        "D0013": "TRUCK, ARMORED, TRACTOR, 7 TON, W/O WINCH, REDUCIBLE",
-        "D0015": "TRUCK, ARMORED, WRECKER, 7 TON, W/WINCH REDUCIBLE",
-        "D0016": "TRAILER, CARGO (LTT-H)",
-        "D0022": "TRUCK, UTILITY: EXPANDED CAPACITY, ENHANCED, 11,500 GVW, 4X4, M1152, 2 DOOR",
-        "D0026": "JLTV SHELTER AMBULANCE",
-        "D0045": "GENERAL PURPOSE JOINT LIGHT TACTICAL VEHICLE (JLTV)",
-        "D0046": "HVY GUNS CARRIER JLTV",
-        "D0048": "UTILITY JLTV",
-        "D0052": "LVSR, ARMORED CARGO VARIANT",
-        "D0053": "LVSR, ARMORED TRACTOR VARIANT",
-        "D0054": "LVSR, ARMORED WRECKER VARIANT",
-        "D0187": "TRK, UTIL, HVY, 2 1/4T, HMMWV",
-        "D0198": "TRUCK, CARGO, 7 TON, W/O WINCH",
-        "D0886": "TRUCK CARGO 22.5 TON, 10X10, (LVSR)",
-        "D0887": "TRUCK, TRACTOR, 10X10 (LVSR)",
-        "D1001": "TRK, AMBUL, 4-LTR, ARMD, 2 1/4T, HMMWV",
-        "D1002": "TRK, AMBUL, 2-LTR, SOFT TOP, 2 1/4T, HMMWV",
-        "D1062": "TRUCK, CARGO, 7 TON, XLWB, W/ WINCH",
-        "D1073": "TRUCK, DUMP, 7 TON, W/O WINCH",
-        "D1158": "TRK, UTIL, CARGO/TRP CARR, 1 1/4T, W/EQP, HMMWV",
-        "D1214": "TRUCK, WRECKER, 10X10 (LVSR)"
-    };
-
-    const vehicleModelNames = {
-        "D0003": "MK23", "D0005": "MK25", "D0007": "MK29", "D0009": "MK31",
-        "D0011": "MK27 or MK28 (Troop Carrier Variants)", "D0013": "MK31 (Tractor Variant)",
-        "D0015": "MK36 Wrecker", "D0016": "M1102 (or LTT Trailer Series)", "D0022": "M1152 HMMWV",
-        "D0026": "JLTV Ambulance Variant", "D0045": "JLTV GP", "D0046": "JLTV Heavy Guns Carrier Variant",
-        "D0048": "JLTV Utility Variant", "D0052": "MKR18 Cargo", "D0053": "MKR16 Tractor",
-        "D0054": "MKR15 Wrecker", "D0187": "M998 or M1151 HMMWV", "D0198": "MK23",
-        "D0886": "MKR18 Cargo", "D0887": "MKR16 Tractor", "D1001": "M997 (Armored Ambulance)",
-        "D1002": "M1035 (Soft Top Ambulance)", "D1062": "MK28", "D1073": "MK30",
-        "D1158": "M1097 or M1152 HMMWV", "D1214": "MKR15 Wrecker"
-    };
-
-    const weaponsData = {
-        "E0011": "M2 .50 Caliber Machine Gun",
-        "E0178": "M240G 7.62mm Medium Machine Gun",
-        "E0845": "MK19 40mm Grenade Machine Gun"
-    };
-
-    const weaponsModelNames = {
-        "E0011": "M2", "E0178": "M240G", "E0845": "MK19"
-    };
-
-    const usmcRanks = [
-        "Pvt", "PFC", "LCpl", "Cpl", "Sgt", "SSgt", "GySgt", "MSgt", "1stSgt",
-        "MGySgt", "SgtMaj", "2ndLt", "1stLt", "Capt", "Maj", "LtCol", "Col",
-        "BGen", "MajGen", "LtGen", "Gen"
-    ];
-
-    const militaryLicenses = [
-        "HMMWV (Up to 1-1/4 Ton)", "MTVR (7 Ton)", "LVSR (10 Ton)", "JLTV (All Variants)",
-        "M88 (Recovery Vehicle)", "M939 (5 Ton)", "HEMTT (10 Ton)", "PLS (Palletized Load System)",
-        "Tactical Trailer (LTT/M149)", "Ambulance (HMMWV/JLTV Variants)", "MOS 3521 (Mechanic - General)",
-        "MOS 3531 (Operator - General)", "HazMat Endorsement"
-    ];
-
-    const validBloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
-
-    // Screen management
-    function showScreen(screenId) {
-        document.querySelectorAll('#app .screen').forEach(screen => screen.style.display = 'none');
-        document.getElementById(screenId).style.display = 'block';
-    }
-
-    // Splash screen transition
-    window.addEventListener('load', () => {
-        const splash = document.getElementById('splash');
-        const app = document.getElementById('app');
-        if (!splash || !app) {
-            console.error("Splash or app element not found in DOM");
-            return;
-        }
-        setTimeout(() => {
-            splash.style.display = 'none';
-            app.style.display = 'block';
-        }, 5000);
-    });
-
-    // Check for existing users
-    const users = JSON.parse(localStorage.getItem('users')) || {};
-    if (Object.keys(users).length > 0) {
-        document.getElementById('returning-user-btn').disabled = false;
-    }
-
-    // Initial screen buttons
-    document.getElementById('new-user-btn').addEventListener('click', () => showScreen('new-user-screen'));
-    document.getElementById('returning-user-btn').addEventListener('click', () => {
-        showScreen('returning-user-screen');
-        const userSelect = document.getElementById('user-select');
-        userSelect.innerHTML = '';
-        Object.keys(users).forEach(key => {
-            const user = users[key];
-            userSelect.innerHTML += `<option value="${key}">${user.rank} ${user.lastName}, ${user.firstName} (${user.unit})</option>`;
-        });
-    });
-
-    // New user form submission
-    document.getElementById('user-form').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const user = {
-            rank: document.getElementById('rank').value,
-            lastName: document.getElementById('last-name').value,
-            firstName: document.getElementById('first-name').value,
-            billet: document.getElementById('billet').value,
-            unit: document.getElementById('unit').value
+        // Water container data
+        const waterContainerData = {
+            "B2086": "SIXCON Water Storage Module",
+            "D0880": "M149 Water Trailer ('Water Bull')",
+            "D0882": "MTVR Water Trailer (MK149)"
         };
-        const userKey = `${user.rank}_${user.lastName}_${user.firstName}`.toLowerCase().replace(/\s+/g, '');
+
+        // Fuel container data
+        const fuelContainerData = {
+            "B2085": "Fuel SIXCON",
+            "D0211": "Flatrack Refueler",
+            "D0215": "M970 Refueler"
+        };
+
+        // Vehicle data
+        const vehicleData = {
+            "D0003": "TRUCK, ARMORED, CARGO 7 TON, W/O WINCH NON-REDUCIBLE W/DFCS",
+            "D0005": "TRUCK, ARMORED, XLWB CARGO, 7 TON, W/O WINCH, NON REDUCIBLE",
+            "D0007": "TRUCK, ARMORED, DUMP 7-TON W/O WINCH NON-REDUCIBLE",
+            "D0009": "TRUCK TRACTOR",
+            "D0011": "CARRIER, TROOP, ARMORED, MTVR",
+            "D0013": "TRUCK, ARMORED, TRACTOR, 7 TON, W/O WINCH, REDUCIBLE",
+            "D0015": "TRUCK, ARMORED, WRECKER, 7 TON, W/WINCH REDUCIBLE",
+            "D0016": "TRAILER, CARGO (LTT-H)",
+            "D0022": "TRUCK, UTILITY: EXPANDED CAPACITY, ENHANCED, 11,500 GVW, 4X4, M1152, 2 DOOR",
+            "D0026": "JLTV SHELTER AMBULANCE",
+            "D0045": "GENERAL PURPOSE JOINT LIGHT TACTICAL VEHICLE (JLTV)",
+            "D0046": "HVY GUNS CARRIER JLTV",
+            "D0048": "UTILITY JLTV",
+            "D0052": "LVSR, ARMORED CARGO VARIANT",
+            "D0053": "LVSR, ARMORED TRACTOR VARIANT",
+            "D0054": "LVSR, ARMORED WRECKER VARIANT",
+            "D0187": "TRK, UTIL, HVY, 2 1/4T, HMMWV",
+            "D0198": "TRUCK, CARGO, 7 TON, W/O WINCH",
+            "D0886": "TRUCK CARGO 22.5 TON, 10X10, (LVSR)",
+            "D0887": "TRUCK, TRACTOR, 10X10 (LVSR)",
+            "D1001": "TRK, AMBUL, 4-LTR, ARMD, 2 1/4T, HMMWV",
+            "D1002": "TRK, AMBUL, 2-LTR, SOFT TOP, 2 1/4T, HMMWV",
+            "D1062": "TRUCK, CARGO, 7 TON, XLWB, W/ WINCH",
+            "D1073": "TRUCK, DUMP, 7 TON, W/O WINCH",
+            "D1158": "TRK, UTIL, CARGO/TRP CARR, 1 1/4T, W/EQP, HMMWV",
+            "D1214": "TRUCK, WRECKER, 10X10 (LVSR)"
+        };
+
+        const vehicleModelNames = {
+            "D0003": "MK23", "D0005": "MK25", "D0007": "MK29", "D0009": "MK31",
+            "D0011": "MK27 or MK28 (Troop Carrier Variants)", "D0013": "MK31 (Tractor Variant)",
+            "D0015": "MK36 Wrecker", "D0016": "M1102 (or LTT Trailer Series)", "D0022": "M1152 HMMWV",
+            "D0026": "JLTV Ambulance Variant", "D0045": "JLTV GP", "D0046": "JLTV Heavy Guns Carrier Variant",
+            "D0048": "JLTV Utility Variant", "D0052": "MKR18 Cargo", "D0053": "MKR16 Tractor",
+            "D0054": "MKR15 Wrecker", "D0187": "M998 or M1151 HMMWV", "D0198": "MK23",
+            "D0886": "MKR18 Cargo", "D0887": "MKR16 Tractor", "D1001": "M997 (Armored Ambulance)",
+            "D1002": "M1035 (Soft Top Ambulance)", "D1062": "MK28", "D1073": "MK30",
+            "D1158": "M1097 or M1152 HMMWV", "D1214": "MKR15 Wrecker"
+        };
+
+        // Weapons data
+        const weaponsData = {
+            "E0011": "M2 .50 Caliber Machine Gun",
+            "E0178": "M240G 7.62mm Medium Machine Gun",
+            "E0845": "MK19 40mm Grenade Machine Gun"
+        };
+
+        const weaponsModelNames = {
+            "E0011": "M2", "E0178": "M240G", "E0845": "MK19"
+        };
+
+        // USMC Ranks
+        const usmcRanks = [
+            "Pvt", "PFC", "LCpl", "Cpl", "Sgt", "SSgt", "GySgt", "MSgt", "1stSgt",
+            "MGySgt", "SgtMaj", "2ndLt", "1stLt", "Capt", "Maj", "LtCol", "Col",
+            "BGen", "MajGen", "LtGen", "Gen"
+        ];
+
+        // Military Vehicle Licenses (MOS-related and common categories)
+        const militaryLicenses = [
+            "HMMWV (Up to 1-1/4 Ton)", // High Mobility Multipurpose Wheeled Vehicle
+            "MTVR (7 Ton)", // Medium Tactical Vehicle Replacement
+            "LVSR (10 Ton)", // Logistics Vehicle System Replacement
+            "JLTV (All Variants)", // Joint Light Tactical Vehicle
+            "M88 (Recovery Vehicle)", // Heavy Recovery Vehicle
+            "M939 (5 Ton)", // 5-Ton 6x6 Truck
+            "HEMTT (10 Ton)", // Heavy Expanded Mobility Tactical Truck
+            "PLS (Palletized Load System)", // Palletized Load System
+            "Tactical Trailer (LTT/M149)", // Light Tactical Trailer / Water Trailer
+            "Ambulance (HMMWV/JLTV Variants)", // Tactical Ambulances
+            "MOS 3521 (Mechanic - General)", // Automotive Maintenance Technician
+            "MOS 3531 (Operator - General)", // Motor Vehicle Operator
+            "HazMat Endorsement" // Hazardous Materials Transport
+        ];
+
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('#app .screen').forEach(screen => screen.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        // Splash screen transition
+        setTimeout(() => {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+        }, 5000);
+
+        // Check for existing users
         const users = JSON.parse(localStorage.getItem('users')) || {};
-        users[userKey] = user;
-        localStorage.setItem('users', JSON.stringify(users));
-        localStorage.setItem('currentUser', userKey);
-        showScreen('options-screen');
-    });
-
-    // Returning user screen buttons
-    document.getElementById('load-user-btn').addEventListener('click', () => {
-        const userKey = document.getElementById('user-select').value;
-        localStorage.setItem('currentUser', userKey);
-        alert('Data loaded for ' + userKey);
-        showScreen('options-screen');
-    });
-    document.getElementById('back-to-initial-btn-returning').addEventListener('click', () => showScreen('initial-screen'));
-
-    // Options screen buttons
-    document.getElementById('enter-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
-    document.getElementById('enter-personnel-btn').addEventListener('click', () => {
-        showScreen('personnel-screen');
-        loadPersonnelRows();
-    });
-    document.getElementById('back-to-initial-btn').addEventListener('click', () => showScreen('initial-screen'));
-
-    // Vehicles screen buttons
-    document.getElementById('manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
-    document.getElementById('upload-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
-    document.getElementById('back-to-options-btn').addEventListener('click', () => showScreen('options-screen'));
-
-    // Manual add screen buttons
-    document.getElementById('add-comm-gear-btn').addEventListener('click', () => {
-        showScreen('add-comm-gear-screen');
-        loadCommGearRows();
-    });
-    document.getElementById('add-water-containers-btn').addEventListener('click', () => {
-        showScreen('add-water-containers-screen');
-        loadWaterContainerRows();
-    });
-    document.getElementById('add-fuel-containers-btn').addEventListener('click', () => {
-        showScreen('add-fuel-containers-screen');
-        loadFuelContainerRows();
-    });
-    document.getElementById('add-vehicles-btn').addEventListener('click', () => {
-        showScreen('add-vehicles-screen');
-        loadVehicleRows();
-    });
-    document.getElementById('add-weapons-btn').addEventListener('click', () => {
-        showScreen('add-weapons-screen');
-        loadWeaponsRows();
-    });
-    document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
-
-    // Comm Gear logic
-    const commSearchInput = document.getElementById('comm-search');
-    const commSuggestions = document.getElementById('comm-suggestions');
-    const commAddedTable = document.getElementById('comm-gear-added');
-
-    radioTypes.forEach(type => {
-        commSuggestions.innerHTML += `<option value="${type}"></option>`;
-    });
-
-    document.getElementById('add-search-btn').addEventListener('click', () => {
-        const query = commSearchInput.value.trim().toUpperCase();
-        const match = radioTypes.find(type => type.toUpperCase() === query);
-        if (match) {
-            commAddedTable.appendChild(createCommGearRow(match));
-            commSearchInput.value = '';
-        } else {
-            alert('No matching radio type found. Please select from the suggestions.');
+        if (Object.keys(users).length > 0) {
+            document.getElementById('returning-user-btn').disabled = false;
         }
-    });
 
-    function createCommGearRow(radioType, serial = '') {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${radioType}</td>
-            <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
-            <td><button class="delete-btn">Delete</button></td>
-        `;
-        row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
-        return row;
-    }
-
-    function loadCommGearRows() {
-        commAddedTable.innerHTML = '';
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            const savedGear = (userData[currentUser] && userData[currentUser].commGear) || [];
-            savedGear.forEach(gear => commAddedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
-        }
-    }
-
-    document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            alert('No user logged in. Please register first.');
-            showScreen('initial-screen');
-            return;
-        }
-        const rows = commAddedTable.querySelectorAll('tr');
-        const gearList = [];
-        let allValid = true;
-        rows.forEach(row => {
-            const radioType = row.cells[0].textContent;
-            const serialInput = row.querySelector('.serial-input');
-            const serial = serialInput.value.trim();
-            const errorMessage = row.querySelector('.error-message');
-            if (serial) {
-                gearList.push({ radioType, serial });
-                errorMessage.style.display = 'none';
-            } else {
-                allValid = false;
-                errorMessage.style.display = 'block';
-            }
+        // Initial screen buttons
+        document.getElementById('new-user-btn').addEventListener('click', () => showScreen('new-user-screen'));
+        document.getElementById('returning-user-btn').addEventListener('click', () => {
+            showScreen('returning-user-screen');
+            const userSelect = document.getElementById('user-select');
+            userSelect.innerHTML = '';
+            Object.keys(users).forEach(key => {
+                const user = users[key];
+                userSelect.innerHTML += `<option value="${key}">${user.rank} ${user.lastName}, ${user.firstName} (${user.unit})</option>`;
+            });
         });
-        if (!allValid) {
-            alert('Please enter serial numbers for all added items.');
-        } else if (gearList.length > 0) {
+
+        // New user form submission
+        document.getElementById('user-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const user = {
+                rank: document.getElementById('rank').value,
+                lastName: document.getElementById('last-name').value,
+                firstName: document.getElementById('first-name').value,
+                billet: document.getElementById('billet').value,
+                unit: document.getElementById('unit').value
+            };
+            const userKey = `${user.rank}_${user.lastName}_${user.firstName}`.toLowerCase().replace(/\s+/g, '');
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            users[userKey] = user;
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', userKey);
+            showScreen('options-screen');
+        });
+
+        // Returning user screen buttons
+        document.getElementById('load-user-btn').addEventListener('click', () => {
+            const userKey = document.getElementById('user-select').value;
+            localStorage.setItem('currentUser', userKey);
+            alert('Data loaded for ' + userKey);
+            showScreen('options-screen');
+        });
+        document.getElementById('back-to-initial-btn-returning').addEventListener('click', () => showScreen('initial-screen'));
+
+        // Options screen buttons
+        document.getElementById('enter-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
+        document.getElementById('enter-personnel-btn').addEventListener('click', () => {
+            showScreen('personnel-screen');
+            loadPersonnelRows();
+        });
+        document.getElementById('back-to-initial-btn').addEventListener('click', () => showScreen('initial-screen'));
+
+        // Vehicles screen buttons
+        document.getElementById('manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
+        document.getElementById('upload-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
+        document.getElementById('back-to-options-btn').addEventListener('click', () => showScreen('options-screen'));
+
+        // Manual add screen buttons
+        document.getElementById('add-comm-gear-btn').addEventListener('click', () => {
+            showScreen('add-comm-gear-screen');
+            loadCommGearRows();
+        });
+        document.getElementById('add-water-containers-btn').addEventListener('click', () => {
+            showScreen('add-water-containers-screen');
+            loadWaterContainerRows();
+        });
+        document.getElementById('add-fuel-containers-btn').addEventListener('click', () => {
+            showScreen('add-fuel-containers-screen');
+            loadFuelContainerRows();
+        });
+        document.getElementById('add-vehicles-btn').addEventListener('click', () => {
+            showScreen('add-vehicles-screen');
+            loadVehicleRows();
+        });
+        document.getElementById('add-weapons-btn').addEventListener('click', () => {
+            showScreen('add-weapons-screen');
+            loadWeaponsRows();
+        });
+        document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
+
+        // Download template
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        document.getElementById('download-template-btn').addEventListener('click', () => {
+            const wb = XLSX.utils.book_new();
+
+            // Comm Gear Sheet
+            const commGearData = [['Radio Type', 'Serial Number'], ['', '']];
+            const commGearSheet = XLSX.utils.aoa_to_sheet(commGearData);
+            XLSX.utils.book_append_sheet(wb, commGearSheet, 'Comm Gear');
+
+            // Water Containers Sheet
+            const waterContainerData = [['Container Code', 'Name', 'Serial Number'], ['', '', '']];
+            const waterContainerSheet = XLSX.utils.aoa_to_sheet(waterContainerData);
+            XLSX.utils.book_append_sheet(wb, waterContainerSheet, 'Water Containers');
+
+            // Fuel Containers Sheet
+            const fuelContainerData = [['Container Code', 'Name', 'Serial Number'], ['', '', '']];
+            const fuelContainerSheet = XLSX.utils.aoa_to_sheet(fuelContainerData);
+            XLSX.utils.book_append_sheet(wb, fuelContainerSheet, 'Fuel Containers');
+
+            // Vehicles Sheet
+            const vehicleData = [['TAMCN', 'Model', 'Description', 'Serial Number'], ['', '', '', '']];
+            const vehicleSheet = XLSX.utils.aoa_to_sheet(vehicleData);
+            XLSX.utils.book_append_sheet(wb, vehicleSheet, 'Vehicles');
+
+            // Weapons Sheet
+            const weaponsData = [['Code', 'Model', 'Description', 'Serial Number'], ['', '', '', '']];
+            const weaponsSheet = XLSX.utils.aoa_to_sheet(weaponsData);
+            XLSX.utils.book_append_sheet(wb, weaponsSheet, 'Weapons');
+
+            // Personnel Sheet
+            const personnelData = [
+                ['Rank', 'Last Name', 'First Name', 'Middle Initial', 'Blood Type', 'Zap Number', 'Licenses (Comma-Separated)', 'M4 Serial', 'M9 Serial', 'RCO Serial', 'NVG Serial', 'PEQ Serial', 'Misc Gear'],
+                ['', '', '', '', '', '', '', '', '', '', '', '', '']
+            ];
+            const personnelSheet = XLSX.utils.aoa_to_sheet(personnelData);
+            XLSX.utils.book_append_sheet(wb, personnelSheet, 'Personnel');
+
+            // Set workbook properties
+            wb.Props = { Title: "Manifest Template", Subject: "USMC Convoy Manifest", Author: "Grok 3", CreatedDate: new Date() };
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+            const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'manifest_template.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        });
+
+        // Handle spreadsheet upload
+        function handleSpreadsheetUpload() {
+            const fileInput = document.getElementById('spreadsheet-upload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = e.target.result;
+                    const workbook = XLSX.read(data, { type: 'binary' });
+
+                    // Process each sheet in the workbook
+                    let uploadedData = {};
+                    workbook.SheetNames.forEach(sheetName => {
+                        const sheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                        uploadedData[sheetName] = jsonData;
+                    });
+
+                    // Process the uploaded data
+                    processUploadedData(uploadedData);
+
+                    // Provide feedback to the user
+                    alert('Spreadsheet uploaded and processed successfully!');
+                    fileInput.value = ''; // Clear the file input
+                } catch (error) {
+                    console.error('Error processing spreadsheet:', error);
+                    alert('Error processing the spreadsheet. Please ensure it matches the template format.');
+                }
+            };
+
+            reader.onerror = function() {
+                alert('Error reading the file. Please try again.');
+            };
+
+            reader.readAsBinaryString(file);
+        }
+
+        function processUploadedData(uploadedData) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+
             const userData = JSON.parse(localStorage.getItem('userData')) || {};
             if (!userData[currentUser]) userData[currentUser] = {};
-            userData[currentUser].commGear = gearList;
+
+            // Process Comm Gear (also handle "Test Sheet" for backward compatibility)
+            if (uploadedData['Comm Gear'] || uploadedData['Test Sheet']) {
+                const commGearData = uploadedData['Comm Gear'] || uploadedData['Test Sheet'];
+                const gearList = [];
+                for (let i = 1; i < commGearData.length; i++) {
+                    const row = commGearData[i];
+                    const radioType = row[0] ? row[0].toString().trim() : '';
+                    const serial = row[1] ? row[1].toString().trim() : '';
+                    if (radioType && serial && radioTypes.includes(radioType)) {
+                        gearList.push({ radioType, serial });
+                    }
+                }
+                if (gearList.length > 0) {
+                    const existingGear = userData[currentUser].commGear || [];
+                    userData[currentUser].commGear = [...existingGear, ...gearList];
+                    if (document.getElementById('add-comm-gear-screen').style.display === 'block') {
+                        loadCommGearRows();
+                    }
+                }
+            }
+
+            // Process Water Containers
+            if (uploadedData['Water Containers']) {
+                const waterData = uploadedData['Water Containers'];
+                const containerList = [];
+                for (let i = 1; i < waterData.length; i++) {
+                    const row = waterData[i];
+                    const code = row[0] ? row[0].toString().trim() : '';
+                    const name = row[1] ? row[1].toString().trim() : '';
+                    const serial = row[2] ? row[2].toString().trim() : '';
+                    if (code && name && serial && waterContainerData[code] && waterContainerData[code] === name) {
+                        containerList.push({ code, name, serial });
+                    }
+                }
+                if (containerList.length > 0) {
+                    const existingContainers = userData[currentUser].waterContainers || [];
+                    userData[currentUser].waterContainers = [...existingContainers, ...containerList];
+                    if (document.getElementById('add-water-containers-screen').style.display === 'block') {
+                        loadWaterContainerRows();
+                    }
+                }
+            }
+
+            // Process Fuel Containers
+            if (uploadedData['Fuel Containers']) {
+                const fuelData = uploadedData['Fuel Containers'];
+                const containerList = [];
+                for (let i = 1; i < fuelData.length; i++) {
+                    const row = fuelData[i];
+                    const code = row[0] ? row[0].toString().trim() : '';
+                    const name = row[1] ? row[1].toString().trim() : '';
+                    const serial = row[2] ? row[2].toString().trim() : '';
+                    if (code && name && serial && fuelContainerData[code] && fuelContainerData[code] === name) {
+                        containerList.push({ code, name, serial });
+                    }
+                }
+                if (containerList.length > 0) {
+                    const existingContainers = userData[currentUser].fuelContainers || [];
+                    userData[currentUser].fuelContainers = [...existingContainers, ...containerList];
+                    if (document.getElementById('add-fuel-containers-screen').style.display === 'block') {
+                        loadFuelContainerRows();
+                    }
+                }
+            }
+
+            // Process Vehicles
+            if (uploadedData['Vehicles']) {
+                const vehicleData = uploadedData['Vehicles'];
+                const vehicleList = [];
+                for (let i = 1; i < vehicleData.length; i++) {
+                    const row = vehicleData[i];
+                    const tamcn = row[0] ? row[0].toString().trim() : '';
+                    const model = row[1] ? row[1].toString().trim() : '';
+                    const description = row[2] ? row[2].toString().trim() : '';
+                    const serial = row[3] ? row[3].toString().trim() : '';
+                    if (tamcn && model && description && serial && vehicleData[tamcn] && vehicleModelNames[tamcn] === model && vehicleData[tamcn] === description) {
+                        vehicleList.push({ tamcn, model, description, serial });
+                    }
+                }
+                if (vehicleList.length > 0) {
+                    const existingVehicles = userData[currentUser].vehicles || [];
+                    userData[currentUser].vehicles = [...existingVehicles, ...vehicleList];
+                    if (document.getElementById('add-vehicles-screen').style.display === 'block') {
+                        loadVehicleRows();
+                    }
+                }
+            }
+
+            // Process Weapons
+            if (uploadedData['Weapons']) {
+                const weaponsData = uploadedData['Weapons'];
+                const weaponList = [];
+                for (let i = 1; i < weaponsData.length; i++) {
+                    const row = weaponsData[i];
+                    const code = row[0] ? row[0].toString().trim() : '';
+                    const model = row[1] ? row[1].toString().trim() : '';
+                    const description = row[2] ? row[2].toString().trim() : '';
+                    const serial = row[3] ? row[3].toString().trim() : '';
+                    if (code && model && description && serial && weaponsData[code] && weaponsModelNames[code] === model && weaponsData[code] === description) {
+                        weaponList.push({ code, model, description, serial });
+                    }
+                }
+                if (weaponList.length > 0) {
+                    const existingWeapons = userData[currentUser].weapons || [];
+                    userData[currentUser].weapons = [...existingWeapons, ...weaponList];
+                    if (document.getElementById('add-weapons-screen').style.display === 'block') {
+                        loadWeaponsRows();
+                    }
+                }
+            }
+
+            // Process Personnel
+            if (uploadedData['Personnel']) {
+                const personnelData = uploadedData['Personnel'];
+                const personnelList = [];
+                for (let i = 1; i < personnelData.length; i++) {
+                    const row = personnelData[i];
+                    const rank = row[0] ? row[0].toString().trim() : '';
+                    const lastName = row[1] ? row[1].toString().trim() : '';
+                    const firstName = row[2] ? row[2].toString().trim() : '';
+                    const middleInitial = row[3] ? row[3].toString().trim() : '';
+                    const bloodType = row[4] ? row[4].toString().trim() : '';
+                    const zapNumber = row[5] ? row[5].toString().trim() : '';
+                    const licenses = row[6] ? row[6].toString().split(',').map(l => l.trim()).filter(Boolean) : [];
+                    const m4Serial = row[7] ? row[7].toString().trim() : '';
+                    const m9Serial = row[8] ? row[8].toString().trim() : '';
+                    const rcoSerial = row[9] ? row[9].toString().trim() : '';
+                    const nvgSerial = row[10] ? row[10].toString().trim() : '';
+                    const peqSerial = row[11] ? row[11].toString().trim() : '';
+                    const miscGear = row[12] ? row[12].toString().trim() : '';
+
+                    const validBloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+                    if (rank && lastName && firstName && bloodType && zapNumber && usmcRanks.includes(rank) && validBloodTypes.includes(bloodType)) {
+                        personnelList.push({
+                            rank,
+                            lastName,
+                            firstName,
+                            middleInitial,
+                            bloodType,
+                            zapNumber,
+                            licenses,
+                            m4Serial,
+                            m9Serial,
+                            rcoSerial,
+                            nvgSerial,
+                            peqSerial,
+                            miscGear
+                        });
+                    }
+                }
+                if (personnelList.length > 0) {
+                    const existingPersonnel = userData[currentUser].personnel || [];
+                    userData[currentUser].personnel = [...existingPersonnel, ...personnelList];
+                    if (document.getElementById('personnel-screen').style.display === 'block') {
+                        loadPersonnelRows();
+                    }
+                }
+            }
+
+            // Save the updated user data
             localStorage.setItem('userData', JSON.stringify(userData));
-            alert('Comm Gear saved for ' + currentUser + '!');
-            showScreen('manual-add-screen');
-        } else {
-            alert('No items to save.');
         }
-    });
-    document.getElementById('back-to-manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
 
-    // Water Containers logic
-    const waterSearchInput = document.getElementById('water-search');
-    const waterSuggestions = document.getElementById('water-suggestions');
-    const waterAddedTable = document.getElementById('water-container-added');
+        // Comm Gear logic
+        const commSearchInput = document.getElementById('comm-search');
+        const commSuggestions = document.getElementById('comm-suggestions');
+        const commAddedTable = document.getElementById('comm-gear-added');
 
-    Object.entries(waterContainerData).forEach(([code, name]) => {
-        waterSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
-    });
+        radioTypes.forEach(type => {
+            commSuggestions.innerHTML += `<option value="${type}"></option>`;
+        });
 
-    document.getElementById('add-water-btn').addEventListener('click', () => {
-        const query = waterSearchInput.value.trim().toUpperCase();
-        const match = Object.keys(waterContainerData).find(code => code === query) || 
-                     Object.values(waterContainerData).find(name => name.toUpperCase() === query);
-        const code = Object.keys(waterContainerData).find(c => waterContainerData[c] === match || c === query);
-        const name = waterContainerData[code];
-        if (code && name) {
-            waterAddedTable.appendChild(createWaterContainerRow(code, name));
-            waterSearchInput.value = '';
-        } else {
-            alert('No matching water container found. Please select from the suggestions.');
+        document.getElementById('add-search-btn').addEventListener('click', () => {
+            const query = commSearchInput.value.trim().toUpperCase();
+            const match = radioTypes.find(type => type.toUpperCase() === query);
+            if (match) {
+                commAddedTable.appendChild(createCommGearRow(match));
+                commSearchInput.value = '';
+            } else {
+                alert('No matching radio type found. Please select from the suggestions.');
+            }
+        });
+
+        function createCommGearRow(radioType, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${radioType}</td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
+            return row;
         }
-    });
 
-    function createWaterContainerRow(code, name, serial = '') {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${code}</td>
-            <td>${name}</td>
-            <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
-            <td><button class="delete-btn">Delete</button></td>
-        `;
-        row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
-        return row;
-    }
-
-    function loadWaterContainerRows() {
-        waterAddedTable.innerHTML = '';
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            const savedContainers = (userData[currentUser] && userData[currentUser].waterContainers) || [];
-            savedContainers.forEach(container => waterAddedTable.appendChild(createWaterContainerRow(container.code, container.name, container.serial)));
+        function loadCommGearRows() {
+            commAddedTable.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedGear = (userData[currentUser] && userData[currentUser].commGear) || [];
+                savedGear.forEach(gear => commAddedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
+            }
         }
-    }
 
-    document.getElementById('save-water-btn').addEventListener('click', () => {
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            alert('No user logged in. Please register first.');
-            showScreen('initial-screen');
-            return;
+        document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = commAddedTable.querySelectorAll('tr');
+            const gearList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const radioType = row.cells[0].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    gearList.push({ radioType, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (gearList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].commGear = gearList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Comm Gear saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+
+        document.getElementById('back-to-manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Water Containers logic
+        const waterSearchInput = document.getElementById('water-search');
+        const waterSuggestions = document.getElementById('water-suggestions');
+        const waterAddedTable = document.getElementById('water-container-added');
+
+        Object.entries(waterContainerData).forEach(([code, name]) => {
+            waterSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
+        });
+
+        document.getElementById('add-water-btn').addEventListener('click', () => {
+            const query = waterSearchInput.value.trim().toUpperCase();
+            const match = Object.keys(waterContainerData).find(code => code === query) || 
+                         Object.values(waterContainerData).find(name => name.toUpperCase() === query);
+            const code = Object.keys(waterContainerData).find(c => waterContainerData[c] === match || c === query);
+            const name = waterContainerData[code];
+            if (code && name) {
+                waterAddedTable.appendChild(createWaterContainerRow(code, name));
+                waterSearchInput.value = '';
+            } else {
+                alert('No matching water container found. Please select from the suggestions.');
+            }
+        });
+
+        function createWaterContainerRow(code, name, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${code}</td>
+                <td>${name}</td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
+            return row;
         }
-        const rows = waterAddedTable.querySelectorAll('tr');
-        const containerList = [];
-        let allValid = true;
-        rows.forEach(row => {
-            const code = row.cells[0].textContent;
-            const name = row.cells[1].textContent;
+
+        function loadWaterContainerRows() {
+            waterAddedTable.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedContainers = (userData[currentUser] && userData[currentUser].waterContainers) || [];
+                savedContainers.forEach(container => waterAddedTable.appendChild(createWaterContainerRow(container.code, container.name, container.serial)));
+            }
+        }
+
+        document.getElementById('save-water-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = waterAddedTable.querySelectorAll('tr');
+            const containerList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    containerList.push({ code, name, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (containerList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].waterContainers = containerList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Water Containers saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+
+        document.getElementById('back-to-manual-add-btn-water').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Fuel Containers logic
+        const fuelSearchInput = document.getElementById('fuel-search');
+        const fuelSuggestions = document.getElementById('fuel-suggestions');
+        const fuelAddedTable = document.getElementById('fuel-container-added');
+
+        Object.entries(fuelContainerData).forEach(([code, name]) => {
+            fuelSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
+        });
+
+        document.getElementById('add-fuel-btn').addEventListener('click', () => {
+            const query = fuelSearchInput.value.trim().toUpperCase();
+            const match = Object.keys(fuelContainerData).find(code => code === query) || 
+                         Object.values(fuelContainerData).find(name => name.toUpperCase() === query);
+            const code = Object.keys(fuelContainerData).find(c => fuelContainerData[c] === match || c === query);
+            const name = fuelContainerData[code];
+            if (code && name) {
+                fuelAddedTable.appendChild(createFuelContainerRow(code, name));
+                fuelSearchInput.value = '';
+            } else {
+                alert('No matching fuel container found. Please select from the suggestions.');
+            }
+        });
+
+        function createFuelContainerRow(code, name, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${code}</td>
+                <td>${name}</td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
+            return row;
+        }
+
+        function loadFuelContainerRows() {
+            fuelAddedTable.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedContainers = (userData[currentUser] && userData[currentUser].fuelContainers) || [];
+                savedContainers.forEach(container => fuelAddedTable.appendChild(createFuelContainerRow(container.code, container.name, container.serial)));
+            }
+        }
+
+        document.getElementById('save-fuel-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = fuelAddedTable.querySelectorAll('tr');
+            const containerList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    containerList.push({ code, name, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (containerList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].fuelContainers = containerList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Fuel Containers saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+
+        document.getElementById('back-to-manual-add-btn-fuel').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Vehicles logic
+        function createVehicleRow(tamcn = '', model = '', description = '', serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><select class="model-select">${Object.keys(vehicleModelNames).map(t => `<option value="${vehicleModelNames[t]}" ${vehicleModelNames[t] === model ? 'selected' : ''}>${vehicleModelNames[t]}</option>`).join('')}</select></td>
+                <td><select class="tamcn-select">${Object.keys(vehicleData).map(t => `<option value="${t}" ${t === tamcn ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
+                <td><select class="description-select">${Object.values(vehicleData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
+                <td><button class="add-row-btn">+</button></td>
+            `;
+            const modelSelect = row.querySelector('.model-select');
+            const tamcnSelect = row.querySelector('.tamcn-select');
+            const descriptionSelect = row.querySelector('.description-select');
             const serialInput = row.querySelector('.serial-input');
-            const serial = serialInput.value.trim();
-            const errorMessage = row.querySelector('.error-message');
-            if (serial) {
-                containerList.push({ code, name, serial });
-                errorMessage.style.display = 'none';
-            } else {
-                allValid = false;
-                errorMessage.style.display = 'block';
-            }
-        });
-        if (!allValid) {
-            alert('Please enter serial numbers for all added items.');
-        } else if (containerList.length > 0) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            if (!userData[currentUser]) userData[currentUser] = {};
-            userData[currentUser].waterContainers = containerList;
-            localStorage.setItem('userData', JSON.stringify(userData));
-            alert('Water Containers saved for ' + currentUser + '!');
-            showScreen('manual-add-screen');
-        } else {
-            alert('No items to save.');
+
+            tamcnSelect.addEventListener('change', () => {
+                const selectedTamcn = tamcnSelect.value;
+                modelSelect.value = vehicleModelNames[selectedTamcn] || '';
+                descriptionSelect.value = vehicleData[selectedTamcn] || '';
+            });
+
+            modelSelect.addEventListener('change', () => {
+                const selectedModel = modelSelect.value;
+                const matchingTamcn = Object.keys(vehicleModelNames).find(t => vehicleModelNames[t] === selectedModel);
+                if (matchingTamcn) {
+                    tamcnSelect.value = matchingTamcn;
+                    descriptionSelect.value = vehicleData[matchingTamcn] || '';
+                }
+            });
+
+            descriptionSelect.addEventListener('change', () => {
+                const selectedDescription = descriptionSelect.value;
+                const matchingTamcn = Object.keys(vehicleData).find(t => vehicleData[t] === selectedDescription);
+                if (matchingTamcn) {
+                    tamcnSelect.value = matchingTamcn;
+                    modelSelect.value = vehicleModelNames[matchingTamcn] || '';
+                }
+            });
+
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                if (!serialInput.value.trim()) {
+                    alert('Please enter a serial number before adding a new row.');
+                } else {
+                    document.getElementById('vehicles-added').appendChild(createVehicleRow());
+                }
+            });
+
+            return row;
         }
-    });
-    document.getElementById('back-to-manual-add-btn-water').addEventListener('click', () => showScreen('manual-add-screen'));
 
-    // Fuel Containers logic
-    const fuelSearchInput = document.getElementById('fuel-search');
-    const fuelSuggestions = document.getElementById('fuel-suggestions');
-    const fuelAddedTable = document.getElementById('fuel-container-added');
-
-    Object.entries(fuelContainerData).forEach(([code, name]) => {
-        fuelSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
-    });
-
-    document.getElementById('add-fuel-btn').addEventListener('click', () => {
-        const query = fuelSearchInput.value.trim().toUpperCase();
-        const match = Object.keys(fuelContainerData).find(code => code === query) || 
-                     Object.values(fuelContainerData).find(name => name.toUpperCase() === query);
-        const code = Object.keys(fuelContainerData).find(c => fuelContainerData[c] === match || c === query);
-        const name = fuelContainerData[code];
-        if (code && name) {
-            fuelAddedTable.appendChild(createFuelContainerRow(code, name));
-            fuelSearchInput.value = '';
-        } else {
-            alert('No matching fuel container found. Please select from the suggestions.');
-        }
-    });
-
-    function createFuelContainerRow(code, name, serial = '') {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${code}</td>
-            <td>${name}</td>
-            <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
-            <td><button class="delete-btn">Delete</button></td>
-        `;
-        row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
-        return row;
-    }
-
-    function loadFuelContainerRows() {
-        fuelAddedTable.innerHTML = '';
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            const savedContainers = (userData[currentUser] && userData[currentUser].fuelContainers) || [];
-            savedContainers.forEach(container => fuelAddedTable.appendChild(createFuelContainerRow(container.code, container.name, container.serial)));
-        }
-    }
-
-    document.getElementById('save-fuel-btn').addEventListener('click', () => {
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            alert('No user logged in. Please register first.');
-            showScreen('initial-screen');
-            return;
-        }
-        const rows = fuelAddedTable.querySelectorAll('tr');
-        const containerList = [];
-        let allValid = true;
-        rows.forEach(row => {
-            const code = row.cells[0].textContent;
-            const name = row.cells[1].textContent;
-            const serialInput = row.querySelector('.serial-input');
-            const serial = serialInput.value.trim();
-            const errorMessage = row.querySelector('.error-message');
-            if (serial) {
-                containerList.push({ code, name, serial });
-                errorMessage.style.display = 'none';
-            } else {
-                allValid = false;
-                errorMessage.style.display = 'block';
-            }
-        });
-        if (!allValid) {
-            alert('Please enter serial numbers for all added items.');
-        } else if (containerList.length > 0) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            if (!userData[currentUser]) userData[currentUser] = {};
-            userData[currentUser].fuelContainers = containerList;
-            localStorage.setItem('userData', JSON.stringify(userData));
-            alert('Fuel Containers saved for ' + currentUser + '!');
-            showScreen('manual-add-screen');
-        } else {
-            alert('No items to save.');
-        }
-    });
-    document.getElementById('back-to-manual-add-btn-fuel').addEventListener('click', () => showScreen('manual-add-screen'));
-
-    // Vehicles logic
-    function createVehicleRow(tamcn = '', model = '', description = '', serial = '') {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><select class="model-select">${Object.keys(vehicleModelNames).map(t => `<option value="${vehicleModelNames[t]}" ${vehicleModelNames[t] === model ? 'selected' : ''}>${vehicleModelNames[t]}</option>`).join('')}</select></td>
-            <td><select class="tamcn-select">${Object.keys(vehicleData).map(t => `<option value="${t}" ${t === tamcn ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
-            <td><select class="description-select">${Object.values(vehicleData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
-            <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
-            <td><button class="add-row-btn">+</button></td>
-        `;
-        const modelSelect = row.querySelector('.model-select');
-        const tamcnSelect = row.querySelector('.tamcn-select');
-        const descriptionSelect = row.querySelector('.description-select');
-        const serialInput = row.querySelector('.serial-input');
-
-        tamcnSelect.addEventListener('change', () => {
-            const selectedTamcn = tamcnSelect.value;
-            modelSelect.value = vehicleModelNames[selectedTamcn] || '';
-            descriptionSelect.value = vehicleData[selectedTamcn] || '';
-        });
-
-        modelSelect.addEventListener('change', () => {
-            const selectedModel = modelSelect.value;
-            const matchingTamcn = Object.keys(vehicleModelNames).find(t => vehicleModelNames[t] === selectedModel);
-            if (matchingTamcn) {
-                tamcnSelect.value = matchingTamcn;
-                descriptionSelect.value = vehicleData[matchingTamcn] || '';
-            }
-        });
-
-        descriptionSelect.addEventListener('change', () => {
-            const selectedDescription = descriptionSelect.value;
-            const matchingTamcn = Object.keys(vehicleData).find(t => vehicleData[t] === selectedDescription);
-            if (matchingTamcn) {
-                tamcnSelect.value = matchingTamcn;
-                modelSelect.value = vehicleModelNames[matchingTamcn] || '';
-            }
-        });
-
-        row.querySelector('.add-row-btn').addEventListener('click', () => {
-            if (!serialInput.value.trim()) {
-                alert('Please enter a serial number before adding a new row.');
-            } else {
-                document.getElementById('vehicles-added').appendChild(createVehicleRow());
-            }
-        });
-
-        return row;
-    }
-
-    function loadVehicleRows() {
-        const tbody = document.getElementById('vehicles-added');
-        tbody.innerHTML = '';
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            const savedVehicles = (userData[currentUser] && userData[currentUser].vehicles) || [];
-            if (savedVehicles.length > 0) {
-                savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.model, vehicle.description, vehicle.serial)));
+        function loadVehicleRows() {
+            const tbody = document.getElementById('vehicles-added');
+            tbody.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedVehicles = (userData[currentUser] && userData[currentUser].vehicles) || [];
+                if (savedVehicles.length > 0) {
+                    savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.model, vehicle.description, vehicle.serial)));
+                } else {
+                    tbody.appendChild(createVehicleRow());
+                }
             } else {
                 tbody.appendChild(createVehicleRow());
             }
-        } else {
-            tbody.appendChild(createVehicleRow());
         }
-    }
 
-    document.getElementById('save-vehicles-btn').addEventListener('click', () => {
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            alert('No user logged in. Please register first.');
-            showScreen('initial-screen');
-            return;
-        }
-        const rows = document.querySelectorAll('#vehicles-added tr');
-        const vehicleList = [];
-        let allValid = true;
-        rows.forEach(row => {
-            const tamcn = row.querySelector('.tamcn-select').value;
-            const model = row.querySelector('.model-select').value;
-            const description = row.querySelector('.description-select').value;
-            const serial = row.querySelector('.serial-input').value.trim();
-            if (tamcn && model && description && serial) {
-                vehicleList.push({ tamcn, model, description, serial });
-            } else if (tamcn || model || description || serial) {
-                allValid = false;
+        document.getElementById('save-vehicles-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
             }
-        });
-        if (!allValid) {
-            alert('Please complete all fields (Model, TAMCN, Description, and Serial Number) for each row.');
-        } else if (vehicleList.length > 0) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            if (!userData[currentUser]) userData[currentUser] = {};
-            userData[currentUser].vehicles = vehicleList;
-            localStorage.setItem('userData', JSON.stringify(userData));
-            alert('Vehicles saved for ' + currentUser + '!');
-            showScreen('manual-add-screen');
-        } else {
-            alert('No valid entries to save.');
-        }
-    });
-    document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
-
-    // Weapons Systems logic
-    function createWeaponsRow(code = '', model = '', description = '', serial = '') {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><select class="model-select">${Object.keys(weaponsModelNames).map(c => `<option value="${weaponsModelNames[c]}" ${weaponsModelNames[c] === model ? 'selected' : ''}>${weaponsModelNames[c]}</option>`).join('')}</select></td>
-            <td><select class="code-select">${Object.keys(weaponsData).map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('')}</select></td>
-            <td><select class="description-select">${Object.values(weaponsData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
-            <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
-            <td><button class="add-row-btn">+</button></td>
-        `;
-        const modelSelect = row.querySelector('.model-select');
-        const codeSelect = row.querySelector('.code-select');
-        const descriptionSelect = row.querySelector('.description-select');
-        const serialInput = row.querySelector('.serial-input');
-
-        codeSelect.addEventListener('change', () => {
-            const selectedCode = codeSelect.value;
-            modelSelect.value = weaponsModelNames[selectedCode] || '';
-            descriptionSelect.value = weaponsData[selectedCode] || '';
-        });
-
-        modelSelect.addEventListener('change', () => {
-            const selectedModel = modelSelect.value;
-            const matchingCode = Object.keys(weaponsModelNames).find(c => weaponsModelNames[c] === selectedModel);
-            if (matchingCode) {
-                codeSelect.value = matchingCode;
-                descriptionSelect.value = weaponsData[matchingCode] || '';
-            }
-        });
-
-        descriptionSelect.addEventListener('change', () => {
-            const selectedDescription = descriptionSelect.value;
-            const matchingCode = Object.keys(weaponsData).find(c => weaponsData[c] === selectedDescription);
-            if (matchingCode) {
-                codeSelect.value = matchingCode;
-                modelSelect.value = weaponsModelNames[matchingCode] || '';
-            }
-        });
-
-        row.querySelector('.add-row-btn').addEventListener('click', () => {
-            if (!serialInput.value.trim()) {
-                alert('Please enter a serial number before adding a new row.');
+            const rows = document.querySelectorAll('#vehicles-added tr');
+            const vehicleList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const tamcn = row.querySelector('.tamcn-select').value;
+                const model = row.querySelector('.model-select').value;
+                const description = row.querySelector('.description-select').value;
+                const serial = row.querySelector('.serial-input').value.trim();
+                if (tamcn && model && description && serial) {
+                    vehicleList.push({ tamcn, model, description, serial });
+                } else if (tamcn || model || description || serial) {
+                    allValid = false;
+                }
+            });
+            if (!allValid) {
+                alert('Please complete all fields (Model, TAMCN, Description, and Serial Number) for each row.');
+            } else if (vehicleList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].vehicles = vehicleList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Vehicles saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
             } else {
-                document.getElementById('weapons-added').appendChild(createWeaponsRow());
+                alert('No valid entries to save.');
             }
         });
 
-        return row;
-    }
+        document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
 
-    function loadWeaponsRows() {
-        const tbody = document.getElementById('weapons-added');
-        tbody.innerHTML = '';
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            const savedWeapons = (userData[currentUser] && userData[currentUser].weapons) || [];
-            if (savedWeapons.length > 0) {
-                savedWeapons.forEach(weapon => tbody.appendChild(createWeaponsRow(weapon.code, weapon.model, weapon.description, weapon.serial)));
+        // Weapons Systems logic
+        function createWeaponsRow(code = '', model = '', description = '', serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><select class="model-select">${Object.keys(weaponsModelNames).map(c => `<option value="${weaponsModelNames[c]}" ${weaponsModelNames[c] === model ? 'selected' : ''}>${weaponsModelNames[c]}</option>`).join('')}</select></td>
+                <td><select class="code-select">${Object.keys(weaponsData).map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('')}</select></td>
+                <td><select class="description-select">${Object.values(weaponsData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
+                <td><button class="add-row-btn">+</button></td>
+            `;
+            const modelSelect = row.querySelector('.model-select');
+            const codeSelect = row.querySelector('.code-select');
+            const descriptionSelect = row.querySelector('.description-select');
+            const serialInput = row.querySelector('.serial-input');
+
+            codeSelect.addEventListener('change', () => {
+                const selectedCode = codeSelect.value;
+                modelSelect.value = weaponsModelNames[selectedCode] || '';
+                descriptionSelect.value = weaponsData[selectedCode] || '';
+            });
+
+            modelSelect.addEventListener('change', () => {
+                const selectedModel = modelSelect.value;
+                const matchingCode = Object.keys(weaponsModelNames).find(c => weaponsModelNames[c] === selectedModel);
+                if (matchingCode) {
+                    codeSelect.value = matchingCode;
+                    descriptionSelect.value = weaponsData[matchingCode] || '';
+                }
+            });
+
+            descriptionSelect.addEventListener('change', () => {
+                const selectedDescription = descriptionSelect.value;
+                const matchingCode = Object.keys(weaponsData).find(c => weaponsData[c] === selectedDescription);
+                if (matchingCode) {
+                    codeSelect.value = matchingCode;
+                    modelSelect.value = weaponsModelNames[matchingCode] || '';
+                }
+            });
+
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                if (!serialInput.value.trim()) {
+                    alert('Please enter a serial number before adding a new row.');
+                } else {
+                    document.getElementById('weapons-added').appendChild(createWeaponsRow());
+                }
+            });
+
+            return row;
+        }
+
+        function loadWeaponsRows() {
+            const tbody = document.getElementById('weapons-added');
+            tbody.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedWeapons = (userData[currentUser] && userData[currentUser].weapons) || [];
+                if (savedWeapons.length > 0) {
+                    savedWeapons.forEach(weapon => tbody.appendChild(createWeaponsRow(weapon.code, weapon.model, weapon.description, weapon.serial)));
+                } else {
+                    tbody.appendChild(createWeaponsRow());
+                }
             } else {
                 tbody.appendChild(createWeaponsRow());
             }
-        } else {
-            tbody.appendChild(createWeaponsRow());
-        }
-    }
-
-    document.getElementById('save-weapons-btn').addEventListener('click', () => {
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            alert('No user logged in. Please register first.');
-            showScreen('initial-screen');
-            return;
-        }
-        const rows = document.querySelectorAll('#weapons-added tr');
-        const weaponList = [];
-        let allValid = true;
-        rows.forEach(row => {
-            const code = row.querySelector('.code-select').value;
-            const model = row.querySelector('.model-select').value;
-            const description = row.querySelector('.description-select').value;
-            const serial = row.querySelector('.serial-input').value.trim();
-            if (code && model && description && serial) {
-                weaponList.push({ code, model, description, serial });
-            } else if (code || model || description || serial) {
-                allValid = false;
-            }
-        });
-        if (!allValid) {
-            alert('Please complete all fields (Model, Code, Description, and Serial Number) for each row.');
-        } else if (weaponList.length > 0) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            if (!userData[currentUser]) userData[currentUser] = {};
-            userData[currentUser].weapons = weaponList;
-            localStorage.setItem('userData', JSON.stringify(userData));
-            alert('Weapons Systems saved for ' + currentUser + '!');
-            showScreen('manual-add-screen');
-        } else {
-            alert('No valid entries to save.');
-        }
-    });
-    document.getElementById('back-to-manual-add-btn-weapons').addEventListener('click', () => showScreen('manual-add-screen'));
-
-    // Personnel logic
-    const personnelAddedTable = document.getElementById('personnel-added');
-    const personnelFormPopup = document.getElementById('personnel-form-popup');
-    const personnelRankSelect = document.getElementById('personnel-rank');
-    const licensesPopup = document.getElementById('licenses-popup');
-    const licensesCheckboxes = document.getElementById('licenses-checkboxes');
-
-    usmcRanks.forEach(rank => {
-        personnelRankSelect.innerHTML += `<option value="${rank}">${rank}</option>`;
-    });
-
-    militaryLicenses.forEach(license => {
-        licensesCheckboxes.innerHTML += `
-            <label><input type="checkbox" name="license" value="${license}"> ${license}</label><br>
-        `;
-    });
-
-    document.getElementById('add-personnel-btn').addEventListener('click', () => {
-        personnelFormPopup.style.display = 'flex';
-        document.getElementById('personnel-form').reset();
-        document.getElementById('personnel-licenses').value = '';
-    });
-
-    document.getElementById('cancel-personnel-form').addEventListener('click', () => {
-        personnelFormPopup.style.display = 'none';
-    });
-
-    document.getElementById('select-licenses-btn').addEventListener('click', () => {
-        licensesPopup.style.display = 'flex';
-        const currentLicenses = document.getElementById('personnel-licenses').value.split(',').filter(Boolean);
-        licensesCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.checked = currentLicenses.includes(checkbox.value);
-        });
-    });
-
-    document.getElementById('save-licenses-btn').addEventListener('click', () => {
-        const selectedLicenses = Array.from(licensesCheckboxes.querySelectorAll('input[type="checkbox"]:checked'))
-            .map(checkbox => checkbox.value);
-        document.getElementById('personnel-licenses').value = selectedLicenses.join(',');
-        licensesPopup.style.display = 'none';
-    });
-
-    document.getElementById('cancel-licenses-btn').addEventListener('click', () => {
-        licensesPopup.style.display = 'none';
-    });
-
-    function createPersonnelRow(person) {
-        const row = document.createElement('tr');
-        row.dataset.person = JSON.stringify(person);
-        row.innerHTML = `
-            <td>${person.rank}</td>
-            <td>${person.lastName}</td>
-            <td>${person.firstName}</td>
-            <td>${person.middleInitial || ''}</td>
-            <td>${person.bloodType}</td>
-            <td>${person.zapNumber}</td>
-            <td>
-                <button class="manage-btn">Manage</button>
-                <button class="delete-btn">Delete</button>
-            </td>
-        `;
-        row.querySelector('.delete-btn').addEventListener('click', () => {
-            row.remove();
-            savePersonnelData();
-        });
-        row.querySelector('.manage-btn').addEventListener('click', () => {
-            alert('Manage functionality coming soon!');
-        });
-        return row;
-    }
-
-    function loadPersonnelRows() {
-        personnelAddedTable.innerHTML = '';
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            const savedPersonnel = (userData[currentUser] && userData[currentUser].personnel) || [];
-            savedPersonnel.forEach(person => personnelAddedTable.appendChild(createPersonnelRow(person)));
-        }
-    }
-
-    function savePersonnelData() {
-        const currentUser = localStorage.getItem('currentUser');
-        if (!currentUser) {
-            alert('No user logged in. Please register first.');
-            showScreen('initial-screen');
-            return;
-        }
-        const rows = personnelAddedTable.querySelectorAll('tr');
-        const personnelList = [];
-        rows.forEach(row => {
-            const person = JSON.parse(row.dataset.person);
-            personnelList.push(person);
-        });
-        const userData = JSON.parse(localStorage.getItem('userData')) || {};
-        if (!userData[currentUser]) userData[currentUser] = {};
-        userData[currentUser].personnel = personnelList;
-        localStorage.setItem('userData', JSON.stringify(userData));
-    }
-
-    document.getElementById('personnel-form').addEventListener('submit', (event) => {
-        event.preventDefault();
-        const person = {
-            rank: document.getElementById('personnel-rank').value,
-            lastName: document.getElementById('personnel-last-name').value,
-            firstName: document.getElementById('personnel-first-name').value,
-            middleInitial: document.getElementById('personnel-middle-initial').value,
-            bloodType: document.getElementById('personnel-blood-type').value,
-            zapNumber: document.getElementById('personnel-zap-number').value,
-            licenses: document.getElementById('personnel-licenses').value.split(',').filter(Boolean),
-            m4Serial: document.getElementById('personnel-m4-serial').value,
-            m9Serial: document.getElementById('personnel-m9-serial').value,
-            rcoSerial: document.getElementById('personnel-rco-serial').value,
-            nvgSerial: document.getElementById('personnel-nvg-serial').value,
-            peqSerial: document.getElementById('personnel-peq-serial').value,
-            miscGear: document.getElementById('personnel-misc-gear').value
-        };
-        personnelAddedTable.appendChild(createPersonnelRow(person));
-        savePersonnelData();
-        personnelFormPopup.style.display = 'none';
-        alert('Personnel added successfully!');
-    });
-    document.getElementById('back-to-options-btn-personnel').addEventListener('click', () => showScreen('options-screen'));
-
-    // Spreadsheet Template Download for Vehicles
-    document.getElementById('download-template-btn').addEventListener('click', () => {
-        const wb = XLSX.utils.book_new();
-        const testData = [
-            ['Model', 'TAMCN', 'Description', 'Serial Number'],
-            ['MK23', 'D0003', 'TRUCK, ARMORED, CARGO 7 TON, W/O WINCH NON-REDUCIBLE W/DFCS', '']
-        ];
-        const ws = XLSX.utils.aoa_to_sheet(testData);
-        wb.Sheets['Vehicle Template'] = ws;
-        wb.Props = { Title: "Vehicle Manifest Template", Subject: "USMC Convoy Manifest", Author: "Grok 3", CreatedDate: new Date() };
-        const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
-        const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'vehicle_manifest_template.xlsx';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
-    });
-
-    function s2ab(s) {
-        const buf = new ArrayBuffer(s.length);
-        const view = new Uint8Array(buf);
-        for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-        return buf;
-    }
-
-    // Spreadsheet Upload Logic for Vehicles
-    function handleSpreadsheetUpload() {
-        const fileInput = document.getElementById('spreadsheet-upload');
-        const file = fileInput.files[0];
-        if (!file) {
-            alert('Please select a file to upload.');
-            return;
         }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-
+        document.getElementById('save-weapons-btn').addEventListener('click', () => {
             const currentUser = localStorage.getItem('currentUser');
             if (!currentUser) {
                 alert('No user logged in. Please register first.');
                 showScreen('initial-screen');
                 return;
             }
-
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            if (!userData[currentUser]) userData[currentUser] = {};
-
-            // Assuming the spreadsheet has columns: Model, TAMCN, Description, Serial Number
-            const vehicles = [];
-            jsonData.slice(1).forEach(row => { // Skip header row
-                if (row.length >= 4) {
-                    const [model, tamcn, description, serial] = row;
-                    if (model && tamcn && description && serial) {
-                        vehicles.push({ model, tamcn, description, serial });
-                    }
+            const rows = document.querySelectorAll('#weapons-added tr');
+            const weaponList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.querySelector('.code-select').value;
+                const model = row.querySelector('.model-select').value;
+                const description = row.querySelector('.description-select').value;
+                const serial = row.querySelector('.serial-input').value.trim();
+                if (code && model && description && serial) {
+                    weaponList.push({ code, model, description, serial });
+                } else if (code || model || description || serial) {
+                    allValid = false;
                 }
             });
-
-            if (vehicles.length > 0) {
-                userData[currentUser].vehicles = (userData[currentUser].vehicles || []).concat(vehicles);
+            if (!allValid) {
+                alert('Please complete all fields (Model, Code, Description, and Serial Number) for each row.');
+            } else if (weaponList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].weapons = weaponList;
                 localStorage.setItem('userData', JSON.stringify(userData));
-                alert(`Uploaded ${vehicles.length} vehicles successfully!`);
-                loadVehicleRows();
+                alert('Weapons saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
             } else {
-                alert('No valid vehicle data found in the spreadsheet.');
+                alert('No valid entries to save.');
             }
-        };
-        reader.readAsArrayBuffer(file);
-    }
+        });
 
-    // Spreadsheet Upload Logic for Personnel
-    document.getElementById('upload-personnel-spreadsheet-btn').addEventListener('click', handlePersonnelSpreadsheetUpload);
+        document.getElementById('back-to-manual-add-btn-weapons').addEventListener('click', () => showScreen('manual-add-screen'));
 
-    function handlePersonnelSpreadsheetUpload() {
-        const fileInput = document.getElementById('personnel-spreadsheet-upload');
-        const file = fileInput.files[0];
-        if (!file) {
-            alert('Please select a file to upload.');
-            return;
-        }
+        // Personnel logic
+        const personnelRankSelect = document.getElementById('personnel-rank');
+        usmcRanks.forEach(rank => {
+            personnelRankSelect.innerHTML += `<option value="${rank}">${rank}</option>`;
+        });
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+        document.getElementById('add-personnel-btn').addEventListener('click', () => {
+            document.getElementById('personnel-form-popup').style.display = 'flex';
+            document.getElementById('personnel-form').reset();
+            document.getElementById('personnel-licenses').value = '';
+        });
 
+        document.getElementById('cancel-personnel-form').addEventListener('click', () => {
+            document.getElementById('personnel-form-popup').style.display = 'none';
+        });
+
+        const licensesCheckboxes = document.getElementById('licenses-checkboxes');
+        militaryLicenses.forEach(license => {
+            const label = document.createElement('label');
+            label.innerHTML = `<input type="checkbox" value="${license}"> ${license}<br>`;
+            licensesCheckboxes.appendChild(label);
+        });
+
+        document.getElementById('select-licenses-btn').addEventListener('click', () => {
+            document.getElementById('licenses-popup').style.display = 'flex';
+            const currentLicenses = document.getElementById('personnel-licenses').value.split(',').filter(Boolean);
+            licensesCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = currentLicenses.includes(checkbox.value);
+            });
+        });
+
+        document.getElementById('save-licenses-btn').addEventListener('click', () => {
+            const selectedLicenses = Array.from(licensesCheckboxes.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+            document.getElementById('personnel-licenses').value = selectedLicenses.join(',');
+            document.getElementById('licenses-popup').style.display = 'none';
+        });
+
+        document.getElementById('cancel-licenses-btn').addEventListener('click', () => {
+            document.getElementById('licenses-popup').style.display = 'none';
+        });
+
+        document.getElementById('personnel-form').addEventListener('submit', (event) => {
+            event.preventDefault();
             const currentUser = localStorage.getItem('currentUser');
             if (!currentUser) {
                 alert('No user logged in. Please register first.');
@@ -1360,75 +1483,67 @@
                 return;
             }
 
-            const userData = JSON.parse(localStorage.getItem('userData')) || {};
-            if (!userData[currentUser]) userData[currentUser] = {};
-
-            // Expected headers based on your template
-            const headers = jsonData[0];
-            const personnel = [];
-            let invalidRows = [];
-
-            // Map headers to expected fields (correcting 'Zap Numbe' to 'zapNumber')
-            const headerMap = {
-                'Rank': 'rank',
-                'Last Name': 'lastName',
-                'First Name': 'firstName',
-                'Middle Init': 'middleInitial',
-                'Blood Type': 'bloodType',
-                'Zap Numbe': 'zapNumber', // Assuming this is a typo in the image
-                'M4 Serial': 'm4Serial',
-                'M9 Serial': 'm9Serial',
-                'RCO Serial': 'rcoSerial',
-                'NVG Serial': 'nvgSerial',
-                'PEQ Serial': 'peqSerial',
-                'Miscellaneous Gear': 'miscGear'
+            const person = {
+                rank: document.getElementById('personnel-rank').value,
+                lastName: document.getElementById('personnel-last-name').value,
+                firstName: document.getElementById('personnel-first-name').value,
+                middleInitial: document.getElementById('personnel-middle-initial').value,
+                bloodType: document.getElementById('personnel-blood-type').value,
+                zapNumber: document.getElementById('personnel-zap-number').value,
+                licenses: document.getElementById('personnel-licenses').value.split(',').filter(Boolean),
+                m4Serial: document.getElementById('personnel-m4-serial').value,
+                m9Serial: document.getElementById('personnel-m9-serial').value,
+                rcoSerial: document.getElementById('personnel-rco-serial').value,
+                nvgSerial: document.getElementById('personnel-nvg-serial').value,
+                peqSerial: document.getElementById('personnel-peq-serial').value,
+                miscGear: document.getElementById('personnel-misc-gear').value
             };
 
-            jsonData.slice(1).forEach((row, index) => { // Skip header row
-                if (row.length >= 6) { // At least required fields (Rank, Last Name, First Name, Blood Type, Zap Number)
-                    const person = {
-                        rank: row[headers.indexOf('Rank')] || '',
-                        lastName: row[headers.indexOf('Last Name')] || '',
-                        firstName: row[headers.indexOf('First Name')] || '',
-                        middleInitial: row[headers.indexOf('Middle Init')] || '',
-                        bloodType: row[headers.indexOf('Blood Type')] || '',
-                        zapNumber: row[headers.indexOf('Zap Numbe')] || '',
-                        m4Serial: row[headers.indexOf('M4 Serial')] || '',
-                        m9Serial: row[headers.indexOf('M9 Serial')] || '',
-                        rcoSerial: row[headers.indexOf('RCO Serial')] || '',
-                        nvgSerial: row[headers.indexOf('NVG Serial')] || '',
-                        peqSerial: row[headers.indexOf('PEQ Serial')] || '',
-                        miscGear: row[headers.indexOf('Miscellaneous Gear')] || ''
-                    };
+            const userData = JSON.parse(localStorage.getItem('userData')) || {};
+            if (!userData[currentUser]) userData[currentUser] = {};
+            if (!userData[currentUser].personnel) userData[currentUser].personnel = [];
+            userData[currentUser].personnel.push(person);
+            localStorage.setItem('userData', JSON.stringify(userData));
+            loadPersonnelRows();
+            document.getElementById('personnel-form-popup').style.display = 'none';
+        });
 
-                    // Validate required fields
-                    if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
-                        invalidRows.push(`Row ${index + 2}: Missing required fields (Rank, Last Name, First Name, Blood Type, or Zap Number)`);
-                    } else if (!usmcRanks.includes(person.rank)) {
-                        invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
-                    } else if (!validBloodTypes.includes(person.bloodType)) {
-                        invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
-                    } else {
-                        personnel.push(person);
-                    }
-                }
-            });
-
-            if (invalidRows.length > 0) {
-                alert('Some rows could not be uploaded due to errors:\n' + invalidRows.join('\n'));
+        function loadPersonnelRows() {
+            const tbody = document.getElementById('personnel-added');
+            tbody.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const personnel = (userData[currentUser] && userData[currentUser].personnel) || [];
+                personnel.forEach((person, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${person.rank}</td>
+                        <td>${person.lastName}</td>
+                        <td>${person.firstName}</td>
+                        <td>${person.middleInitial || ''}</td>
+                        <td>${person.bloodType}</td>
+                        <td>${person.zapNumber}</td>
+                        <td>
+                            <button class="manage-btn" data-index="${index}">Manage</button>
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        </td>
+                    `;
+                    row.querySelector('.manage-btn').addEventListener('click', () => {
+                        // Implement manage functionality if needed
+                        alert('Manage functionality not implemented yet.');
+                    });
+                    row.querySelector('.delete-btn').addEventListener('click', () => {
+                        userData[currentUser].personnel.splice(index, 1);
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        loadPersonnelRows();
+                    });
+                    tbody.appendChild(row);
+                });
             }
+        }
 
-            if (personnel.length > 0) {
-                userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
-                localStorage.setItem('userData', JSON.stringify(userData));
-                alert(`Uploaded ${personnel.length} personnel successfully!`);
-                loadPersonnelRows();
-            } else if (invalidRows.length === 0) {
-                alert('No valid personnel data found in the spreadsheet.');
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    }
-</script>
+        document.getElementById('back-to-options-btn-personnel').addEventListener('click', () => showScreen('options-screen'));
+    </script>
 </body>
 </html>
