@@ -1373,9 +1373,9 @@ function handlePersonnelSpreadsheetUpload() {
             const workbook = XLSX.read(data, { type: 'array' });
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
             
-            // Define the range to only include columns A-L (1-12)
-            const range = { s: { c: 0, r: 0 }, e: { c: 11, r: firstSheet['!ref'] ? XLSX.decode_range(firstSheet['!ref']).e.r : 0 } };
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, range: range });
+            // Get all data, then limit to columns A-L (0-11)
+            const jsonDataFull = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            const jsonData = jsonDataFull.map(row => row.slice(0, 12)); // Trim to 12 columns (A-L)
             
             console.log('Spreadsheet data (columns A-L only):', jsonData);
             
@@ -1451,6 +1451,7 @@ function handlePersonnelSpreadsheetUpload() {
         alert('Failed to read the file.');
     };
     reader.readAsArrayBuffer(file);
+}
 }
 </script>
 </body>
