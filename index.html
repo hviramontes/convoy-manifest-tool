@@ -1347,7 +1347,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function handlePersonnelSpreadsheetUpload() {
-    console.log('Upload button clicked'); // Debug: Confirm click is registered
+    console.log('Upload button clicked');
     const fileInput = document.getElementById('personnel-spreadsheet-upload');
     const file = fileInput.files[0];
     
@@ -1357,18 +1357,27 @@ function handlePersonnelSpreadsheetUpload() {
         return;
     }
     
-    console.log('File selected:', file.name); // Debug: Confirm file is captured
+    console.log('File selected:', file.name);
+    
+    if (typeof XLSX === 'undefined') {
+        console.error('SheetJS library (XLSX) is not loaded');
+        alert('Error: The spreadsheet processing library failed to load. Please check your internet connection or try again later.');
+        return;
+    }
     
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            console.log('File loaded, processing...'); // Debug: Confirm file is read
+            console.log('File loaded, processing...');
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
             
-            console.log('Spreadsheet data:', jsonData); // Debug: See the parsed data
+            // Define the range to only include columns A-L (1-12)
+            const range = { s: { c: 0, r: 0 }, e: { c: 11, r: firstSheet['!ref'] ? XLSX.decode_range(firstSheet['!ref']).e.r : 0 } };
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, range: range });
+            
+            console.log('Spreadsheet data (columns A-L only):', jsonData);
             
             const currentUser = localStorage.getItem('currentUser');
             if (!currentUser) {
@@ -1399,32 +1408,25 @@ function handlePersonnelSpreadsheetUpload() {
                 'Miscellaneous Gear': 'miscGear'
             };
 
-jsonData.slice(1).forEach((row, index) => {
-    if (row.length >= 6) {
-        const person = {};
-        Object.keys(headerMap).forEach(header => {
-            const colIndex = headers.indexOf(header);
-            person[headerMap[header]] = colIndex !== -1 ? row[colIndex] || '' : '';
-        });
+            jsonData.slice(1).forEach((row, index) => {
+                if (row.length >= 6) {
+                    const person = {};
+                    Object.keys(headerMap).forEach(header => {
+                        const colIndex = headers.indexOf(header);
+                        person[headerMap[header]] = colIndex !== -1 ? row[colIndex] || '' : '';
+                    });
 
-        let errors = [];
-        if (!person.rank) errors.push("Rank");
-        if (!person.lastName) errors.push("Last Name");
-        if (!person.firstName) errors.push("First Name");
-        if (!person.bloodType) errors.push("Blood Type");
-        if (!person.zapNumber) errors.push("Zap Number");
-
-        if (errors.length > 0) {
-            invalidRows.push(`Row ${index + 2}: Missing ${errors.join(", ")}`);
-        } else if (!usmcRanks.includes(person.rank)) {
-            invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
-        } else if (!validBloodTypes.includes(person.bloodType)) {
-            invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
-        } else {
-            personnel.push(person);
-        }
-    }
-});
+                    if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
+                        invalidRows.push(`Row ${index + 2}: Missing required fields`);
+                    } else if (!usmcRanks.includes(person.rank)) {
+                        invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
+                    } else if (!validBloodTypes.includes(person.bloodType)) {
+                        invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
+                    } else {
+                        personnel.push(person);
+                    }
+                }
+            });
 
             if (invalidRows.length > 0) {
                 console.log('Invalid rows detected:', invalidRows);
@@ -1450,7 +1452,6 @@ jsonData.slice(1).forEach((row, index) => {
     };
     reader.readAsArrayBuffer(file);
 }
-
 </script>
 </body>
 </html>
