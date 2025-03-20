@@ -1399,25 +1399,32 @@ function handlePersonnelSpreadsheetUpload() {
                 'Miscellaneous Gear': 'miscGear'
             };
 
-            jsonData.slice(1).forEach((row, index) => {
-                if (row.length >= 6) {
-                    const person = {};
-                    Object.keys(headerMap).forEach(header => {
-                        const colIndex = headers.indexOf(header);
-                        person[headerMap[header]] = colIndex !== -1 ? row[colIndex] || '' : '';
-                    });
+jsonData.slice(1).forEach((row, index) => {
+    if (row.length >= 6) {
+        const person = {};
+        Object.keys(headerMap).forEach(header => {
+            const colIndex = headers.indexOf(header);
+            person[headerMap[header]] = colIndex !== -1 ? row[colIndex] || '' : '';
+        });
 
-                    if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
-                        invalidRows.push(`Row ${index + 2}: Missing required fields`);
-                    } else if (!usmcRanks.includes(person.rank)) {
-                        invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
-                    } else if (!validBloodTypes.includes(person.bloodType)) {
-                        invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
-                    } else {
-                        personnel.push(person);
-                    }
-                }
-            });
+        let errors = [];
+        if (!person.rank) errors.push("Rank");
+        if (!person.lastName) errors.push("Last Name");
+        if (!person.firstName) errors.push("First Name");
+        if (!person.bloodType) errors.push("Blood Type");
+        if (!person.zapNumber) errors.push("Zap Number");
+
+        if (errors.length > 0) {
+            invalidRows.push(`Row ${index + 2}: Missing ${errors.join(", ")}`);
+        } else if (!usmcRanks.includes(person.rank)) {
+            invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
+        } else if (!validBloodTypes.includes(person.bloodType)) {
+            invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
+        } else {
+            personnel.push(person);
+        }
+    }
+});
 
             if (invalidRows.length > 0) {
                 console.log('Invalid rows detected:', invalidRows);
