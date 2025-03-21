@@ -495,7 +495,7 @@
     </div>
 
     <script>
-        // Data definitions (unchanged)
+        // Data definitions
         const radioTypes = [
             "AN/PRC-117F", "AN/PRC-117G", "AN/PRC-148 (MBITR)", "AN/PRC-150", "AN/PRC-152",
             "AN/PRC-154", "AN/PRC-155", "AN/PRC-163", "(MIDS) JTRS", "AN/PRC-119", "AN/PRC-153 (IISR)"
@@ -1154,6 +1154,8 @@
             personnelFormPopup.style.display = 'flex';
             document.getElementById('personnel-form').reset();
             document.getElementById('personnel-licenses').value = '';
+            document.querySelector('#personnel-form-popup h2').textContent = 'Add New Person';
+            document.getElementById('personnel-form').dataset.mode = 'add';
         });
 
         document.getElementById('cancel-personnel-form').addEventListener('click', () => {
@@ -1179,9 +1181,10 @@
             licensesPopup.style.display = 'none';
         });
 
-        function createPersonnelRow(person) {
+        function createPersonnelRow(person, index) {
             const row = document.createElement('tr');
             row.dataset.person = JSON.stringify(person);
+            row.dataset.index = index;
             row.innerHTML = `
                 <td>${person.rank}</td>
                 <td>${person.lastName}</td>
@@ -1199,9 +1202,32 @@
                 savePersonnelData();
             });
             row.querySelector('.manage-btn').addEventListener('click', () => {
-                alert('Manage functionality coming soon!');
+                const personData = JSON.parse(row.dataset.person);
+                const idx = row.dataset.index;
+                populatePersonnelForm(personData, idx);
             });
             return row;
+        }
+
+        function populatePersonnelForm(person, index) {
+            personnelFormPopup.style.display = 'flex';
+            document.querySelector('#personnel-form-popup h2').textContent = 'Edit Person';
+            document.getElementById('personnel-form').dataset.mode = 'edit';
+            document.getElementById('personnel-form').dataset.index = index;
+
+            document.getElementById('personnel-rank').value = person.rank;
+            document.getElementById('personnel-last-name').value = person.lastName;
+            document.getElementById('personnel-first-name').value = person.firstName;
+            document.getElementById('personnel-middle-initial').value = person.middleInitial || '';
+            document.getElementById('personnel-blood-type').value = person.bloodType;
+            document.getElementById('personnel-zap-number').value = person.zapNumber;
+            document.getElementById('personnel-licenses').value = (person.licenses || []).join(',');
+            document.getElementById('personnel-m4-serial').value = person.m4Serial || '';
+            document.getElementById('personnel-m9-serial').value = person.m9Serial || '';
+            document.getElementById('personnel-rco-serial').value = person.rcoSerial || '';
+            document.getElementById('personnel-nvg-serial').value = person.nvgSerial || '';
+            document.getElementById('personnel-peq-serial').value = person.peqSerial || '';
+            document.getElementById('personnel-misc-gear').value = person.miscGear || '';
         }
 
         function loadPersonnelRows() {
@@ -1210,7 +1236,7 @@
             if (currentUser) {
                 const userData = JSON.parse(localStorage.getItem('userData')) || {};
                 const savedPersonnel = (userData[currentUser] && userData[currentUser].personnel) || [];
-                savedPersonnel.forEach(person => personnelAddedTable.appendChild(createPersonnelRow(person)));
+                savedPersonnel.forEach((person, index) => personnelAddedTable.appendChild(createPersonnelRow(person, index)));
             }
         }
 
@@ -1235,6 +1261,7 @@
 
         document.getElementById('personnel-form').addEventListener('submit', (event) => {
             event.preventDefault();
+            const mode = document.getElementById('personnel-form').dataset.mode;
             const person = {
                 rank: document.getElementById('personnel-rank').value,
                 lastName: document.getElementById('personnel-last-name').value,
@@ -1250,11 +1277,42 @@
                 peqSerial: document.getElementById('personnel-peq-serial').value,
                 miscGear: document.getElementById('personnel-misc-gear').value
             };
-            personnelAddedTable.appendChild(createPersonnelRow(person));
-            savePersonnelData();
+
+            if (mode === 'edit') {
+                const index = parseInt(document.getElementById('personnel-form').dataset.index, 10);
+                const rows = personnelAddedTable.querySelectorAll('tr');
+                if (index >= 0 && index < rows.length) {
+                    rows[index].dataset.person = JSON.stringify(person);
+                    rows[index].innerHTML = `
+                        <td>${person.rank}</td>
+                        <td>${person.lastName}</td>
+                        <td>${person.firstName}</td>
+                        <td>${person.middleInitial || ''}</td>
+                        <td>${person.bloodType}</td>
+                        <td>${person.zapNumber}</td>
+                        <td>
+                            <button class="manage-btn">Manage</button>
+                            <button class="delete-btn">Delete</button>
+                        </td>
+                    `;
+                    rows[index].querySelector('.delete-btn').addEventListener('click', () => {
+                        rows[index].remove();
+                        savePersonnelData();
+                    });
+                    rows[index].querySelector('.manage-btn').addEventListener('click', () => {
+                        populatePersonnelForm(person, index);
+                    });
+                }
+                savePersonnelData();
+                alert('Personnel updated successfully!');
+            } else {
+                personnelAddedTable.appendChild(createPersonnelRow(person, personnelAddedTable.children.length));
+                savePersonnelData();
+                alert('Personnel added successfully!');
+            }
             personnelFormPopup.style.display = 'none';
-            alert('Personnel added successfully!');
         });
+
         document.getElementById('back-to-options-btn-personnel').addEventListener('click', () => showScreen('options-screen'));
 
         // Spreadsheet Template Download for Vehicles
@@ -1312,9 +1370,8 @@
                 const userData = JSON.parse(localStorage.getItem('userData')) || {};
                 if (!userData[currentUser]) userData[currentUser] = {};
 
-                // Assuming the spreadsheet has columns: Model, TAMCN, Description, Serial Number
                 const vehicles = [];
-                jsonData.slice(1).forEach(row => { // Skip header row
+                jsonData.slice(1).forEach(row => {
                     if (row.length >= 4) {
                         const [model, tamcn, description, serial] = row;
                         if (model && tamcn && description && serial) {
@@ -1336,149 +1393,145 @@
         }
 
         // Spreadsheet Upload Logic for Personnel
-           document.addEventListener('DOMContentLoaded', () => {
-        const uploadBtn = document.getElementById('upload-personnel-spreadsheet-btn');
-        if (uploadBtn) {
-            uploadBtn.addEventListener('click', handlePersonnelSpreadsheetUpload);
-        } else {
-            console.error('Upload button not found in DOM');
-        }
-    });
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadBtn = document.getElementById('upload-personnel-spreadsheet-btn');
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', handlePersonnelSpreadsheetUpload);
+            } else {
+                console.error('Upload button not found in DOM');
+            }
+        });
 
-    function handlePersonnelSpreadsheetUpload() {
-        console.log('Upload button clicked');
-        const fileInput = document.getElementById('personnel-spreadsheet-upload');
-        const file = fileInput.files[0];
-        
-        if (!file) {
-            console.log('No file selected');
-            alert('Please select a file to upload.');
-            return;
-        }
-        
-        console.log('File selected:', file.name);
-        
-        if (typeof XLSX === 'undefined') {
-            console.error('SheetJS library (XLSX) is not loaded');
-            alert('Error: The spreadsheet processing library failed to load.');
-            return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                console.log('File loaded, processing...');
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                
-                // Determine the last row with data in columns A-L (0-11)
-                const range = XLSX.utils.decode_range(firstSheet['!ref'] || 'A1:L1');
-                let lastRow = 1; // Start with header row
-                for (let rowNum = 2; rowNum <= range.e.r + 1; rowNum++) {
-                    let hasData = false;
-                    for (let colNum = 0; colNum <= 11; colNum++) { // A-L only
-                        const cellAddress = XLSX.utils.encode_cell({ r: rowNum - 1, c: colNum });
-                        if (firstSheet[cellAddress] && firstSheet[cellAddress].v) {
-                            hasData = true;
+        function handlePersonnelSpreadsheetUpload() {
+            console.log('Upload button clicked');
+            const fileInput = document.getElementById('personnel-spreadsheet-upload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                console.log('No file selected');
+                alert('Please select a file to upload.');
+                return;
+            }
+            
+            console.log('File selected:', file.name);
+            
+            if (typeof XLSX === 'undefined') {
+                console.error('SheetJS library (XLSX) is not loaded');
+                alert('Error: The spreadsheet processing library failed to load.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    console.log('File loaded, processing...');
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    
+                    const range = XLSX.utils.decode_range(firstSheet['!ref'] || 'A1:L1');
+                    let lastRow = 1;
+                    for (let rowNum = 2; rowNum <= range.e.r + 1; rowNum++) {
+                        let hasData = false;
+                        for (let colNum = 0; colNum <= 11; colNum++) {
+                            const cellAddress = XLSX.utils.encode_cell({ r: rowNum - 1, c: colNum });
+                            if (firstSheet[cellAddress] && firstSheet[cellAddress].v) {
+                                hasData = true;
+                                break;
+                            }
+                        }
+                        if (hasData) {
+                            lastRow = rowNum;
+                        } else {
                             break;
                         }
                     }
-                    if (hasData) {
-                        lastRow = rowNum;
-                    } else {
-                        break; // Stop at first empty row in A-L
+                    
+                    const customRange = {
+                        s: { c: 0, r: 0 },
+                        e: { c: 11, r: lastRow - 1 }
+                    };
+                    
+                    console.log('Processing range:', XLSX.utils.encode_range(customRange));
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, range: customRange });
+                    console.log('Parsed data (A-L only):', jsonData);
+                    
+                    const currentUser = localStorage.getItem('currentUser');
+                    if (!currentUser) {
+                        alert('No user logged in. Please register first.');
+                        showScreen('initial-screen');
+                        return;
                     }
-                }
-                
-                // Set range to A1:L<lastRow>
-                const customRange = {
-                    s: { c: 0, r: 0 }, // Start at A1
-                    e: { c: 11, r: lastRow - 1 } // End at L<lastRow>
-                };
-                
-                console.log('Processing range:', XLSX.utils.encode_range(customRange));
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, range: customRange });
-                console.log('Parsed data (A-L only):', jsonData);
-                
-                const currentUser = localStorage.getItem('currentUser');
-                if (!currentUser) {
-                    alert('No user logged in. Please register first.');
-                    showScreen('initial-screen');
-                    return;
-                }
 
-                const userData = JSON.parse(localStorage.getItem('userData')) || {};
-                if (!userData[currentUser]) userData[currentUser] = {};
+                    const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                    if (!userData[currentUser]) userData[currentUser] = {};
 
-                const headers = jsonData[0];
-                console.log('Headers:', headers);
-                const personnel = [];
-                let invalidRows = [];
+                    const headers = jsonData[0];
+                    console.log('Headers:', headers);
+                    const personnel = [];
+                    let invalidRows = [];
 
-                const headerMap = {
-                    'Rank': 'rank',
-                    'Last Name': 'lastName',
-                    'First Name': 'firstName',
-                    'Middle Init': 'middleInitial',
-                    'Blood Type': 'bloodType',
-                    'Zap Number': 'zapNumber',
-                    'M4 Serial': 'm4Serial',
-                    'M9 Serial': 'm9Serial',
-                    'RCO Serial': 'rcoSerial',
-                    'NVG Serial': 'nvgSerial',
-                    'PEQ Serial': 'peqSerial',
-                    'Miscellaneous Gear': 'miscGear'
-                };
+                    const headerMap = {
+                        'Rank': 'rank',
+                        'Last Name': 'lastName',
+                        'First Name': 'firstName',
+                        'Middle Init': 'middleInitial',
+                        'Blood Type': 'bloodType',
+                        'Zap Number': 'zapNumber',
+                        'M4 Serial': 'm4Serial',
+                        'M9 Serial': 'm9Serial',
+                        'RCO Serial': 'rcoSerial',
+                        'NVG Serial': 'nvgSerial',
+                        'PEQ Serial': 'peqSerial',
+                        'Miscellaneous Gear': 'miscGear'
+                    };
 
-                jsonData.slice(1).forEach((row, index) => {
-                    console.log(`Row ${index + 2} raw data:`, row);
-                    if (row.length > 0) { // Process any row with data
-                        const person = {};
-                        Object.keys(headerMap).forEach(header => {
-                            const colIndex = headers.indexOf(header);
-                            person[headerMap[header]] = colIndex !== -1 && colIndex < 12 ? (row[colIndex] || '') : '';
-                        });
-                        console.log(`Row ${index + 2} mapped data:`, person);
+                    jsonData.slice(1).forEach((row, index) => {
+                        console.log(`Row ${index + 2} raw data:`, row);
+                        if (row.length > 0) {
+                            const person = {};
+                            Object.keys(headerMap).forEach(header => {
+                                const colIndex = headers.indexOf(header);
+                                person[headerMap[header]] = colIndex !== -1 && colIndex < 12 ? (row[colIndex] || '') : '';
+                            });
+                            console.log(`Row ${index + 2} mapped data:`, person);
 
-                        // Ensure required fields are present and valid
-                        if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
-                            invalidRows.push(`Row ${index + 2}: Missing required fields - ${JSON.stringify(person)}`);
-                        } else if (!usmcRanks.includes(person.rank)) {
-                            invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
-                        } else if (!validBloodTypes.includes(person.bloodType)) {
-                            invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
-                        } else {
-                            personnel.push(person);
+                            if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
+                                invalidRows.push(`Row ${index + 2}: Missing required fields - ${JSON.stringify(person)}`);
+                            } else if (!usmcRanks.includes(person.rank)) {
+                                invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
+                            } else if (!validBloodTypes.includes(person.bloodType)) {
+                                invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
+                            } else {
+                                personnel.push(person);
+                            }
                         }
+                    });
+
+                    if (invalidRows.length > 0) {
+                        console.log('Invalid rows detected:', invalidRows);
+                        alert('Some rows could not be uploaded:\n' + invalidRows.join('\n'));
                     }
-                });
 
-                if (invalidRows.length > 0) {
-                    console.log('Invalid rows detected:', invalidRows);
-                    alert('Some rows could not be uploaded:\n' + invalidRows.join('\n'));
+                    if (personnel.length > 0) {
+                        userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        alert(`Uploaded ${personnel.length} personnel successfully!`);
+                        loadPersonnelRows();
+                    } else if (invalidRows.length === 0) {
+                        alert('No valid personnel data found in the spreadsheet.');
+                    }
+                } catch (error) {
+                    console.error('Error processing spreadsheet:', error);
+                    alert('An error occurred while processing the file: ' + error.message);
                 }
-
-                if (personnel.length > 0) {
-                    userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
-                    localStorage.setItem('userData', JSON.stringify(userData));
-                    alert(`Uploaded ${personnel.length} personnel successfully!`);
-                    loadPersonnelRows();
-                } else if (invalidRows.length === 0) {
-                    alert('No valid personnel data found in the spreadsheet.');
-                }
-            } catch (error) {
-                console.error('Error processing spreadsheet:', error);
-                alert('An error occurred while processing the file: ' + error.message);
-            }
-        };
-        reader.onerror = function() {
-            console.error('Error reading file');
-            alert('Failed to read the file.');
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
+            };
+            reader.onerror = function() {
+                console.error('Error reading file');
+                alert('Failed to read the file.');
+            };
+            reader.readAsArrayBuffer(file);
+        }
     </script>
 </body>
 </html>
