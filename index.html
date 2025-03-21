@@ -1336,124 +1336,149 @@
         }
 
         // Spreadsheet Upload Logic for Personnel
-        document.addEventListener('DOMContentLoaded', () => {
-            const uploadBtn = document.getElementById('upload-personnel-spreadsheet-btn');
-            if (uploadBtn) {
-                uploadBtn.addEventListener('click', handlePersonnelSpreadsheetUpload);
-            } else {
-                console.error('Upload button not found in DOM');
-            }
-        });
-
-        function handlePersonnelSpreadsheetUpload() {
-            console.log('Upload button clicked');
-            const fileInput = document.getElementById('personnel-spreadsheet-upload');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-                console.log('No file selected');
-                alert('Please select a file to upload.');
-                return;
-            }
-            
-            console.log('File selected:', file.name);
-            
-            if (typeof XLSX === 'undefined') {
-                console.error('SheetJS library (XLSX) is not loaded');
-                alert('Error: The spreadsheet processing library failed to load.');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    console.log('File loaded, processing...');
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    const jsonDataFull = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-                    console.log('Full data before slicing:', jsonDataFull);
-                    const jsonData = jsonDataFull.map(row => row.slice(0, 12)); // Limit to A-L
-                    console.log('Sliced data (A-L only):', jsonData);
-                    
-                    const currentUser = localStorage.getItem('currentUser');
-                    if (!currentUser) {
-                        alert('No user logged in. Please register first.');
-                        showScreen('initial-screen');
-                        return;
-                    }
-
-                    const userData = JSON.parse(localStorage.getItem('userData')) || {};
-                    if (!userData[currentUser]) userData[currentUser] = {};
-
-                    const headers = jsonData[0];
-                    console.log('Headers:', headers);
-                    const personnel = [];
-                    let invalidRows = [];
-
-                    const headerMap = {
-                        'Rank': 'rank',
-                        'Last Name': 'lastName',
-                        'First Name': 'firstName',
-                        'Middle Init': 'middleInitial',
-                        'Blood Type': 'bloodType',
-                        'Zap Number': 'zapNumber', // Fixed to match template
-                        'M4 Serial': 'm4Serial',
-                        'M9 Serial': 'm9Serial',
-                        'RCO Serial': 'rcoSerial',
-                        'NVG Serial': 'nvgSerial',
-                        'PEQ Serial': 'peqSerial',
-                        'Miscellaneous Gear': 'miscGear'
-                    };
-
-                    jsonData.slice(1).forEach((row, index) => {
-                        console.log(`Row ${index + 2} raw data:`, row);
-                        if (row.length > 0) { // Process any row with data
-                            const person = {};
-                            Object.keys(headerMap).forEach(header => {
-                                const colIndex = headers.indexOf(header);
-                                person[headerMap[header]] = colIndex !== -1 && colIndex < 12 ? (row[colIndex] || '') : '';
-                            });
-                            console.log(`Row ${index + 2} mapped data:`, person);
-
-                            // Ensure required fields are present and valid
-                            if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
-                                invalidRows.push(`Row ${index + 2}: Missing required fields - ${JSON.stringify(person)}`);
-                            } else if (!usmcRanks.includes(person.rank)) {
-                                invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
-                            } else if (!validBloodTypes.includes(person.bloodType)) {
-                                invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
-                            } else {
-                                personnel.push(person);
-                            }
-                        }
-                    });
-
-                    if (invalidRows.length > 0) {
-                        console.log('Invalid rows detected:', invalidRows);
-                        alert('Some rows could not be uploaded:\n' + invalidRows.join('\n'));
-                    }
-
-                    if (personnel.length > 0) {
-                        userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
-                        localStorage.setItem('userData', JSON.stringify(userData));
-                        alert(`Uploaded ${personnel.length} personnel successfully!`);
-                        loadPersonnelRows();
-                    } else if (invalidRows.length === 0) {
-                        alert('No valid personnel data found in the spreadsheet.');
-                    }
-                } catch (error) {
-                    console.error('Error processing spreadsheet:', error);
-                    alert('An error occurred while processing the file: ' + error.message);
-                }
-            };
-            reader.onerror = function() {
-                console.error('Error reading file');
-                alert('Failed to read the file.');
-            };
-            reader.readAsArrayBuffer(file);
+           document.addEventListener('DOMContentLoaded', () => {
+        const uploadBtn = document.getElementById('upload-personnel-spreadsheet-btn');
+        if (uploadBtn) {
+            uploadBtn.addEventListener('click', handlePersonnelSpreadsheetUpload);
+        } else {
+            console.error('Upload button not found in DOM');
         }
+    });
+
+    function handlePersonnelSpreadsheetUpload() {
+        console.log('Upload button clicked');
+        const fileInput = document.getElementById('personnel-spreadsheet-upload');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            console.log('No file selected');
+            alert('Please select a file to upload.');
+            return;
+        }
+        
+        console.log('File selected:', file.name);
+        
+        if (typeof XLSX === 'undefined') {
+            console.error('SheetJS library (XLSX) is not loaded');
+            alert('Error: The spreadsheet processing library failed to load.');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                console.log('File loaded, processing...');
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                
+                // Determine the last row with data in columns A-L (0-11)
+                const range = XLSX.utils.decode_range(firstSheet['!ref'] || 'A1:L1');
+                let lastRow = 1; // Start with header row
+                for (let rowNum = 2; rowNum <= range.e.r + 1; rowNum++) {
+                    let hasData = false;
+                    for (let colNum = 0; colNum <= 11; colNum++) { // A-L only
+                        const cellAddress = XLSX.utils.encode_cell({ r: rowNum - 1, c: colNum });
+                        if (firstSheet[cellAddress] && firstSheet[cellAddress].v) {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    if (hasData) {
+                        lastRow = rowNum;
+                    } else {
+                        break; // Stop at first empty row in A-L
+                    }
+                }
+                
+                // Set range to A1:L<lastRow>
+                const customRange = {
+                    s: { c: 0, r: 0 }, // Start at A1
+                    e: { c: 11, r: lastRow - 1 } // End at L<lastRow>
+                };
+                
+                console.log('Processing range:', XLSX.utils.encode_range(customRange));
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, range: customRange });
+                console.log('Parsed data (A-L only):', jsonData);
+                
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    alert('No user logged in. Please register first.');
+                    showScreen('initial-screen');
+                    return;
+                }
+
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+
+                const headers = jsonData[0];
+                console.log('Headers:', headers);
+                const personnel = [];
+                let invalidRows = [];
+
+                const headerMap = {
+                    'Rank': 'rank',
+                    'Last Name': 'lastName',
+                    'First Name': 'firstName',
+                    'Middle Init': 'middleInitial',
+                    'Blood Type': 'bloodType',
+                    'Zap Number': 'zapNumber',
+                    'M4 Serial': 'm4Serial',
+                    'M9 Serial': 'm9Serial',
+                    'RCO Serial': 'rcoSerial',
+                    'NVG Serial': 'nvgSerial',
+                    'PEQ Serial': 'peqSerial',
+                    'Miscellaneous Gear': 'miscGear'
+                };
+
+                jsonData.slice(1).forEach((row, index) => {
+                    console.log(`Row ${index + 2} raw data:`, row);
+                    if (row.length > 0) { // Process any row with data
+                        const person = {};
+                        Object.keys(headerMap).forEach(header => {
+                            const colIndex = headers.indexOf(header);
+                            person[headerMap[header]] = colIndex !== -1 && colIndex < 12 ? (row[colIndex] || '') : '';
+                        });
+                        console.log(`Row ${index + 2} mapped data:`, person);
+
+                        // Ensure required fields are present and valid
+                        if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
+                            invalidRows.push(`Row ${index + 2}: Missing required fields - ${JSON.stringify(person)}`);
+                        } else if (!usmcRanks.includes(person.rank)) {
+                            invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
+                        } else if (!validBloodTypes.includes(person.bloodType)) {
+                            invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
+                        } else {
+                            personnel.push(person);
+                        }
+                    }
+                });
+
+                if (invalidRows.length > 0) {
+                    console.log('Invalid rows detected:', invalidRows);
+                    alert('Some rows could not be uploaded:\n' + invalidRows.join('\n'));
+                }
+
+                if (personnel.length > 0) {
+                    userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    alert(`Uploaded ${personnel.length} personnel successfully!`);
+                    loadPersonnelRows();
+                } else if (invalidRows.length === 0) {
+                    alert('No valid personnel data found in the spreadsheet.');
+                }
+            } catch (error) {
+                console.error('Error processing spreadsheet:', error);
+                alert('An error occurred while processing the file: ' + error.message);
+            }
+        };
+        reader.onerror = function() {
+            console.error('Error reading file');
+            alert('Failed to read the file.');
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
     </script>
 </body>
 </html>
