@@ -1313,7 +1313,10 @@
             personnelFormPopup.style.display = 'none';
         });
 
-        document.getElementById('back-to-options-btn-personnel').addEventListener('click', () => showScreen('options-screen'));
+        // Update event listener
+document.getElementById('upload-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
+// Remove or update personnel upload listener if separate
+document.getElementById('upload-personnel-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);tListener('click', () => showScreen('options-screen'));
 
         // Spreadsheet Template Download for Vehicles
         document.getElementById('download-template-btn').addEventListener('click', () => {
@@ -1346,50 +1349,125 @@
 
         // Spreadsheet Upload Logic for Vehicles
         function handleSpreadsheetUpload() {
-            const fileInput = document.getElementById('spreadsheet-upload');
-            const file = fileInput.files[0];
-            if (!file) {
-                alert('Please select a file to upload.');
-                return;
-            }
+    const fileInput = document.getElementById('spreadsheet-upload');
+    const file = fileInput.files[0];
+    if (!file) {
+        alert('Please select a file to upload.');
+        return;
+    }
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, { type: 'array' });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const currentUser = localStorage.getItem('currentUser');
+        if (!currentUser) {
+            alert('No user logged in. Please register first.');
+            showScreen('initial-screen');
+            return;
+        }
 
-                const currentUser = localStorage.getItem('currentUser');
-                if (!currentUser) {
-                    alert('No user logged in. Please register first.');
-                    showScreen('initial-screen');
-                    return;
-                }
+        const userData = JSON.parse(localStorage.getItem('userData')) || {};
+        if (!userData[currentUser]) userData[currentUser] = {};
 
-                const userData = JSON.parse(localStorage.getItem('userData')) || {};
-                if (!userData[currentUser]) userData[currentUser] = {};
+        // Personnel
+        if (workbook.SheetNames.includes('Personnel')) {
+            const sheet = workbook.Sheets['Personnel'];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const personnel = jsonData.slice(1).filter(row => row[0] && row[1] && row[2]).map(row => ({
+                rank: row[0] || '',
+                lastName: row[1] || '',
+                firstName: row[2] || '',
+                middleInitial: row[3] || '',
+                bloodType: row[4] || '',
+                zapNumber: row[5] || '',
+                m4Serial: row[6] || '',
+                m9Serial: row[7] || '',
+                rcoSerial: row[8] || '',
+                nvgSerial: row[9] || '',
+                peqSerial: row[10] || '',
+                miscGear: row[11] || ''
+            }));
+            userData[currentUser].personnel = personnel;
+            loadPersonnelRows();
+        }
 
-                const vehicles = [];
-                jsonData.slice(1).forEach(row => {
-                    if (row.length >= 4) {
-                        const [model, tamcn, description, serial] = row;
-                        if (model && tamcn && description && serial) {
-                            vehicles.push({ model, tamcn, description, serial });
-                        }
-                    }
-                });
+        // Vehicles
+        if (workbook.SheetNames.includes('Vehicles')) {
+            const sheet = workbook.Sheets['Vehicles'];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const vehicles = jsonData.slice(1).filter(row => row[0] && row[1] && row[3]).map(row => ({
+                model: row[0] || '',
+                tamcn: row[1] || '',
+                description: row[2] || '',
+                serial: row[3] || ''
+            }));
+            userData[currentUser].vehicles = vehicles;
+            loadVehicleRows();
+        }
 
-                if (vehicles.length > 0) {
-                    userData[currentUser].vehicles = (userData[currentUser].vehicles || []).concat(vehicles);
-                    localStorage.setItem('userData', JSON.stringify(userData));
-                    alert(`Uploaded ${vehicles.length} vehicles successfully!`);
-                    loadVehicleRows();
-                } else {
-                    alert('No valid vehicle data found in the spreadsheet.');
-                }
-            };
-            reader.readAsArrayBuffer(file);
+        // Radios
+        if (workbook.SheetNames.includes('Radios')) {
+            const sheet = workbook.Sheets['Radios'];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const commGear = jsonData.slice(1).filter(row => row[0] && row[1]).map(row => ({
+                radioType: row[0] || '',
+                serial: row[1] || ''
+            }));
+            userData[currentUser].commGear = commGear;
+            loadCommGearRows();
+        }
+
+        // Water Containers
+        if (workbook.SheetNames.includes('Water Containers')) {
+            const sheet = workbook.Sheets['Water Containers'];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const waterContainers = jsonData.slice(1).filter(row => row[0] && row[2]).map(row => ({
+                code: row[0] || '',
+                name: row[1] || '',
+                serial: row[2] || ''
+            }));
+            userData[currentUser].waterContainers = waterContainers;
+            loadWaterContainerRows();
+        }
+
+        // Fuel Containers
+        if (workbook.SheetNames.includes('Fuel Containers')) {
+            const sheet = workbook.Sheets['Fuel Containers'];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const fuelContainers = jsonData.slice(1).filter(row => row[0] && row[2]).map(row => ({
+                code: row[0] || '',
+                name: row[1] || '',
+                serial: row[2] || ''
+            }));
+            userData[currentUser].fuelContainers = fuelContainers;
+            loadFuelContainerRows();
+        }
+
+        // Weapon Systems
+        if (workbook.SheetNames.includes('Weapon Systems')) {
+            const sheet = workbook.Sheets['Weapon Systems'];
+            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            const weapons = jsonData.slice(1).filter(row => row[0] && row[1] && row[3]).map(row => ({
+                model: row[0] || '',
+                code: row[1] || '',
+                description: row[2] || '',
+                serial: row[3] || ''
+            }));
+            userData[currentUser].weapons = weapons;
+            loadWeaponsRows();
+        }
+
+        localStorage.setItem('userData', JSON.stringify(userData));
+        alert('Data uploaded successfully!');
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+// Update event listener
+document.getElementById('upload-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
+// Remove or update personnel upload listener if separate
+document.getElementById('upload-personnel-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
         }
 
         // Spreadsheet Upload Logic for Personnel
