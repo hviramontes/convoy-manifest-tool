@@ -260,6 +260,7 @@
                 <input type="text" id="unit" name="unit" required>
                 <button type="submit">Submit</button>
             </form>
+            <button id="back-to-initial-btn-new">Back</button>
         </div>
 
         <div id="returning-user-screen" class="screen" style="display: none;">
@@ -270,15 +271,17 @@
             <button id="back-to-initial-btn-returning">Back</button>
         </div>
 
-        <div id="options-screen" class="screen" style="display: none;">
-            <h1>Convoy Management Options</h1>
-            <button id="enter-vehicles-btn">Enter New Vehicles</button>
-            <button id="enter-personnel-btn">Enter New Personnel</button>
-            <button id="back-to-initial-btn">Back</button>
+        <div id="dashboard-screen" class="screen" style="display: none;">
+            <h1>Convoy Management Dashboard</h1>
+            <h2>Welcome, <span id="current-user-display"></span></h2>
+            <button id="manage-personnel-btn">Manage Personnel</button>
+            <button id="manage-vehicles-btn">Manage Vehicles</button>
+            <button id="manage-equipment-btn">Manage Equipment</button>
+            <button id="logout-btn">Logout</button>
         </div>
 
         <div id="vehicles-screen" class="screen" style="display: none;">
-            <h1>Enter New Vehicles</h1>
+            <h1>Manage Vehicles</h1>
             <button id="manual-add-btn">Manual Add</button>
             <div id="upload-section">
                 <a id="download-template-btn" href="#" download="manifest_template.xlsx">Download Template</a>
@@ -286,17 +289,17 @@
                 <input type="file" id="spreadsheet-upload" accept=".xlsx">
                 <button id="upload-spreadsheet-btn">Upload Spreadsheet</button>
             </div>
-            <button id="back-to-options-btn">Back</button>
+            <button id="back-to-dashboard-btn-vehicles">Back to Dashboard</button>
         </div>
 
         <div id="manual-add-screen" class="screen" style="display: none;">
-            <h1>Manual Add Equipment</h1>
+            <h1>Manage Equipment</h1>
             <button id="add-comm-gear-btn">Add Comm Gear</button>
             <button id="add-water-containers-btn">Add Water Containers</button>
             <button id="add-fuel-containers-btn">Add Fuel Containers</button>
             <button id="add-vehicles-btn">Add Vehicles</button>
             <button id="add-weapons-btn">Add Weapons Systems</button>
-            <button id="back-to-vehicles-btn">Back</button>
+            <button id="back-to-vehicles-btn">Back to Vehicles</button>
         </div>
 
         <div id="add-comm-gear-screen" class="screen" style="display: none;">
@@ -401,10 +404,10 @@
         </div>
 
         <div id="personnel-screen" class="screen" style="display: none;">
-            <h1>Enter New Personnel</h1>
+            <h1>Manage Personnel</h1>
             <button id="add-personnel-btn">Add New Person</button>
             <div id="personnel-upload-section">
-                <a id="download-personnel-template-btn" href="https://raw.githubusercontent.com/hviramontes/convoy-manifest-tool/refs/heads/main/Convoy Manifest Personnel Upload.xlsx" download="Convoy Manifest Personnel Upload.xlsx">Download Personnel Template</a>
+                <a id="download-personnel-template-btn" href="https://raw.githubusercontent.com/hviramontes/convoy-manifest-tool/refs/heads/main/Convoy%20Manifest%20Personnel%20Upload.xlsx" download="Convoy_Manifest_Personnel_Upload.xlsx">Download Personnel Template</a>
                 <br>
                 <input type="file" id="personnel-spreadsheet-upload" accept=".xlsx">
                 <button id="upload-personnel-spreadsheet-btn">Upload Personnel Spreadsheet</button>
@@ -423,7 +426,7 @@
                 </thead>
                 <tbody id="personnel-added"></tbody>
             </table>
-            <button id="back-to-options-btn-personnel">Back</button>
+            <button id="back-to-dashboard-btn-personnel">Back to Dashboard</button>
         </div>
 
         <div id="personnel-form-popup" class="popup">
@@ -617,7 +620,7 @@
             });
         });
 
-        // New user form submission
+        // New user screen buttons
         document.getElementById('user-form').addEventListener('submit', (event) => {
             event.preventDefault();
             const user = {
@@ -632,30 +635,55 @@
             users[userKey] = user;
             localStorage.setItem('users', JSON.stringify(users));
             localStorage.setItem('currentUser', userKey);
-            showScreen('options-screen');
+            showScreen('dashboard-screen');
+            updateDashboard();
         });
+        document.getElementById('back-to-initial-btn-new').addEventListener('click', () => showScreen('initial-screen'));
 
         // Returning user screen buttons
         document.getElementById('load-user-btn').addEventListener('click', () => {
             const userKey = document.getElementById('user-select').value;
             localStorage.setItem('currentUser', userKey);
             alert('Data loaded for ' + userKey);
-            showScreen('options-screen');
+            showScreen('dashboard-screen');
+            updateDashboard();
         });
         document.getElementById('back-to-initial-btn-returning').addEventListener('click', () => showScreen('initial-screen'));
 
-        // Options screen buttons
-        document.getElementById('enter-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
-        document.getElementById('enter-personnel-btn').addEventListener('click', () => {
+        // Dashboard screen buttons
+        document.getElementById('manage-personnel-btn').addEventListener('click', () => {
             showScreen('personnel-screen');
             loadPersonnelRows();
         });
-        document.getElementById('back-to-initial-btn').addEventListener('click', () => showScreen('initial-screen'));
+        document.getElementById('manage-vehicles-btn').addEventListener('click', () => {
+            showScreen('vehicles-screen');
+            loadVehicleRows();
+        });
+        document.getElementById('manage-equipment-btn').addEventListener('click', () => {
+            showScreen('manual-add-screen');
+            loadCommGearRows();
+            loadWaterContainerRows();
+            loadFuelContainerRows();
+            loadWeaponsRows();
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            showScreen('initial-screen');
+        });
+
+        function updateDashboard() {
+            const currentUser = localStorage.getItem('currentUser');
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            const user = users[currentUser];
+            if (user) {
+                document.getElementById('current-user-display').textContent = `${user.rank} ${user.lastName}, ${user.firstName}`;
+            }
+        }
 
         // Vehicles screen buttons
         document.getElementById('manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('upload-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
-        document.getElementById('back-to-options-btn').addEventListener('click', () => showScreen('options-screen'));
+        document.getElementById('back-to-dashboard-btn-vehicles').addEventListener('click', () => showScreen('dashboard-screen'));
 
         // Manual add screen buttons
         document.getElementById('add-comm-gear-btn').addEventListener('click', () => {
@@ -1313,7 +1341,7 @@
             personnelFormPopup.style.display = 'none';
         });
 
-        document.getElementById('back-to-options-btn-personnel').addEventListener('click', () => showScreen('options-screen'));
+        document.getElementById('back-to-dashboard-btn-personnel').addEventListener('click', () => showScreen('dashboard-screen'));
 
         // Spreadsheet Template Download for Vehicles
         document.getElementById('download-template-btn').addEventListener('click', () => {
