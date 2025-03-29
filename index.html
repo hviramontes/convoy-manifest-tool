@@ -261,10 +261,53 @@
     </style>
 </head>
 <body>
-    <!-- Other sections unchanged -->
-    
+    <div id="splash">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Eagle%2C_Globe%2C_and_Anchor.svg/512px-Eagle%2C_Globe%2C_and_Anchor.svg.png" alt="USMC EGA">
+        <h1>USMC Convoy Manifest Tool</h1>
+        <p>Developed by [Your Name]</p>
+    </div>
+
     <div id="app">
-        <!-- Other screens unchanged -->
+        <div id="initial-screen" class="screen">
+            <h1>Welcome to the USMC Convoy Manifest Tool</h1>
+            <button id="new-user-btn">New User</button>
+            <button id="returning-user-btn" disabled>Returning User</button>
+        </div>
+
+        <div id="new-user-screen" class="screen" style="display: none;">
+            <h1>New User Registration</h1>
+            <form id="user-form">
+                <label for="rank">Rank:</label>
+                <input type="text" id="rank" name="rank" required>
+                <label for="last-name">Last Name:</label>
+                <input type="text" id="last-name" name="last-name" required>
+                <label for="first-name">First Name:</label>
+                <input type="text" id="first-name" name="first-name" required>
+                <label for="billet">Billet:</label>
+                <input type="text" id="billet" name="billet" required>
+                <label for="unit">Unit:</label>
+                <input type="text" id="unit" name="unit" required>
+                <button type="submit">Submit</button>
+            </form>
+            <button id="back-to-initial-btn-new">Back</button>
+        </div>
+
+        <div id="returning-user-screen" class="screen" style="display: none;">
+            <h1>Welcome Back</h1>
+            <label for="user-select">Select Your Profile:</label>
+            <select id="user-select"></select>
+            <button id="load-user-btn">Load Data</button>
+            <button id="back-to-initial-btn-returning">Back</button>
+        </div>
+
+        <div id="dashboard-screen" class="screen" style="display: none;">
+            <h1>Convoy Management Dashboard</h1>
+            <h2>Welcome, <span id="current-user-display"></span></h2>
+            <button id="manage-personnel-btn">Manage Personnel</button>
+            <button id="manage-vehicles-btn">Manage Vehicles</button>
+            <button id="manage-equipment-btn">Manage Equipment</button>
+            <button id="logout-btn">Logout</button>
+        </div>
 
         <div id="vehicles-screen" class="screen" style="display: none;">
             <h1>Manage Vehicles</h1>
@@ -291,23 +334,1270 @@
             </div>
         </div>
 
-        <!-- Other screens unchanged -->
+        <div id="manual-add-screen" class="screen" style="display: none;">
+            <h1>Manage Equipment</h1>
+            <button id="add-comm-gear-btn">Add Comm Gear</button>
+            <button id="add-water-containers-btn">Add Water Containers</button>
+            <button id="add-fuel-containers-btn">Add Fuel Containers</button>
+            <button id="add-weapons-btn">Add Weapons Systems</button>
+            <button id="back-to-dashboard-btn-equipment">Back to Dashboard</button>
+        </div>
+
+        <div id="add-comm-gear-screen" class="screen" style="display: none;">
+            <h1>Add Comm Gear</h1>
+            <div class="search-container">
+                <input type="text" id="comm-search" placeholder="Search Radio Type" list="comm-suggestions">
+                <datalist id="comm-suggestions"></datalist>
+                <button id="add-search-btn">Add</button>
+            </div>
+            <table id="comm-gear-table">
+                <thead>
+                    <tr>
+                        <th>Radio Type</th>
+                        <th>Serial Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="comm-gear-added"></tbody>
+            </table>
+            <button id="save-comm-gear-btn">Save</button>
+            <button id="back-to-manual-add-btn">Back</button>
+        </div>
+
+        <div id="add-water-containers-screen" class="screen" style="display: none;">
+            <h1>Add Water Containers</h1>
+            <div class="search-container">
+                <input type="text" id="water-search" placeholder="Search Water Container" list="water-suggestions">
+                <datalist id="water-suggestions"></datalist>
+                <button id="add-water-btn">Add</button>
+            </div>
+            <table id="water-container-table">
+                <thead>
+                    <tr>
+                        <th>Container Code</th>
+                        <th>Name</th>
+                        <th>Serial Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="water-container-added"></tbody>
+            </table>
+            <button id="save-water-btn">Save</button>
+            <button id="back-to-manual-add-btn-water">Back</button>
+        </div>
+
+        <div id="add-fuel-containers-screen" class="screen" style="display: none;">
+            <h1>Add Fuel Containers</h1>
+            <div class="search-container">
+                <input type="text" id="fuel-search" placeholder="Search Fuel Container" list="fuel-suggestions">
+                <datalist id="fuel-suggestions"></datalist>
+                <button id="add-fuel-btn">Add</button>
+            </div>
+            <table id="fuel-container-table">
+                <thead>
+                    <tr>
+                        <th>Container Code</th>
+                        <th>Name</th>
+                        <th>Serial Number</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="fuel-container-added"></tbody>
+            </table>
+            <button id="save-fuel-btn">Save</button>
+            <button id="back-to-manual-add-btn-fuel">Back</button>
+        </div>
+
+        <div id="add-vehicles-screen" class="screen" style="display: none;">
+            <h1>Add Vehicles</h1>
+            <table id="vehicles-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>TAMCN</th>
+                        <th>Vehicle Description</th>
+                        <th>Serial Number</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="vehicles-added"></tbody>
+            </table>
+            <button id="save-vehicles-btn">Save</button>
+            <button id="back-to-manual-add-btn-vehicles">Back</button>
+        </div>
+
+        <div id="add-weapons-screen" class="screen" style="display: none;">
+            <h1>Add Weapons Systems</h1>
+            <table id="weapons-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Serial Number</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="weapons-added"></tbody>
+            </table>
+            <button id="save-weapons-btn">Save</button>
+            <button id="back-to-manual-add-btn-weapons">Back</button>
+        </div>
+
+        <div id="personnel-screen" class="screen" style="display: none;">
+            <h1>Manage Personnel</h1>
+            <input type="file" id="personnel-spreadsheet-upload" accept=".xlsx">
+            <div id="personnel-upload-section">
+                <a id="download-personnel-template-btn" href="https://raw.githubusercontent.com/hviramontes/convoy-manifest-tool/refs/heads/main/Convoy%20Manifest%20Personnel%20Upload.xlsx" download="Convoy_Manifest_Personnel_Upload.xlsx">Download Personnel Template</a>
+                <button id="upload-personnel-spreadsheet-btn">Upload Personnel Spreadsheet</button>
+            </div>
+            <table id="personnel-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Last Name</th>
+                        <th>First Name</th>
+                        <th>Middle Initial</th>
+                        <th>Blood Type</th>
+                        <th>ZAP Number</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="personnel-added"></tbody>
+            </table>
+            <div id="personnel-controls">
+                <button id="back-to-dashboard-btn-personnel">Back to Dashboard</button>
+                <button id="add-personnel-btn">Add New Person</button>
+            </div>
+        </div>
+
+        <div id="personnel-form-popup" class="popup">
+            <div class="popup-content">
+                <h2>Add New Person</h2>
+                <form id="personnel-form">
+                    <div class="form-columns">
+                        <div class="form-column">
+                            <h3>Marine Info</h3>
+                            <label for="personnel-rank">Rank:</label>
+                            <select id="personnel-rank" name="rank" required></select>
+                            <label for="personnel-last-name">Last Name:</label>
+                            <input type="text" id="personnel-last-name" name="last-name" required>
+                            <label for="personnel-first-name">First Name:</label>
+                            <input type="text" id="personnel-first-name" name="first-name" required>
+                            <label for="personnel-middle-initial">Middle Initial:</label>
+                            <input type="text" id="personnel-middle-initial" name="middle-initial" maxlength="1">
+                            <label for="personnel-blood-type">Blood Type:</label>
+                            <select id="personnel-blood-type" name="blood-type" required>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                            <label for="personnel-zap-number">Zap Number:</label>
+                            <input type="text" id="personnel-zap-number" name="zap-number" required>
+                            <label>Licenses:</label>
+                            <button type="button" id="select-licenses-btn">Select Licenses</button>
+                            <input type="hidden" id="personnel-licenses" name="licenses">
+                        </div>
+                        <div class="form-column">
+                            <h3>Weapons/Optics</h3>
+                            <label for="personnel-m4-serial">M4 Serial Number:</label>
+                            <input type="text" id="personnel-m4-serial" name="m4-serial">
+                            <label for="personnel-m9-serial">M9 Serial Number:</label>
+                            <input type="text" id="personnel-m9-serial" name="m9-serial">
+                            <label for="personnel-rco-serial">RCO Serial Number:</label>
+                            <input type="text" id="personnel-rco-serial" name="rco-serial">
+                            <label for="personnel-nvg-serial">NVG Serial Number:</label>
+                            <input type="text" id="personnel-nvg-serial" name="nvg-serial">
+                            <label for="personnel-peq-serial">PEQ Serial Number:</label>
+                            <input type="text" id="personnel-peq-serial" name="peq-serial">
+                            <label for="personnel-misc-gear">Miscellaneous Gear:</label>
+                            <input type="text" id="personnel-misc-gear" name="misc-gear">
+                        </div>
+                    </div>
+                    <button type="submit">Save</button>
+                    <button type="button" id="cancel-personnel-form">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="licenses-popup" class="popup">
+            <div class="popup-content">
+                <h2>Select Licenses</h2>
+                <div id="licenses-checkboxes" class="checkbox-list"></div>
+                <button id="save-licenses-btn">Save</button>
+                <button id="cancel-licenses-btn">Cancel</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            UNCLASSIFIED
+        </div>
     </div>
 
     <script>
-        // JavaScript remains unchanged unless additional functionality is needed
-        // Only showing relevant event listeners for #vehicles-screen for brevity
+        // Data definitions
+        const radioTypes = [
+            "AN/PRC-117F", "AN/PRC-117G", "AN/PRC-148 (MBITR)", "AN/PRC-150", "AN/PRC-152",
+            "AN/PRC-154", "AN/PRC-155", "AN/PRC-163", "(MIDS) JTRS", "AN/PRC-119", "AN/PRC-153 (IISR)"
+        ];
 
+        const waterContainerData = {
+            "B2086": "SIXCON Water Storage Module",
+            "D0880": "M149 Water Trailer ('Water Bull')",
+            "D0882": "MTVR Water Trailer (MK149)"
+        };
+
+        const fuelContainerData = {
+            "B2085": "Fuel SIXCON",
+            "D0211": "Flatrack Refueler",
+            "D0215": "M970 Refueler"
+        };
+
+        const vehicleData = {
+            "D0003": "TRUCK, ARMORED, CARGO 7 TON, W/O WINCH NON-REDUCIBLE W/DFCS",
+            "D0005": "TRUCK, ARMORED, XLWB CARGO, 7 TON, W/O WINCH, NON REDUCIBLE",
+            "D0007": "TRUCK, ARMORED, DUMP 7-TON W/O WINCH NON-REDUCIBLE",
+            "D0009": "TRUCK TRACTOR",
+            "D0011": "CARRIER, TROOP, ARMORED, MTVR",
+            "D0013": "TRUCK, ARMORED, TRACTOR, 7 TON, W/O WINCH, REDUCIBLE",
+            "D0015": "TRUCK, ARMORED, WRECKER, 7 TON, W/WINCH REDUCIBLE",
+            "D0016": "TRAILER, CARGO (LTT-H)",
+            "D0022": "TRUCK, UTILITY: EXPANDED CAPACITY, ENHANCED, 11,500 GVW, 4X4, M1152, 2 DOOR",
+            "D0026": "JLTV SHELTER AMBULANCE",
+            "D0045": "GENERAL PURPOSE JOINT LIGHT TACTICAL VEHICLE (JLTV)",
+            "D0046": "HVY GUNS CARRIER JLTV",
+            "D0048": "UTILITY JLTV",
+            "D0052": "LVSR, ARMORED CARGO VARIANT",
+            "D0053": "LVSR, ARMORED TRACTOR VARIANT",
+            "D0054": "LVSR, ARMORED WRECKER VARIANT",
+            "D0187": "TRK, UTIL, HVY, 2 1/4T, HMMWV",
+            "D0198": "TRUCK, CARGO, 7 TON, W/O WINCH",
+            "D0886": "TRUCK CARGO 22.5 TON, 10X10, (LVSR)",
+            "D0887": "TRUCK, TRACTOR, 10X10 (LVSR)",
+            "D1001": "TRK, AMBUL, 4-LTR, ARMD, 2 1/4T, HMMWV",
+            "D1002": "TRK, AMBUL, 2-LTR, SOFT TOP, 2 1/4T, HMMWV",
+            "D1062": "TRUCK, CARGO, 7 TON, XLWB, W/ WINCH",
+            "D1073": "TRUCK, DUMP, 7 TON, W/O WINCH",
+            "D1158": "TRK, UTIL, CARGO/TRP CARR, 1 1/4T, W/EQP, HMMWV",
+            "D1214": "TRUCK, WRECKER, 10X10 (LVSR)"
+        };
+
+        const vehicleModelNames = {
+            "D0003": "MK23", "D0005": "MK25", "D0007": "MK29", "D0009": "MK31",
+            "D0011": "MK27 or MK28 (Troop Carrier Variants)", "D0013": "MK31 (Tractor Variant)",
+            "D0015": "MK36 Wrecker", "D0016": "M1102 (or LTT Trailer Series)", "D0022": "M1152 HMMWV",
+            "D0026": "JLTV Ambulance Variant", "D0045": "JLTV GP", "D0046": "JLTV Heavy Guns Carrier Variant",
+            "D0048": "JLTV Utility Variant", "D0052": "MKR18 Cargo", "D0053": "MKR16 Tractor",
+            "D0054": "MKR15 Wrecker", "D0187": "M998 or M1151 HMMWV", "D0198": "MK23",
+            "D0886": "MKR18 Cargo", "D0887": "MKR16 Tractor", "D1001": "M997 (Armored Ambulance)",
+            "D1002": "M1035 (Soft Top Ambulance)", "D1062": "MK28", "D1073": "MK30",
+            "D1158": "M1097 or M1152 HMMWV", "D1214": "MKR15 Wrecker"
+        };
+
+        const weaponsData = {
+            "E0011": "M2 .50 Caliber Machine Gun",
+            "E0178": "M240G 7.62mm Medium Machine Gun",
+            "E0845": "MK19 40mm Grenade Machine Gun"
+        };
+
+        const weaponsModelNames = {
+            "E0011": "M2", "E0178": "M240G", "E0845": "MK19"
+        };
+
+        const usmcRanks = [
+            "Pvt", "PFC", "LCpl", "Cpl", "Sgt", "SSgt", "GySgt", "MSgt", "1stSgt",
+            "MGySgt", "SgtMaj", "2ndLt", "1stLt", "Capt", "Maj", "LtCol", "Col",
+            "BGen", "MajGen", "LtGen", "Gen"
+        ];
+
+        const militaryLicenses = [
+            "HMMWV (Up to 1-1/4 Ton)", "MTVR (7 Ton)", "LVSR (10 Ton)", "JLTV (All Variants)",
+            "M88 (Recovery Vehicle)", "M939 (5 Ton)", "HEMTT (10 Ton)", "PLS (Palletized Load System)",
+            "Tactical Trailer (LTT/M149)", "Ambulance (HMMWV/JLTV Variants)", "MOS 3521 (Mechanic - General)",
+            "MOS 3531 (Operator - General)", "HazMat Endorsement"
+        ];
+
+        const validBloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+
+        // Screen management
+        function showScreen(screenId) {
+            document.querySelectorAll('#app .screen').forEach(screen => screen.style.display = 'none');
+            document.getElementById(screenId).style.display = 'block';
+        }
+
+        // Splash screen transition
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splash');
+            const app = document.getElementById('app');
+            if (!splash || !app) {
+                console.error("Splash or app element not found in DOM");
+                return;
+            }
+            setTimeout(() => {
+                splash.style.display = 'none';
+                app.style.display = 'block';
+            }, 5000);
+        });
+
+        // Check for existing users
+        const users = JSON.parse(localStorage.getItem('users')) || {};
+        if (Object.keys(users).length > 0) {
+            document.getElementById('returning-user-btn').disabled = false;
+        }
+
+        // Initial screen buttons
+        document.getElementById('new-user-btn').addEventListener('click', () => showScreen('new-user-screen'));
+        document.getElementById('returning-user-btn').addEventListener('click', () => {
+            showScreen('returning-user-screen');
+            const userSelect = document.getElementById('user-select');
+            userSelect.innerHTML = '';
+            Object.keys(users).forEach(key => {
+                const user = users[key];
+                userSelect.innerHTML += `<option value="${key}">${user.rank} ${user.lastName}, ${user.firstName} (${user.unit})</option>`;
+            });
+        });
+
+        // New user screen buttons
+        document.getElementById('user-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const user = {
+                rank: document.getElementById('rank').value,
+                lastName: document.getElementById('last-name').value,
+                firstName: document.getElementById('first-name').value,
+                billet: document.getElementById('billet').value,
+                unit: document.getElementById('unit').value
+            };
+            const userKey = `${user.rank}_${user.lastName}_${user.firstName}`.toLowerCase().replace(/\s+/g, '');
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            users[userKey] = user;
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', userKey);
+            showScreen('dashboard-screen');
+            updateDashboard();
+        });
+        document.getElementById('back-to-initial-btn-new').addEventListener('click', () => showScreen('initial-screen'));
+
+        // Returning user screen buttons
+        document.getElementById('load-user-btn').addEventListener('click', () => {
+            const userKey = document.getElementById('user-select').value;
+            localStorage.setItem('currentUser', userKey);
+            alert('Data loaded for ' + userKey);
+            showScreen('dashboard-screen');
+            updateDashboard();
+        });
+        document.getElementById('back-to-initial-btn-returning').addEventListener('click', () => showScreen('initial-screen'));
+
+        // Dashboard screen buttons
+        document.getElementById('manage-personnel-btn').addEventListener('click', () => {
+            showScreen('personnel-screen');
+            loadPersonnelRows();
+        });
         document.getElementById('manage-vehicles-btn').addEventListener('click', () => {
             showScreen('vehicles-screen');
             loadVehicleRows();
         });
+        document.getElementById('manage-equipment-btn').addEventListener('click', () => {
+            showScreen('manual-add-screen');
+            loadCommGearRows();
+            loadWaterContainerRows();
+            loadFuelContainerRows();
+            loadWeaponsRows();
+        });
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            showScreen('initial-screen');
+        });
 
+        function updateDashboard() {
+            const currentUser = localStorage.getItem('currentUser');
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            const user = users[currentUser];
+            if (user) {
+                document.getElementById('current-user-display').textContent = `${user.rank} ${user.lastName}, ${user.firstName}`;
+            }
+        }
+
+        // Vehicles screen buttons
         document.getElementById('manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
         document.getElementById('upload-spreadsheet-btn').addEventListener('click', handleSpreadsheetUpload);
         document.getElementById('back-to-dashboard-btn-vehicles').addEventListener('click', () => showScreen('dashboard-screen'));
 
-        // Other JavaScript logic unchanged
+        // Manual add screen buttons
+        document.getElementById('add-comm-gear-btn').addEventListener('click', () => {
+            showScreen('add-comm-gear-screen');
+            loadCommGearRows();
+        });
+        document.getElementById('add-water-containers-btn').addEventListener('click', () => {
+            showScreen('add-water-containers-screen');
+            loadWaterContainerRows();
+        });
+        document.getElementById('add-fuel-containers-btn').addEventListener('click', () => {
+            showScreen('add-fuel-containers-screen');
+            loadFuelContainerRows();
+        });
+        document.getElementById('add-weapons-btn').addEventListener('click', () => {
+            showScreen('add-weapons-screen');
+            loadWeaponsRows();
+        });
+        document.getElementById('back-to-dashboard-btn-equipment').addEventListener('click', () => showScreen('dashboard-screen'));
+
+        // Comm Gear logic
+        const commSearchInput = document.getElementById('comm-search');
+        const commSuggestions = document.getElementById('comm-suggestions');
+        const commAddedTable = document.getElementById('comm-gear-added');
+
+        radioTypes.forEach(type => {
+            commSuggestions.innerHTML += `<option value="${type}"></option>`;
+        });
+
+        document.getElementById('add-search-btn').addEventListener('click', () => {
+            const query = commSearchInput.value.trim().toUpperCase();
+            const match = radioTypes.find(type => type.toUpperCase() === query);
+            if (match) {
+                commAddedTable.appendChild(createCommGearRow(match));
+                commSearchInput.value = '';
+            } else {
+                alert('No matching radio type found. Please select from the suggestions.');
+            }
+        });
+
+        function createCommGearRow(radioType, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${radioType}</td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
+            return row;
+        }
+
+        function loadCommGearRows() {
+            commAddedTable.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedGear = (userData[currentUser] && userData[currentUser].commGear) || [];
+                savedGear.forEach(gear => commAddedTable.appendChild(createCommGearRow(gear.radioType, gear.serial)));
+            }
+        }
+
+        document.getElementById('save-comm-gear-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = commAddedTable.querySelectorAll('tr');
+            const gearList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const radioType = row.cells[0].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    gearList.push({ radioType, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (gearList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].commGear = gearList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Comm Gear saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+        document.getElementById('back-to-manual-add-btn').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Water Containers logic
+        const waterSearchInput = document.getElementById('water-search');
+        const waterSuggestions = document.getElementById('water-suggestions');
+        const waterAddedTable = document.getElementById('water-container-added');
+
+        Object.entries(waterContainerData).forEach(([code, name]) => {
+            waterSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
+        });
+
+        document.getElementById('add-water-btn').addEventListener('click', () => {
+            const query = waterSearchInput.value.trim().toUpperCase();
+            const match = Object.keys(waterContainerData).find(code => code === query) || 
+                         Object.values(waterContainerData).find(name => name.toUpperCase() === query);
+            const code = Object.keys(waterContainerData).find(c => waterContainerData[c] === match || c === query);
+            const name = waterContainerData[code];
+            if (code && name) {
+                waterAddedTable.appendChild(createWaterContainerRow(code, name));
+                waterSearchInput.value = '';
+            } else {
+                alert('No matching water container found. Please select from the suggestions.');
+            }
+        });
+
+        function createWaterContainerRow(code, name, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${code}</td>
+                <td>${name}</td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
+            return row;
+        }
+
+        function loadWaterContainerRows() {
+            waterAddedTable.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedContainers = (userData[currentUser] && userData[currentUser].waterContainers) || [];
+                savedContainers.forEach(container => waterAddedTable.appendChild(createWaterContainerRow(container.code, container.name, container.serial)));
+            }
+        }
+
+        document.getElementById('save-water-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = waterAddedTable.querySelectorAll('tr');
+            const containerList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    containerList.push({ code, name, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (containerList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].waterContainers = containerList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Water Containers saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+        document.getElementById('back-to-manual-add-btn-water').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Fuel Containers logic
+        const fuelSearchInput = document.getElementById('fuel-search');
+        const fuelSuggestions = document.getElementById('fuel-suggestions');
+        const fuelAddedTable = document.getElementById('fuel-container-added');
+
+        Object.entries(fuelContainerData).forEach(([code, name]) => {
+            fuelSuggestions.innerHTML += `<option value="${code}">${name}</option>`;
+        });
+
+        document.getElementById('add-fuel-btn').addEventListener('click', () => {
+            const query = fuelSearchInput.value.trim().toUpperCase();
+            const match = Object.keys(fuelContainerData).find(code => code === query) || 
+                         Object.values(fuelContainerData).find(name => name.toUpperCase() === query);
+            const code = Object.keys(fuelContainerData).find(c => fuelContainerData[c] === match || c === query);
+            const name = fuelContainerData[code];
+            if (code && name) {
+                fuelAddedTable.appendChild(createFuelContainerRow(code, name));
+                fuelSearchInput.value = '';
+            } else {
+                alert('No matching fuel container found. Please select from the suggestions.');
+            }
+        });
+
+        function createFuelContainerRow(code, name, serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${code}</td>
+                <td>${name}</td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required><div class="error-message">Missing Serial Number</div></td>
+                <td><button class="delete-btn">Delete</button></td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
+            return row;
+        }
+
+        function loadFuelContainerRows() {
+            fuelAddedTable.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedContainers = (userData[currentUser] && userData[currentUser].fuelContainers) || [];
+                savedContainers.forEach(container => fuelAddedTable.appendChild(createFuelContainerRow(container.code, container.name, container.serial)));
+            }
+        }
+
+        document.getElementById('save-fuel-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = fuelAddedTable.querySelectorAll('tr');
+            const containerList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.cells[0].textContent;
+                const name = row.cells[1].textContent;
+                const serialInput = row.querySelector('.serial-input');
+                const serial = serialInput.value.trim();
+                const errorMessage = row.querySelector('.error-message');
+                if (serial) {
+                    containerList.push({ code, name, serial });
+                    errorMessage.style.display = 'none';
+                } else {
+                    allValid = false;
+                    errorMessage.style.display = 'block';
+                }
+            });
+            if (!allValid) {
+                alert('Please enter serial numbers for all added items.');
+            } else if (containerList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].fuelContainers = containerList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Fuel Containers saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No items to save.');
+            }
+        });
+        document.getElementById('back-to-manual-add-btn-fuel').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Vehicles logic
+        function createVehicleRow(tamcn = '', model = '', description = '', serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><select class="model-select">${Object.keys(vehicleModelNames).map(t => `<option value="${vehicleModelNames[t]}" ${vehicleModelNames[t] === model ? 'selected' : ''}>${vehicleModelNames[t]}</option>`).join('')}</select></td>
+                <td><select class="tamcn-select">${Object.keys(vehicleData).map(t => `<option value="${t}" ${t === tamcn ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
+                <td><select class="description-select">${Object.values(vehicleData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
+                <td><button class="add-row-btn">+</button></td>
+            `;
+            const modelSelect = row.querySelector('.model-select');
+            const tamcnSelect = row.querySelector('.tamcn-select');
+            const descriptionSelect = row.querySelector('.description-select');
+            const serialInput = row.querySelector('.serial-input');
+
+            tamcnSelect.addEventListener('change', () => {
+                const selectedTamcn = tamcnSelect.value;
+                modelSelect.value = vehicleModelNames[selectedTamcn] || '';
+                descriptionSelect.value = vehicleData[selectedTamcn] || '';
+            });
+
+            modelSelect.addEventListener('change', () => {
+                const selectedModel = modelSelect.value;
+                const matchingTamcn = Object.keys(vehicleModelNames).find(t => vehicleModelNames[t] === selectedModel);
+                if (matchingTamcn) {
+                    tamcnSelect.value = matchingTamcn;
+                    descriptionSelect.value = vehicleData[matchingTamcn] || '';
+                }
+            });
+
+            descriptionSelect.addEventListener('change', () => {
+                const selectedDescription = descriptionSelect.value;
+                const matchingTamcn = Object.keys(vehicleData).find(t => vehicleData[t] === selectedDescription);
+                if (matchingTamcn) {
+                    tamcnSelect.value = matchingTamcn;
+                    modelSelect.value = vehicleModelNames[matchingTamcn] || '';
+                }
+            });
+
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                if (!serialInput.value.trim()) {
+                    alert('Please enter a serial number before adding a new row.');
+                } else {
+                    document.getElementById('vehicles-added').appendChild(createVehicleRow());
+                }
+            });
+
+            return row;
+        }
+
+        function loadVehicleRows() {
+            const tbody = document.getElementById('vehicles-added');
+            tbody.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedVehicles = (userData[currentUser] && userData[currentUser].vehicles) || [];
+                if (savedVehicles.length > 0) {
+                    savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.model, vehicle.description, vehicle.serial)));
+                } else {
+                    tbody.appendChild(createVehicleRow());
+                }
+            } else {
+                tbody.appendChild(createVehicleRow());
+            }
+        }
+
+        document.getElementById('save-vehicles-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = document.querySelectorAll('#vehicles-added tr');
+            const vehicleList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const tamcn = row.querySelector('.tamcn-select').value;
+                const model = row.querySelector('.model-select').value;
+                const description = row.querySelector('.description-select').value;
+                const serial = row.querySelector('.serial-input').value.trim();
+                if (tamcn && model && description && serial) {
+                    vehicleList.push({ tamcn, model, description, serial });
+                } else if (tamcn || model || description || serial) {
+                    allValid = false;
+                }
+            });
+            if (!allValid) {
+                alert('Please complete all fields (Model, TAMCN, Description, and Serial Number) for each row.');
+            } else if (vehicleList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].vehicles = vehicleList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Vehicles saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No valid entries to save.');
+            }
+        });
+        document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Weapons Systems logic
+        function createWeaponsRow(code = '', model = '', description = '', serial = '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><select class="model-select">${Object.keys(weaponsModelNames).map(c => `<option value="${weaponsModelNames[c]}" ${weaponsModelNames[c] === model ? 'selected' : ''}>${weaponsModelNames[c]}</option>`).join('')}</select></td>
+                <td><select class="code-select">${Object.keys(weaponsData).map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('')}</select></td>
+                <td><select class="description-select">${Object.values(weaponsData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
+                <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
+                <td><button class="add-row-btn">+</button></td>
+            `;
+            const modelSelect = row.querySelector('.model-select');
+            const codeSelect = row.querySelector('.code-select');
+            const descriptionSelect = row.querySelector('.description-select');
+            const serialInput = row.querySelector('.serial-input');
+
+            codeSelect.addEventListener('change', () => {
+                const selectedCode = codeSelect.value;
+                modelSelect.value = weaponsModelNames[selectedCode] || '';
+                descriptionSelect.value = weaponsData[selectedCode] || '';
+            });
+
+            modelSelect.addEventListener('change', () => {
+                const selectedModel = modelSelect.value;
+                const matchingCode = Object.keys(weaponsModelNames).find(c => weaponsModelNames[c] === selectedModel);
+                if (matchingCode) {
+                    codeSelect.value = matchingCode;
+                    descriptionSelect.value = weaponsData[matchingCode] || '';
+                }
+            });
+
+            descriptionSelect.addEventListener('change', () => {
+                const selectedDescription = descriptionSelect.value;
+                const matchingCode = Object.keys(weaponsData).find(c => weaponsData[c] === selectedDescription);
+                if (matchingCode) {
+                    codeSelect.value = matchingCode;
+                    modelSelect.value = weaponsModelNames[matchingCode] || '';
+                }
+            });
+
+            row.querySelector('.add-row-btn').addEventListener('click', () => {
+                if (!serialInput.value.trim()) {
+                    alert('Please enter a serial number before adding a new row.');
+                } else {
+                    document.getElementById('weapons-added').appendChild(createWeaponsRow());
+                }
+            });
+
+            return row;
+        }
+
+        function loadWeaponsRows() {
+            const tbody = document.getElementById('weapons-added');
+            tbody.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedWeapons = (userData[currentUser] && userData[currentUser].weapons) || [];
+                if (savedWeapons.length > 0) {
+                    savedWeapons.forEach(weapon => tbody.appendChild(createWeaponsRow(weapon.code, weapon.model, weapon.description, weapon.serial)));
+                } else {
+                    tbody.appendChild(createWeaponsRow());
+                }
+            } else {
+                tbody.appendChild(createWeaponsRow());
+            }
+        }
+
+        document.getElementById('save-weapons-btn').addEventListener('click', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = document.querySelectorAll('#weapons-added tr');
+            const weaponList = [];
+            let allValid = true;
+            rows.forEach(row => {
+                const code = row.querySelector('.code-select').value;
+                const model = row.querySelector('.model-select').value;
+                const description = row.querySelector('.description-select').value;
+                const serial = row.querySelector('.serial-input').value.trim();
+                if (code && model && description && serial) {
+                    weaponList.push({ code, model, description, serial });
+                } else if (code || model || description || serial) {
+                    allValid = false;
+                }
+            });
+            if (!allValid) {
+                alert('Please complete all fields (Model, Code, Description, and Serial Number) for each row.');
+            } else if (weaponList.length > 0) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+                userData[currentUser].weapons = weaponList;
+                localStorage.setItem('userData', JSON.stringify(userData));
+                alert('Weapons Systems saved for ' + currentUser + '!');
+                showScreen('manual-add-screen');
+            } else {
+                alert('No valid entries to save.');
+            }
+        });
+        document.getElementById('back-to-manual-add-btn-weapons').addEventListener('click', () => showScreen('manual-add-screen'));
+
+        // Personnel logic
+        const personnelAddedTable = document.getElementById('personnel-added');
+        const personnelFormPopup = document.getElementById('personnel-form-popup');
+        const personnelRankSelect = document.getElementById('personnel-rank');
+        const licensesPopup = document.getElementById('licenses-popup');
+        const licensesCheckboxes = document.getElementById('licenses-checkboxes');
+
+        usmcRanks.forEach(rank => {
+            personnelRankSelect.innerHTML += `<option value="${rank}">${rank}</option>`;
+        });
+
+        militaryLicenses.forEach(license => {
+            licensesCheckboxes.innerHTML += `
+                <label><input type="checkbox" name="license" value="${license}"> ${license}</label><br>
+            `;
+        });
+
+        document.getElementById('add-personnel-btn').addEventListener('click', () => {
+            personnelFormPopup.style.display = 'flex';
+            document.getElementById('personnel-form').reset();
+            document.getElementById('personnel-licenses').value = '';
+            document.querySelector('#personnel-form-popup h2').textContent = 'Add New Person';
+            document.getElementById('personnel-form').dataset.mode = 'add';
+        });
+
+        document.getElementById('cancel-personnel-form').addEventListener('click', () => {
+            personnelFormPopup.style.display = 'none';
+        });
+
+        document.getElementById('select-licenses-btn').addEventListener('click', () => {
+            licensesPopup.style.display = 'flex';
+            const currentLicenses = document.getElementById('personnel-licenses').value.split(',').filter(Boolean);
+            licensesCheckboxes.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = currentLicenses.includes(checkbox.value);
+            });
+        });
+
+        document.getElementById('save-licenses-btn').addEventListener('click', () => {
+            const selectedLicenses = Array.from(licensesCheckboxes.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+            document.getElementById('personnel-licenses').value = selectedLicenses.join(',');
+            licensesPopup.style.display = 'none';
+        });
+
+        document.getElementById('cancel-licenses-btn').addEventListener('click', () => {
+            licensesPopup.style.display = 'none';
+        });
+
+        function createPersonnelRow(person, index) {
+            const row = document.createElement('tr');
+            row.dataset.person = JSON.stringify(person);
+            row.dataset.index = index;
+            row.innerHTML = `
+                <td>${person.rank}</td>
+                <td>${person.lastName}</td>
+                <td>${person.firstName}</td>
+                <td>${person.middleInitial || ''}</td>
+                <td>${person.bloodType}</td>
+                <td>${person.zapNumber}</td>
+                <td>
+                    <button class="manage-btn">Manage</button>
+                    <button class="delete-btn">Delete</button>
+                </td>
+            `;
+            row.querySelector('.delete-btn').addEventListener('click', () => {
+                row.remove();
+                savePersonnelData();
+            });
+            row.querySelector('.manage-btn').addEventListener('click', () => {
+                const personData = JSON.parse(row.dataset.person);
+                const idx = row.dataset.index;
+                populatePersonnelForm(personData, idx);
+            });
+            return row;
+        }
+
+        function populatePersonnelForm(person, index) {
+            personnelFormPopup.style.display = 'flex';
+            document.querySelector('#personnel-form-popup h2').textContent = 'Edit Person';
+            document.getElementById('personnel-form').dataset.mode = 'edit';
+            document.getElementById('personnel-form').dataset.index = index;
+
+            document.getElementById('personnel-rank').value = person.rank;
+            document.getElementById('personnel-last-name').value = person.lastName;
+            document.getElementById('personnel-first-name').value = person.firstName;
+            document.getElementById('personnel-middle-initial').value = person.middleInitial || '';
+            document.getElementById('personnel-blood-type').value = person.bloodType;
+            document.getElementById('personnel-zap-number').value = person.zapNumber;
+            document.getElementById('personnel-licenses').value = (person.licenses || []).join(',');
+            document.getElementById('personnel-m4-serial').value = person.m4Serial || '';
+            document.getElementById('personnel-m9-serial').value = person.m9Serial || '';
+            document.getElementById('personnel-rco-serial').value = person.rcoSerial || '';
+            document.getElementById('personnel-nvg-serial').value = person.nvgSerial || '';
+            document.getElementById('personnel-peq-serial').value = person.peqSerial || '';
+            document.getElementById('personnel-misc-gear').value = person.miscGear || '';
+        }
+
+        function loadPersonnelRows() {
+            personnelAddedTable.innerHTML = '';
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                const savedPersonnel = (userData[currentUser] && userData[currentUser].personnel) || [];
+                savedPersonnel.forEach((person, index) => personnelAddedTable.appendChild(createPersonnelRow(person, index)));
+            }
+        }
+
+        function savePersonnelData() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('No user logged in. Please register first.');
+                showScreen('initial-screen');
+                return;
+            }
+            const rows = personnelAddedTable.querySelectorAll('tr');
+            const personnelList = [];
+            rows.forEach(row => {
+                const person = JSON.parse(row.dataset.person);
+                personnelList.push(person);
+            });
+            const userData = JSON.parse(localStorage.getItem('userData')) || {};
+            if (!userData[currentUser]) userData[currentUser] = {};
+            userData[currentUser].personnel = personnelList;
+            localStorage.setItem('userData', JSON.stringify(userData));
+        }
+
+        document.getElementById('personnel-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const mode = document.getElementById('personnel-form').dataset.mode;
+            const person = {
+                rank: document.getElementById('personnel-rank').value,
+                lastName: document.getElementById('personnel-last-name').value,
+                firstName: document.getElementById('personnel-first-name').value,
+                middleInitial: document.getElementById('personnel-middle-initial').value,
+                bloodType: document.getElementById('personnel-blood-type').value,
+                zapNumber: document.getElementById('personnel-zap-number').value,
+                licenses: document.getElementById('personnel-licenses').value.split(',').filter(Boolean),
+                m4Serial: document.getElementById('personnel-m4-serial').value,
+                m9Serial: document.getElementById('personnel-m9-serial').value,
+                rcoSerial: document.getElementById('personnel-rco-serial').value,
+                nvgSerial: document.getElementById('personnel-nvg-serial').value,
+                peqSerial: document.getElementById('personnel-peq-serial').value,
+                miscGear: document.getElementById('personnel-misc-gear').value
+            };
+
+            if (mode === 'edit') {
+                const index = parseInt(document.getElementById('personnel-form').dataset.index, 10);
+                const rows = personnelAddedTable.querySelectorAll('tr');
+                if (index >= 0 && index < rows.length) {
+                    rows[index].dataset.person = JSON.stringify(person);
+                    rows[index].innerHTML = `
+                        <td>${person.rank}</td>
+                        <td>${person.lastName}</td>
+                        <td>${person.firstName}</td>
+                        <td>${person.middleInitial || ''}</td>
+                        <td>${person.bloodType}</td>
+                        <td>${person.zapNumber}</td>
+                        <td>
+                            <button class="manage-btn">Manage</button>
+                            <button class="delete-btn">Delete</button>
+                        </td>
+                    `;
+                    rows[index].querySelector('.delete-btn').addEventListener('click', () => {
+                        rows[index].remove();
+                        savePersonnelData();
+                    });
+                    rows[index].querySelector('.manage-btn').addEventListener('click', () => {
+                        populatePersonnelForm(person, index);
+                    });
+                }
+                savePersonnelData();
+                alert('Personnel updated successfully!');
+            } else {
+                personnelAddedTable.appendChild(createPersonnelRow(person, personnelAddedTable.children.length));
+                savePersonnelData();
+                alert('Personnel added successfully!');
+            }
+            personnelFormPopup.style.display = 'none';
+        });
+
+        document.getElementById('back-to-dashboard-btn-personnel').addEventListener('click', () => showScreen('dashboard-screen'));
+
+        // Spreadsheet Template Download for Vehicles
+        document.getElementById('download-template-btn').addEventListener('click', () => {
+            const wb = XLSX.utils.book_new();
+            const testData = [
+                ['Model', 'TAMCN', 'Description', 'Serial Number'],
+                ['MK23', 'D0003', 'TRUCK, ARMORED, CARGO 7 TON, W/O WINCH NON-REDUCIBLE W/DFCS', '']
+            ];
+            const ws = XLSX.utils.aoa_to_sheet(testData);
+            wb.Sheets['Vehicle Template'] = ws;
+            wb.Props = { Title: "Vehicle Manifest Template", Subject: "USMC Convoy Manifest", Author: "Grok 3", CreatedDate: new Date() };
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'binary' });
+            const blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'vehicle_manifest_template.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        });
+
+        function s2ab(s) {
+            const buf = new ArrayBuffer(s.length);
+            const view = new Uint8Array(buf);
+            for (let i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
+
+        // Spreadsheet Upload Logic for Vehicles
+        function handleSpreadsheetUpload() {
+            const fileInput = document.getElementById('spreadsheet-upload');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select a file to upload.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    alert('No user logged in. Please register first.');
+                    showScreen('initial-screen');
+                    return;
+                }
+
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+
+                const vehicles = [];
+                jsonData.slice(1).forEach(row => {
+                    if (row.length >= 4) {
+                        const [model, tamcn, description, serial] = row;
+                        if (model && tamcn && description && serial) {
+                            vehicles.push({ model, tamcn, description, serial });
+                        }
+                    }
+                });
+
+                if (vehicles.length > 0) {
+                    userData[currentUser].vehicles = (userData[currentUser].vehicles || []).concat(vehicles);
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    alert(`Uploaded ${vehicles.length} vehicles successfully!`);
+                    loadVehicleRows();
+                } else {
+                    alert('No valid vehicle data found in the spreadsheet.');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Spreadsheet Upload Logic for Personnel
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadBtn = document.getElementById('upload-personnel-spreadsheet-btn');
+            if (uploadBtn) {
+                uploadBtn.addEventListener('click', handlePersonnelSpreadsheetUpload);
+            } else {
+                console.error('Upload button not found in DOM');
+            }
+        });
+
+        function handlePersonnelSpreadsheetUpload() {
+            console.log('Upload button clicked');
+            const fileInput = document.getElementById('personnel-spreadsheet-upload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                console.log('No file selected');
+                alert('Please select a file to upload.');
+                return;
+            }
+            
+            console.log('File selected:', file.name);
+            
+            if (typeof XLSX === 'undefined') {
+                console.error('SheetJS library (XLSX) is not loaded');
+                alert('Error: The spreadsheet processing library failed to load.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    console.log('File loaded, processing...');
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    
+                    const range = XLSX.utils.decode_range(firstSheet['!ref'] || 'A1:L1');
+                    let lastRow = 1;
+                    for (let rowNum = 2; rowNum <= range.e.r + 1; rowNum++) {
+                        let hasData = false;
+                        for (let colNum = 0; colNum <= 11; colNum++) {
+                            const cellAddress = XLSX.utils.encode_cell({ r: rowNum - 1, c: colNum });
+                            if (firstSheet[cellAddress] && firstSheet[cellAddress].v) {
+                                hasData = true;
+                                break;
+                            }
+                        }
+                        if (hasData) {
+                            lastRow = rowNum;
+                        } else {
+                            break;
+                        }
+                    }
+                    
+                    const customRange = {
+                        s: { c: 0, r: 0 },
+                        e: { c: 11, r: lastRow - 1 }
+                    };
+                    
+                    console.log('Processing range:', XLSX.utils.encode_range(customRange));
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, range: customRange });
+                    console.log('Parsed data (A-L only):', jsonData);
+                    
+                    const currentUser = localStorage.getItem('currentUser');
+                    if (!currentUser) {
+                        alert('No user logged in. Please register first.');
+                        showScreen('initial-screen');
+                        return;
+                    }
+
+                    const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                    if (!userData[currentUser]) userData[currentUser] = {};
+
+                    const headers = jsonData[0];
+                    console.log('Headers:', headers);
+                    const personnel = [];
+                    let invalidRows = [];
+
+                    const headerMap = {
+                        'Rank': 'rank',
+                        'Last Name': 'lastName',
+                        'First Name': 'firstName',
+                        'Middle Init': 'middleInitial',
+                        'Blood Type': 'bloodType',
+                        'Zap Number': 'zapNumber',
+                        'M4 Serial': 'm4Serial',
+                        'M9 Serial': 'm9Serial',
+                        'RCO Serial': 'rcoSerial',
+                        'NVG Serial': 'nvgSerial',
+                        'PEQ Serial': 'peqSerial',
+                        'Miscellaneous Gear': 'miscGear'
+                    };
+
+                    jsonData.slice(1).forEach((row, index) => {
+                        console.log(`Row ${index + 2} raw data:`, row);
+                        if (row.length > 0) {
+                            const person = {};
+                            Object.keys(headerMap).forEach(header => {
+                                const colIndex = headers.indexOf(header);
+                                person[headerMap[header]] = colIndex !== -1 && colIndex < 12 ? (row[colIndex] || '') : '';
+                            });
+                            console.log(`Row ${index + 2} mapped data:`, person);
+
+                            if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
+                                invalidRows.push(`Row ${index + 2}: Missing required fields - ${JSON.stringify(person)}`);
+                            } else if (!usmcRanks.includes(person.rank)) {
+                                invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
+                            } else if (!validBloodTypes.includes(person.bloodType)) {
+                                invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
+                            } else {
+                                personnel.push(person);
+                            }
+                        }
+                    });
+
+                    if (invalidRows.length > 0) {
+                        console.log('Invalid rows detected:', invalidRows);
+                        alert('Some rows could not be uploaded:\n' + invalidRows.join('\n'));
+                    }
+
+                    if (personnel.length > 0) {
+                        userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        alert(`Uploaded ${personnel.length} personnel successfully!`);
+                        loadPersonnelRows();
+                    } else if (invalidRows.length === 0) {
+                        alert('No valid personnel data found in the spreadsheet.');
+                    }
+                } catch (error) {
+                    console.error('Error processing spreadsheet:', error);
+                    alert('An error occurred while processing the file: ' + error.message);
+                }
+            };
+            reader.onerror = function() {
+                console.error('Error reading file');
+                alert('Failed to read the file.');
+            };
+            reader.readAsArrayBuffer(file);
+        }
     </script>
 </body>
 </html>
