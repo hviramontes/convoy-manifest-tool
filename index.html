@@ -297,9 +297,8 @@
             <button id="add-comm-gear-btn">Add Comm Gear</button>
             <button id="add-water-containers-btn">Add Water Containers</button>
             <button id="add-fuel-containers-btn">Add Fuel Containers</button>
-            <button id="add-vehicles-btn">Add Vehicles</button>
             <button id="add-weapons-btn">Add Weapons Systems</button>
-            <button id="back-to-vehicles-btn">Back to Vehicles</button>
+            <button id="back-to-dashboard-btn-equipment">Back to Dashboard</button>
         </div>
 
         <div id="add-comm-gear-screen" class="screen" style="display: none;">
@@ -698,15 +697,11 @@
             showScreen('add-fuel-containers-screen');
             loadFuelContainerRows();
         });
-        document.getElementById('add-vehicles-btn').addEventListener('click', () => {
-            showScreen('add-vehicles-screen');
-            loadVehicleRows();
-        });
         document.getElementById('add-weapons-btn').addEventListener('click', () => {
             showScreen('add-weapons-screen');
             loadWeaponsRows();
         });
-        document.getElementById('back-to-vehicles-btn').addEventListener('click', () => showScreen('vehicles-screen'));
+        document.getElementById('back-to-dashboard-btn-equipment').addEventListener('click', () => showScreen('dashboard-screen'));
 
         // Comm Gear logic
         const commSearchInput = document.getElementById('comm-search');
