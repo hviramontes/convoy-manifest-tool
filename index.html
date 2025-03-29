@@ -159,8 +159,21 @@
             font-size: 12px; 
             display: none; 
         }
-        #upload-section { 
-            margin-top: 10px; 
+        #personnel-upload-section { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin: 10px 0; 
+        }
+        #personnel-controls { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 20px; 
+        }
+        #personnel-screen input[type="file"] { 
+            margin: 0 auto; 
+            display: block; 
         }
         .popup { 
             display: none; 
@@ -404,11 +417,9 @@
 
         <div id="personnel-screen" class="screen" style="display: none;">
             <h1>Manage Personnel</h1>
-            <button id="add-personnel-btn">Add New Person</button>
+            <input type="file" id="personnel-spreadsheet-upload" accept=".xlsx">
             <div id="personnel-upload-section">
                 <a id="download-personnel-template-btn" href="https://raw.githubusercontent.com/hviramontes/convoy-manifest-tool/refs/heads/main/Convoy%20Manifest%20Personnel%20Upload.xlsx" download="Convoy_Manifest_Personnel_Upload.xlsx">Download Personnel Template</a>
-                <br>
-                <input type="file" id="personnel-spreadsheet-upload" accept=".xlsx">
                 <button id="upload-personnel-spreadsheet-btn">Upload Personnel Spreadsheet</button>
             </div>
             <table id="personnel-table">
@@ -425,7 +436,10 @@
                 </thead>
                 <tbody id="personnel-added"></tbody>
             </table>
-            <button id="back-to-dashboard-btn-personnel">Back to Dashboard</button>
+            <div id="personnel-controls">
+                <button id="back-to-dashboard-btn-personnel">Back to Dashboard</button>
+                <button id="add-personnel-btn">Add New Person</button>
+            </div>
         </div>
 
         <div id="personnel-form-popup" class="popup">
