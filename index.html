@@ -98,17 +98,17 @@
         }
         .search-container { 
             margin-bottom: 20px; 
-            text-align: center; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
         }
         .search-container input { 
             max-width: 500px; 
-            margin: 0 auto; 
-            display: block; 
+            flex-grow: 1; 
         }
         .search-container button { 
-            display: inline-block; 
-            margin-left: auto; 
-            margin-right: 0; 
+            margin-left: 10px; 
         }
         table { 
             width: 100%; 
@@ -332,7 +332,7 @@
                         <th>TAMCN</th>
                         <th>Vehicle Description</th>
                         <th>Serial Number</th>
-                        <th></th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="vehicles-added"></tbody>
@@ -421,24 +421,6 @@
                 <button id="back-to-manual-add-btn-fuel">Back</button>
                 <button id="save-fuel-btn">Save</button>
             </div>
-        </div>
-
-        <div id="add-vehicles-screen" class="screen" style="display: none;">
-            <h1>Add Vehicles</h1>
-            <table id="vehicles-table">
-                <thead>
-                    <tr>
-                        <th>Model</th>
-                        <th>TAMCN</th>
-                        <th>Vehicle Description</th>
-                        <th>Serial Number</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="vehicles-added"></tbody>
-            </table>
-            <button id="save-vehicles-btn">Save</button>
-            <button id="back-to-manual-add-btn-vehicles">Back</button>
         </div>
 
         <div id="add-weapons-screen" class="screen" style="display: none;">
@@ -1023,12 +1005,11 @@
                 <td><select class="tamcn-select">${Object.keys(vehicleData).map(t => `<option value="${t}" ${t === tamcn ? 'selected' : ''}>${t}</option>`).join('')}</select></td>
                 <td><select class="description-select">${Object.values(vehicleData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
                 <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
-                <td><button class="add-row-btn">+</button></td>
+                <td><button class="delete-btn">Delete</button></td>
             `;
             const modelSelect = row.querySelector('.model-select');
             const tamcnSelect = row.querySelector('.tamcn-select');
             const descriptionSelect = row.querySelector('.description-select');
-            const serialInput = row.querySelector('.serial-input');
 
             tamcnSelect.addEventListener('change', () => {
                 const selectedTamcn = tamcnSelect.value;
@@ -1054,13 +1035,7 @@
                 }
             });
 
-            row.querySelector('.add-row-btn').addEventListener('click', () => {
-                if (!serialInput.value.trim()) {
-                    alert('Please enter a serial number before adding a new row.');
-                } else {
-                    document.getElementById('vehicles-added').appendChild(createVehicleRow());
-                }
-            });
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
 
             return row;
         }
@@ -1072,26 +1047,15 @@
             if (currentUser) {
                 const userData = JSON.parse(localStorage.getItem('userData')) || {};
                 const savedVehicles = (userData[currentUser] && userData[currentUser].vehicles) || [];
-                if (savedVehicles.length > 0) {
-                    savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.model, vehicle.description, vehicle.serial)));
-                } else {
-                    tbody.appendChild(createVehicleRow());
-                }
-            } else {
-                tbody.appendChild(createVehicleRow());
+                savedVehicles.forEach(vehicle => tbody.appendChild(createVehicleRow(vehicle.tamcn, vehicle.model, vehicle.description, vehicle.serial)));
             }
         }
 
-        document.getElementById('save-vehicles-btn').addEventListener('click', () => {
+        document.getElementById('vehicles-added').addEventListener('change', () => {
             const currentUser = localStorage.getItem('currentUser');
-            if (!currentUser) {
-                alert('No user logged in. Please register first.');
-                showScreen('initial-screen');
-                return;
-            }
+            if (!currentUser) return;
             const rows = document.querySelectorAll('#vehicles-added tr');
             const vehicleList = [];
-            let allValid = true;
             rows.forEach(row => {
                 const tamcn = row.querySelector('.tamcn-select').value;
                 const model = row.querySelector('.model-select').value;
@@ -1099,24 +1063,13 @@
                 const serial = row.querySelector('.serial-input').value.trim();
                 if (tamcn && model && description && serial) {
                     vehicleList.push({ tamcn, model, description, serial });
-                } else if (tamcn || model || description || serial) {
-                    allValid = false;
                 }
             });
-            if (!allValid) {
-                alert('Please complete all fields (Model, TAMCN, Description, and Serial Number) for each row.');
-            } else if (vehicleList.length > 0) {
-                const userData = JSON.parse(localStorage.getItem('userData')) || {};
-                if (!userData[currentUser]) userData[currentUser] = {};
-                userData[currentUser].vehicles = vehicleList;
-                localStorage.setItem('userData', JSON.stringify(userData));
-                alert('Vehicles saved for ' + currentUser + '!');
-                showScreen('manual-add-screen');
-            } else {
-                alert('No valid entries to save.');
-            }
+            const userData = JSON.parse(localStorage.getItem('userData')) || {};
+            if (!userData[currentUser]) userData[currentUser] = {};
+            userData[currentUser].vehicles = vehicleList;
+            localStorage.setItem('userData', JSON.stringify(userData));
         });
-        document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
 
         // Weapons Systems logic
         const weaponsSearchInput = document.getElementById('weapons-search');
