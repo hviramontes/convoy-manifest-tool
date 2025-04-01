@@ -97,15 +97,18 @@
             color: #1A2526; 
         }
         .search-container { 
-            display: flex; 
-            align-items: center; 
             margin-bottom: 20px; 
+            text-align: center; 
         }
-        #comm-search, #water-search, #fuel-search { 
-            flex: 1; 
+        .search-container input { 
+            max-width: 500px; 
+            margin: 0 auto; 
+            display: block; 
         }
-        #add-search-btn, #add-water-btn, #add-fuel-btn { 
-            margin-left: 10px; 
+        .search-container button { 
+            display: inline-block; 
+            margin-left: auto; 
+            margin-right: 0; 
         }
         table { 
             width: 100%; 
@@ -190,6 +193,12 @@
         #personnel-screen input[type="file"] { 
             margin: 0 auto; 
             display: block; 
+        }
+        .control-buttons { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 20px; 
         }
         .popup { 
             display: none; 
@@ -360,8 +369,10 @@
                 </thead>
                 <tbody id="comm-gear-added"></tbody>
             </table>
-            <button id="save-comm-gear-btn">Save</button>
-            <button id="back-to-manual-add-btn">Back</button>
+            <div class="control-buttons">
+                <button id="back-to-manual-add-btn">Back</button>
+                <button id="save-comm-gear-btn">Save</button>
+            </div>
         </div>
 
         <div id="add-water-containers-screen" class="screen" style="display: none;">
@@ -382,8 +393,10 @@
                 </thead>
                 <tbody id="water-container-added"></tbody>
             </table>
-            <button id="save-water-btn">Save</button>
-            <button id="back-to-manual-add-btn-water">Back</button>
+            <div class="control-buttons">
+                <button id="back-to-manual-add-btn-water">Back</button>
+                <button id="save-water-btn">Save</button>
+            </div>
         </div>
 
         <div id="add-fuel-containers-screen" class="screen" style="display: none;">
@@ -404,8 +417,10 @@
                 </thead>
                 <tbody id="fuel-container-added"></tbody>
             </table>
-            <button id="save-fuel-btn">Save</button>
-            <button id="back-to-manual-add-btn-fuel">Back</button>
+            <div class="control-buttons">
+                <button id="back-to-manual-add-btn-fuel">Back</button>
+                <button id="save-fuel-btn">Save</button>
+            </div>
         </div>
 
         <div id="add-vehicles-screen" class="screen" style="display: none;">
@@ -428,6 +443,11 @@
 
         <div id="add-weapons-screen" class="screen" style="display: none;">
             <h1>Add Weapons Systems</h1>
+            <div class="search-container">
+                <input type="text" id="weapons-search" placeholder="Search Weapons System" list="weapons-suggestions">
+                <datalist id="weapons-suggestions"></datalist>
+                <button id="add-weapons-btn-add">Add</button>
+            </div>
             <table id="weapons-table">
                 <thead>
                     <tr>
@@ -435,13 +455,15 @@
                         <th>Code</th>
                         <th>Description</th>
                         <th>Serial Number</th>
-                        <th></th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="weapons-added"></tbody>
             </table>
-            <button id="save-weapons-btn">Save</button>
-            <button id="back-to-manual-add-btn-weapons">Back</button>
+            <div class="control-buttons">
+                <button id="back-to-manual-add-btn-weapons">Back</button>
+                <button id="save-weapons-btn">Save</button>
+            </div>
         </div>
 
         <div id="personnel-screen" class="screen" style="display: none;">
@@ -1097,6 +1119,29 @@
         document.getElementById('back-to-manual-add-btn-vehicles').addEventListener('click', () => showScreen('manual-add-screen'));
 
         // Weapons Systems logic
+        const weaponsSearchInput = document.getElementById('weapons-search');
+        const weaponsSuggestions = document.getElementById('weapons-suggestions');
+        const weaponsAddedTable = document.getElementById('weapons-added');
+
+        Object.entries(weaponsData).forEach(([code, description]) => {
+            weaponsSuggestions.innerHTML += `<option value="${code}">${description}</option>`;
+        });
+
+        document.getElementById('add-weapons-btn-add').addEventListener('click', () => {
+            const query = weaponsSearchInput.value.trim().toUpperCase();
+            const match = Object.keys(weaponsData).find(code => code === query) || 
+                         Object.values(weaponsData).find(desc => desc.toUpperCase() === query);
+            const code = Object.keys(weaponsData).find(c => weaponsData[c] === match || c === query);
+            const description = weaponsData[code];
+            const model = weaponsModelNames[code];
+            if (code && model && description) {
+                weaponsAddedTable.appendChild(createWeaponsRow(code, model, description));
+                weaponsSearchInput.value = '';
+            } else {
+                alert('No matching weapons system found. Please select from the suggestions.');
+            }
+        });
+
         function createWeaponsRow(code = '', model = '', description = '', serial = '') {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -1104,12 +1149,11 @@
                 <td><select class="code-select">${Object.keys(weaponsData).map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('')}</select></td>
                 <td><select class="description-select">${Object.values(weaponsData).map(d => `<option value="${d}" ${d === description ? 'selected' : ''}>${d}</option>`).join('')}</select></td>
                 <td><input type="text" class="serial-input" value="${serial}" placeholder="Enter Serial Number" required></td>
-                <td><button class="add-row-btn">+</button></td>
+                <td><button class="delete-btn">Delete</button></td>
             `;
             const modelSelect = row.querySelector('.model-select');
             const codeSelect = row.querySelector('.code-select');
             const descriptionSelect = row.querySelector('.description-select');
-            const serialInput = row.querySelector('.serial-input');
 
             codeSelect.addEventListener('change', () => {
                 const selectedCode = codeSelect.value;
@@ -1135,31 +1179,18 @@
                 }
             });
 
-            row.querySelector('.add-row-btn').addEventListener('click', () => {
-                if (!serialInput.value.trim()) {
-                    alert('Please enter a serial number before adding a new row.');
-                } else {
-                    document.getElementById('weapons-added').appendChild(createWeaponsRow());
-                }
-            });
+            row.querySelector('.delete-btn').addEventListener('click', () => row.remove());
 
             return row;
         }
 
         function loadWeaponsRows() {
-            const tbody = document.getElementById('weapons-added');
-            tbody.innerHTML = '';
+            weaponsAddedTable.innerHTML = '';
             const currentUser = localStorage.getItem('currentUser');
             if (currentUser) {
                 const userData = JSON.parse(localStorage.getItem('userData')) || {};
                 const savedWeapons = (userData[currentUser] && userData[currentUser].weapons) || [];
-                if (savedWeapons.length > 0) {
-                    savedWeapons.forEach(weapon => tbody.appendChild(createWeaponsRow(weapon.code, weapon.model, weapon.description, weapon.serial)));
-                } else {
-                    tbody.appendChild(createWeaponsRow());
-                }
-            } else {
-                tbody.appendChild(createWeaponsRow());
+                savedWeapons.forEach(weapon => weaponsAddedTable.appendChild(createWeaponsRow(weapon.code, weapon.model, weapon.description, weapon.serial)));
             }
         }
 
@@ -1170,7 +1201,7 @@
                 showScreen('initial-screen');
                 return;
             }
-            const rows = document.querySelectorAll('#weapons-added tr');
+            const rows = weaponsAddedTable.querySelectorAll('tr');
             const weaponList = [];
             let allValid = true;
             rows.forEach(row => {
@@ -1459,142 +1490,64 @@
         }
 
         // Spreadsheet Upload Logic for Personnel
-        document.addEventListener('DOMContentLoaded', () => {
-            const uploadBtn = document.getElementById('upload-personnel-spreadsheet-btn');
-            if (uploadBtn) {
-                uploadBtn.addEventListener('click', handlePersonnelSpreadsheetUpload);
-            } else {
-                console.error('Upload button not found in DOM');
-            }
-        });
+        document.getElementById('upload-personnel-spreadsheet-btn').addEventListener('click', handlePersonnelSpreadsheetUpload);
 
         function handlePersonnelSpreadsheetUpload() {
-            console.log('Upload button clicked');
             const fileInput = document.getElementById('personnel-spreadsheet-upload');
             const file = fileInput.files[0];
-            
             if (!file) {
-                console.log('No file selected');
                 alert('Please select a file to upload.');
                 return;
             }
-            
-            console.log('File selected:', file.name);
-            
-            if (typeof XLSX === 'undefined') {
-                console.error('SheetJS library (XLSX) is not loaded');
-                alert('Error: The spreadsheet processing library failed to load.');
-                return;
-            }
-            
+
             const reader = new FileReader();
             reader.onload = function(e) {
-                try {
-                    console.log('File loaded, processing...');
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    
-                    const range = XLSX.utils.decode_range(firstSheet['!ref'] || 'A1:L1');
-                    let lastRow = 1;
-                    for (let rowNum = 2; rowNum <= range.e.r + 1; rowNum++) {
-                        let hasData = false;
-                        for (let colNum = 0; colNum <= 11; colNum++) {
-                            const cellAddress = XLSX.utils.encode_cell({ r: rowNum - 1, c: colNum });
-                            if (firstSheet[cellAddress] && firstSheet[cellAddress].v) {
-                                hasData = true;
-                                break;
-                            }
-                        }
-                        if (hasData) {
-                            lastRow = rowNum;
-                        } else {
-                            break;
-                        }
-                    }
-                    
-                    const customRange = {
-                        s: { c: 0, r: 0 },
-                        e: { c: 11, r: lastRow - 1 }
-                    };
-                    
-                    console.log('Processing range:', XLSX.utils.encode_range(customRange));
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, range: customRange });
-                    console.log('Parsed data (A-L only):', jsonData);
-                    
-                    const currentUser = localStorage.getItem('currentUser');
-                    if (!currentUser) {
-                        alert('No user logged in. Please register first.');
-                        showScreen('initial-screen');
-                        return;
-                    }
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
 
-                    const userData = JSON.parse(localStorage.getItem('userData')) || {};
-                    if (!userData[currentUser]) userData[currentUser] = {};
-
-                    const headers = jsonData[0];
-                    console.log('Headers:', headers);
-                    const personnel = [];
-                    let invalidRows = [];
-
-                    const headerMap = {
-                        'Rank': 'rank',
-                        'Last Name': 'lastName',
-                        'First Name': 'firstName',
-                        'Middle Init': 'middleInitial',
-                        'Blood Type': 'bloodType',
-                        'Zap Number': 'zapNumber',
-                        'M4 Serial': 'm4Serial',
-                        'M9 Serial': 'm9Serial',
-                        'RCO Serial': 'rcoSerial',
-                        'NVG Serial': 'nvgSerial',
-                        'PEQ Serial': 'peqSerial',
-                        'Miscellaneous Gear': 'miscGear'
-                    };
-
-                    jsonData.slice(1).forEach((row, index) => {
-                        console.log(`Row ${index + 2} raw data:`, row);
-                        if (row.length > 0) {
-                            const person = {};
-                            Object.keys(headerMap).forEach(header => {
-                                const colIndex = headers.indexOf(header);
-                                person[headerMap[header]] = colIndex !== -1 && colIndex < 12 ? (row[colIndex] || '') : '';
-                            });
-                            console.log(`Row ${index + 2} mapped data:`, person);
-
-                            if (!person.rank || !person.lastName || !person.firstName || !person.bloodType || !person.zapNumber) {
-                                invalidRows.push(`Row ${index + 2}: Missing required fields - ${JSON.stringify(person)}`);
-                            } else if (!usmcRanks.includes(person.rank)) {
-                                invalidRows.push(`Row ${index + 2}: Invalid rank "${person.rank}"`);
-                            } else if (!validBloodTypes.includes(person.bloodType)) {
-                                invalidRows.push(`Row ${index + 2}: Invalid blood type "${person.bloodType}"`);
-                            } else {
-                                personnel.push(person);
-                            }
-                        }
-                    });
-
-                    if (invalidRows.length > 0) {
-                        console.log('Invalid rows detected:', invalidRows);
-                        alert('Some rows could not be uploaded:\n' + invalidRows.join('\n'));
-                    }
-
-                    if (personnel.length > 0) {
-                        userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
-                        localStorage.setItem('userData', JSON.stringify(userData));
-                        alert(`Uploaded ${personnel.length} personnel successfully!`);
-                        loadPersonnelRows();
-                    } else if (invalidRows.length === 0) {
-                        alert('No valid personnel data found in the spreadsheet.');
-                    }
-                } catch (error) {
-                    console.error('Error processing spreadsheet:', error);
-                    alert('An error occurred while processing the file: ' + error.message);
+                const currentUser = localStorage.getItem('currentUser');
+                if (!currentUser) {
+                    alert('No user logged in. Please register first.');
+                    showScreen('initial-screen');
+                    return;
                 }
-            };
-            reader.onerror = function() {
-                console.error('Error reading file');
-                alert('Failed to read the file.');
+
+                const userData = JSON.parse(localStorage.getItem('userData')) || {};
+                if (!userData[currentUser]) userData[currentUser] = {};
+
+                const personnel = [];
+                jsonData.slice(1).forEach(row => {
+                    if (row.length >= 6) {
+                        const [rank, lastName, firstName, middleInitial, bloodType, zapNumber, m4Serial, m9Serial, rcoSerial, nvgSerial, peqSerial, miscGear] = row;
+                        if (rank && lastName && firstName && bloodType && zapNumber) {
+                            personnel.push({
+                                rank,
+                                lastName,
+                                firstName,
+                                middleInitial: middleInitial || '',
+                                bloodType,
+                                zapNumber,
+                                m4Serial: m4Serial || '',
+                                m9Serial: m9Serial || '',
+                                rcoSerial: rcoSerial || '',
+                                nvgSerial: nvgSerial || '',
+                                peqSerial: peqSerial || '',
+                                miscGear: miscGear || ''
+                            });
+                        }
+                    }
+                });
+
+                if (personnel.length > 0) {
+                    userData[currentUser].personnel = (userData[currentUser].personnel || []).concat(personnel);
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    alert(`Uploaded ${personnel.length} personnel successfully!`);
+                    loadPersonnelRows();
+                } else {
+                    alert('No valid personnel data found in the spreadsheet.');
+                }
             };
             reader.readAsArrayBuffer(file);
         }
